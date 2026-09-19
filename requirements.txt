@@ -1,3 +1,4 @@
 xarm-python-sdk
 opencv-python
 numpy
+flask

@@ -1,0 +1,12 @@
+{
+  "mode": "simulation",
+  "robot_model": "xArm6",
+  "controller_ip": "127.0.0.1",
+  "reference_width_mm": 100.0,
+  "reference_height_mm": 150.0,
+  "reference_origin_robot_xy_mm": [200.0, -75.0],
+  "reference_rotation_deg": 0.0,
+  "approach_z_mm": 200.0,
+  "tool_orientation_deg": [180.0, 0.0, 0.0],
+  "speed_mm_s": 20.0
+}
