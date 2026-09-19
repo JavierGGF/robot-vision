@@ -1,5 +1,5 @@
 """
-Detect a dark object on the calibrated plane.
+Detect an object and measure its center on the reference plane.
 
 Author: Javier G. Fontanet
 """
@@ -11,17 +11,19 @@ import cv2
 import numpy as np
 
 
-def main():
+def detect_piece():
+    """Return measurements and preview images without opening windows."""
     project_root = Path(__file__).resolve().parents[3]
-
     calibration_path = (
         project_root / "data" / "calibration"
         / "planar_calibration.json"
     )
+
     calibration = json.loads(
         calibration_path.read_text(encoding="utf-8")
     )
 
+    # Use the calibrated test image for this first integration.
     image_path = (
         project_root / "data" / "examples"
         / calibration["source_image"]
@@ -32,6 +34,7 @@ def main():
         raise FileNotFoundError(f"Could not load: {image_path}")
 
     height, width = image.shape[:2]
+
     if (
         width != calibration["image_width_px"]
         or height != calibration["image_height_px"]
@@ -44,7 +47,6 @@ def main():
     width_mm = calibration["reference_width_mm"]
     height_mm = calibration["reference_height_mm"]
 
-    # Rectify the reference rectangle at 4 pixels per millimeter.
     pixels_per_mm = 4.0
     scale_matrix = np.diag([pixels_per_mm, pixels_per_mm, 1.0])
 
@@ -68,8 +70,6 @@ def main():
         mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
     )
 
-    # Reject regions near the reference rectangle's edges.
-    # Keep the object at least 3 mm away from those edges.
     margin = round(3 * pixels_per_mm)
     mask_height, mask_width = mask.shape
     candidates = []
@@ -88,33 +88,41 @@ def main():
             candidates.append(contour)
 
     if not candidates:
-        print("No suitable object detected inside the reference area.")
-    else:
-        # This first version assumes one main object.
-        contour = max(candidates, key=cv2.contourArea)
-        moments = cv2.moments(contour)
+        raise ValueError("No suitable object detected.")
 
-        cx = moments["m10"] / moments["m00"]
-        cy = moments["m01"] / moments["m00"]
+    # This version assumes one main object.
+    contour = max(candidates, key=cv2.contourArea)
+    moments = cv2.moments(contour)
 
-        x_mm = cx / pixels_per_mm
-        y_mm = cy / pixels_per_mm
+    cx = moments["m10"] / moments["m00"]
+    cy = moments["m01"] / moments["m00"]
 
-        print(f"Object center: X = {x_mm:.2f} mm, Y = {y_mm:.2f} mm")
-        print("Origin: top-left reference point.")
-        print("X: rightward. Y: downward.")
-        print("These are reference-plane coordinates, not robot coordinates.")
+    result = {
+        "status": "ok",
+        "message": "Object detected",
+        "reference_x_mm": float(cx / pixels_per_mm),
+        "reference_y_mm": float(cy / pixels_per_mm)
+    }
 
-        cv2.drawContours(rectified, [contour], -1, (0, 255, 0), 2)
-        cv2.drawMarker(
-            rectified, (round(cx), round(cy)),
-            (0, 0, 255), cv2.MARKER_CROSS, 25, 2
-        )
+    cv2.drawContours(rectified, [contour], -1, (0, 255, 0), 2)
+    cv2.drawMarker(
+        rectified, (round(cx), round(cy)),
+        (0, 0, 255), cv2.MARKER_CROSS, 25, 2
+    )
 
-    cv2.imshow("Rectified reference plane", rectified)
-    cv2.imshow("Object mask", mask)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    return result, rectified, mask
+
+
+def main():
+    result, rectified, mask = detect_piece()
+    print(json.dumps(result, indent=2))
+
+    try:
+        cv2.imshow("Rectified reference plane", rectified)
+        cv2.imshow("Object mask", mask)
+        cv2.waitKey(0)
+    finally:
+        cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
