@@ -11,5 +11,14 @@ venv/
 # Credentials
 .env
 
+# VS Code local settings
+.vscode/
+
 # macOS
 .DS_Store
+
+# Station-specific camera / robot calibration
+data/calibration/planar_calibration.json
+data/calibration/grasp_calibration.json
+data/calibration/reference_part_mask.png
+data/examples/camera_calibration.jpg
