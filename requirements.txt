@@ -1,4 +1,4 @@
-xarm-python-sdk
-opencv-python
-numpy
-flask
+xarm-python-sdk==1.18.4
+opencv-python==5.0.0.93
+numpy==2.4.6
+Flask==3.1.3

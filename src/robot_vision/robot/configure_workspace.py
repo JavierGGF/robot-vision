@@ -1,221 +1,159 @@
-"""
-Calibrate the position of the vision workspace relative to the xArm base.
-
-The student teaches two corners of the US Letter reference sheet:
-
-1. Top-left
-2. Top-right
-
-From these two robot coordinates, the program calculates:
-- the location of the sheet relative to the robot base
-- the rotation of the sheet relative to the robot
-
-Author: Javier G. Fontanet
-"""
-
+from pathlib import Path
 import json
 import math
-from pathlib import Path
 
 
-def read_coordinate(name):
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+CONFIG_PATH = PROJECT_ROOT / "config" / "simulation.json"
+
+
+def read_xy(label):
+    print()
+    print(label)
+    print("Use UFACTORY to move the TCP to this corner of the Letter sheet.")
+    print("Then read the robot X and Y coordinates.")
 
     while True:
-
-        value = input(
-            f"Enter robot {name} coordinate in mm: "
-        ).strip()
-
         try:
-            value = float(value)
-
-            if not math.isfinite(value):
-                raise ValueError
-
-            return value
-
+            x = float(input("Robot X [mm]: ").strip())
+            y = float(input("Robot Y [mm]: ").strip())
+            return x, y
         except ValueError:
-
-            print(
-                "Please enter a valid number."
-            )
+            print("Please enter valid numbers.")
 
 
 def main():
+    print()
+    print("======================================")
+    print("LETTER SHEET -> ROBOT CALIBRATION")
+    print("======================================")
+    print()
+    print("The Letter sheet must remain fixed during calibration.")
+    print()
+    print("You will teach three corners:")
+    print("  1. TOP-LEFT")
+    print("  2. TOP-RIGHT")
+    print("  3. BOTTOM-LEFT")
+    print()
+    print("Move the CENTER OF THE TCP above each corner.")
+    print("Only X and Y are used for this calibration.")
+    print()
 
-    project_root = Path(__file__).resolve().parents[3]
+    if not CONFIG_PATH.exists():
+        raise FileNotFoundError(f"Configuration file not found: {CONFIG_PATH}")
 
-    config_path = (
-        project_root
-        / "config"
-        / "simulation.json"
-    )
+    with open(CONFIG_PATH, "r") as f:
+        config = json.load(f)
 
-    config = json.loads(
-        config_path.read_text(
-            encoding="utf-8"
-        )
-    )
+    width_mm = float(config.get("reference_width_mm", 215.9))
+    height_mm = float(config.get("reference_height_mm", 279.4))
 
-    width_mm = config[
-        "reference_width_mm"
+    print(f"Reference sheet size: {width_mm:.1f} mm x {height_mm:.1f} mm")
+
+    input("\nPress ENTER to begin...")
+
+    x_tl, y_tl = read_xy("1. TOP-LEFT corner")
+    x_tr, y_tr = read_xy("2. TOP-RIGHT corner")
+    x_bl, y_bl = read_xy("3. BOTTOM-LEFT corner")
+
+    dx_x = x_tr - x_tl
+    dx_y = y_tr - y_tl
+
+    dy_x = x_bl - x_tl
+    dy_y = y_bl - y_tl
+
+    measured_width = math.hypot(dx_x, dx_y)
+    measured_height = math.hypot(dy_x, dy_y)
+
+    if measured_width < 1.0:
+        raise RuntimeError("TOP-LEFT and TOP-RIGHT are too close.")
+
+    if measured_height < 1.0:
+        raise RuntimeError("TOP-LEFT and BOTTOM-LEFT are too close.")
+
+    # Robot displacement produced by 1 mm movement on the paper X axis
+    x_axis_robot = [
+        dx_x / width_mm,
+        dx_y / width_mm,
     ]
 
-    print()
-    print("======================================")
-    print("     WORKSPACE / ROBOT CALIBRATION")
-    print("======================================")
-    print()
-    print(
-        "This step tells the vision system where the "
-        "US Letter workspace is located relative to the robot."
-    )
-    print()
-    print("DO NOT move the paper during this calibration.")
-    print()
-    print("STEP 1")
-    print(
-        "Use UFACTORY to move the center of the robot tool "
-        "directly above the TOP-LEFT corner of the paper."
-    )
-    print()
-    print(
-        "You only need to record X and Y. "
-        "Keep the robot at a safe Z height."
-    )
-    print()
+    # Robot displacement produced by 1 mm movement on the paper Y axis
+    y_axis_robot = [
+        dy_x / height_mm,
+        dy_y / height_mm,
+    ]
 
-    input(
-        "Press ENTER when the robot is above the TOP-LEFT corner..."
+    rotation_deg = math.degrees(math.atan2(dx_y, dx_x))
+
+    # Check approximately how perpendicular the taught axes are
+    dot = (
+        x_axis_robot[0] * y_axis_robot[0]
+        + x_axis_robot[1] * y_axis_robot[1]
     )
 
-    print()
+    x_scale = math.hypot(*x_axis_robot)
+    y_scale = math.hypot(*y_axis_robot)
 
-    x1 = read_coordinate("X")
-    y1 = read_coordinate("Y")
-
-    print()
-    print("--------------------------------------")
-    print()
-    print("STEP 2")
-    print(
-        "Now move the center of the robot tool directly above "
-        "the TOP-RIGHT corner of the paper."
-    )
-    print()
-
-    input(
-        "Press ENTER when the robot is above the TOP-RIGHT corner..."
-    )
-
-    print()
-
-    x2 = read_coordinate("X")
-    y2 = read_coordinate("Y")
-
-    # ---------------------------------------------------------
-    # Calculate sheet orientation
-    # ---------------------------------------------------------
-
-    dx = x2 - x1
-    dy = y2 - y1
-
-    measured_width = math.hypot(
-        dx,
-        dy
-    )
-
-    rotation_deg = math.degrees(
-        math.atan2(
-            dy,
-            dx
-        )
+    determinant = (
+        x_axis_robot[0] * y_axis_robot[1]
+        - x_axis_robot[1] * y_axis_robot[0]
     )
 
     print()
     print("======================================")
-    print("       CALIBRATION RESULT")
+    print("CALIBRATION RESULTS")
     print("======================================")
+    print(f"Measured top edge:  {measured_width:.1f} mm")
+    print(f"Expected top edge:  {width_mm:.1f} mm")
     print()
-    print(
-        f"Paper origin in robot coordinates:"
-    )
-    print(
-        f"X = {x1:.2f} mm"
-    )
-    print(
-        f"Y = {y1:.2f} mm"
-    )
+    print(f"Measured left edge: {measured_height:.1f} mm")
+    print(f"Expected left edge: {height_mm:.1f} mm")
     print()
-    print(
-        f"Paper rotation = "
-        f"{rotation_deg:.2f} deg"
-    )
-    print()
-    print(
-        f"Expected paper width = "
-        f"{width_mm:.1f} mm"
-    )
-    print(
-        f"Measured robot distance = "
-        f"{measured_width:.1f} mm"
-    )
-    print()
+    print(f"Paper X-axis angle in robot coordinates: {rotation_deg:.2f} deg")
+    print(f"X scale: {x_scale:.4f}")
+    print(f"Y scale: {y_scale:.4f}")
+    print(f"Axis dot product: {dot:.4f}")
+    print(f"Transform determinant: {determinant:.4f}")
 
-    # ---------------------------------------------------------
-    # Basic calibration check
-    # ---------------------------------------------------------
-
-    width_error = abs(
-        measured_width - width_mm
-    )
-
-    if width_error > 15:
-
-        print(
-            "WARNING:"
-        )
-        print(
-            "The measured distance between the two corners "
-            "is significantly different from the paper width."
-        )
-        print(
-            "Check that the correct two corners were selected."
-        )
+    if abs(measured_width - width_mm) > 15.0:
         print()
+        print("WARNING:")
+        print("The measured sheet width differs significantly from a Letter sheet.")
+        print("Check the taught TOP-LEFT and TOP-RIGHT points.")
 
-    # ---------------------------------------------------------
-    # Save configuration
-    # ---------------------------------------------------------
+    if abs(measured_height - height_mm) > 15.0:
+        print()
+        print("WARNING:")
+        print("The measured sheet height differs significantly from a Letter sheet.")
+        print("Check the taught TOP-LEFT and BOTTOM-LEFT points.")
 
-    config[
-        "reference_origin_robot_xy_mm"
-    ] = [
-        x1,
-        y1
-    ]
+    if abs(dot) > 0.15:
+        print()
+        print("WARNING:")
+        print("The taught X and Y axes are not close to perpendicular.")
+        print("Check the three taught corner positions.")
 
-    config[
-        "reference_rotation_deg"
-    ] = rotation_deg
+    if abs(determinant) < 0.2:
+        raise RuntimeError(
+            "Invalid workspace calibration. "
+            "The three taught points do not define a valid workspace."
+        )
 
-    config_path.write_text(
-        json.dumps(
-            config,
-            indent=2
-        ),
-        encoding="utf-8"
-    )
+    config["reference_origin_robot_xy_mm"] = [x_tl, y_tl]
+    config["reference_x_axis_robot_per_mm"] = x_axis_robot
+    config["reference_y_axis_robot_per_mm"] = y_axis_robot
 
-    print("======================================")
-    print("      WORKSPACE CALIBRATION SAVED")
-    print("======================================")
+    # Keep this for display / backward compatibility.
+    config["reference_rotation_deg"] = rotation_deg
+
+    with open(CONFIG_PATH, "w") as f:
+        json.dump(config, f, indent=2)
+
     print()
-    print(
-        "The vision system can now convert positions "
-        "on the paper into robot coordinates."
-    )
+    print("Workspace calibration saved successfully.")
+    print(f"Saved to: {CONFIG_PATH}")
     print()
+    print("The Letter sheet must remain in this position while the system is used.")
 
 
 if __name__ == "__main__":
