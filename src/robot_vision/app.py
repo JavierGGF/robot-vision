@@ -15,9 +15,9 @@ import cv2
 import numpy as np
 from flask import Flask, jsonify
 
-from vision.detection import load_calibration, process_frame
-from vision.orientation import calculate_grasp, load_grasp_config
-from robot.coordinates import load_config, reference_to_robot
+from robot_vision.vision.detection import load_calibration, process_frame
+from robot_vision.vision.orientation import calculate_grasp, load_grasp_config
+from robot_vision.robot.coordinates import load_config, reference_to_robot
 
 
 app = Flask(__name__)
@@ -301,7 +301,9 @@ def main():
                         2
                     )
 
-            except Exception:
+            except Exception as exc:
+
+                print(f"Vision processing error: {type(exc).__name__}: {exc}")
 
                 with result_lock:
                     latest_result = None
