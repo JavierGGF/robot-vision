@@ -1,0 +1,20 @@
+{
+  "reference_part_center_mm": [
+    113.36415085848016,
+    183.00160613425143
+  ],
+  "grasp_point_mm": [
+    113.5,
+    190.25
+  ],
+  "grasp_offset_mm": [
+    0.1358491415198415,
+    7.248393865748568
+  ],
+  "reference_silhouette": "reference_part_mask.png",
+  "silhouette_size_px": 311,
+  "pixels_per_mm": 4.0,
+  "part_height_mm": 25.0,
+  "pick_z_mm": 8.0,
+  "gripper_angle_offset_deg": null
+}

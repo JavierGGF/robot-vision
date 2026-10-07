@@ -1,0 +1,177 @@
+{
+  "timestamp": "2026-10-06T15:50:21.569637-05:00",
+  "status": "ok",
+  "angle_convention": "OpenCV: positive counterclockwise in image",
+  "planar_calibration": {
+    "source_image": "camera_calibration.jpg",
+    "camera_index": 0,
+    "image_width_px": 1920,
+    "image_height_px": 1080,
+    "reference_width_mm": 215.9,
+    "reference_height_mm": 279.4,
+    "image_points": [
+      [
+        136.32,
+        92.24199288256227
+      ],
+      [
+        1693.44,
+        111.45907473309609
+      ],
+      [
+        1712.64,
+        1030.035587188612
+      ],
+      [
+        168.96,
+        1010.8185053380782
+      ]
+    ],
+    "pixel_to_mm_matrix": [
+      [
+        0.13862365128194346,
+        -0.0049257475355777005,
+        -18.442816407402308
+      ],
+      [
+        -0.0037199610455229005,
+        0.3014205826663632,
+        -27.296528994628257
+      ],
+      [
+        2.329810608963145e-07,
+        -9.399210618678262e-06,
+        1.0
+      ]
+    ]
+  },
+  "grasp_calibration": {
+    "reference_part_center_mm": [
+      113.36415085848016,
+      183.00160613425143
+    ],
+    "grasp_point_mm": [
+      113.5,
+      190.25
+    ],
+    "grasp_offset_mm": [
+      0.1358491415198415,
+      7.248393865748568
+    ],
+    "reference_silhouette": "reference_part_mask.png",
+    "silhouette_size_px": 311,
+    "pixels_per_mm": 4.0,
+    "part_height_mm": 25.0,
+    "pick_z_mm": 8.0,
+    "gripper_angle_offset_deg": null
+  },
+  "geometry_limits": {
+    "minimum_depth_ratio": 0.1,
+    "maximum_second_depth_ratio": 0.75,
+    "bottom_depth_fraction": 0.9
+  },
+  "detection": {
+    "status": "ok",
+    "message": "Object detected",
+    "reference_x_mm": 108.33156744886293,
+    "reference_y_mm": 174.28179441029647
+  },
+  "reference_mask_diagnostics": {
+    "shape": [
+      311,
+      311
+    ],
+    "bounding_box_px": [
+      98,
+      27,
+      110,
+      258
+    ],
+    "white_pixels": 15185,
+    "centroid_px": [
+      155.44781033915046,
+      155.48699374382613
+    ]
+  },
+  "current_mask_diagnostics": {
+    "shape": [
+      311,
+      311
+    ],
+    "bounding_box_px": [
+      99,
+      26,
+      109,
+      260
+    ],
+    "white_pixels": 15100,
+    "centroid_px": [
+      155.3164238410596,
+      155.62099337748344
+    ]
+  },
+  "iou_rotation_deg": 0.0,
+  "iou_score": 0.9638804228000778,
+  "reference_pca_image_deg": 92.42370714599639,
+  "current_pca_image_deg": 91.8505959142206,
+  "pca_original_rotation_deg": 179.42688876822422,
+  "pca_opencv_rotation_deg": 0.5731112317757834,
+  "reference_geometry": {
+    "direction_image_deg": 95.42349827938351,
+    "mouth_start_px": [
+      112.0,
+      275.0
+    ],
+    "mouth_end_px": [
+      182.0,
+      284.0
+    ],
+    "mouth_center_px": [
+      147.0,
+      279.5
+    ],
+    "bottom_px": [
+      155.71428571428572,
+      187.71428571428572
+    ],
+    "deepest_contour_point_px": [
+      160.0,
+      185.0
+    ],
+    "depth_px": 95.38671875,
+    "depth_ratio": 0.34009472544520347,
+    "second_depth_px": 14.70703125,
+    "mouth_width_px": 70.57619995437555
+  },
+  "current_geometry": {
+    "direction_image_deg": 94.24593206044061,
+    "mouth_start_px": [
+      112.0,
+      277.0
+    ],
+    "mouth_end_px": [
+      184.0,
+      285.0
+    ],
+    "mouth_center_px": [
+      148.0,
+      281.0
+    ],
+    "bottom_px": [
+      154.96969696969697,
+      187.12121212121212
+    ],
+    "deepest_contour_point_px": [
+      158.0,
+      184.0
+    ],
+    "depth_px": 97.51171875,
+    "depth_ratio": 0.3458797609260256,
+    "second_depth_px": 14.53125,
+    "mouth_width_px": 72.44308110509934
+  },
+  "geometric_rotation_deg": 1.1775662189429,
+  "iou_at_geometric_angle": 0.9541231126596981,
+  "grasp_x_mm": 108.61634935827495,
+  "grasp_y_mm": 181.52586563346543
+}

@@ -1,0 +1,23 @@
+{
+  "status": "cycle_completed_grasp_not_verified",
+  "detection": {
+    "status": "ok",
+    "message": "Object detected",
+    "reference_x_mm": 100.86786243164141,
+    "reference_y_mm": 174.50467286995254
+  },
+  "rotation_change_deg": 2.3209205540259177,
+  "target_xy_mm": [
+    55.46261901996622,
+    -317.89054829231424
+  ],
+  "pick_z_mm": 105.001335,
+  "lift_mm": 40.0,
+  "tool_orientation_deg": [
+    176.370218,
+    -1.134227,
+    -90.068392
+  ],
+  "reference_capture": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/orientation_tests/20261006_151921_979633",
+  "mapping": "approximate local translation"
+}

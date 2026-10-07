@@ -1,0 +1,38 @@
+{
+  "profile_version": 1,
+  "robot_name": "Robot 1",
+  "part_name": "Part 1",
+  "motion": {
+    "tool_orientation_deg": [
+      176.370218,
+      -1.134227,
+      -90.068392
+    ],
+    "pick_z_mm": 105.001335,
+    "approach_z_mm": 200.0,
+    "lift_mm": 40.0,
+    "travel_speed_mm_s": 30.0,
+    "orientation_speed_deg_s": 15.0,
+    "descent_speed_mm_s": 5.0,
+    "lift_speed_mm_s": 10.0,
+    "travel_acceleration": 50.0,
+    "descent_acceleration": 20.0,
+    "open_delay_s": 1.0,
+    "close_delay_s": 1.5
+  },
+  "local_reference": {
+    "capture_directory": "data/orientation_tests/20261006_151921_979633",
+    "marker_record": "data/orientation_tests/20261006_095756_481675/approximate_approach_preview.json",
+    "taught_robot_xy_mm": [
+      70.42083,
+      -295.349182
+    ],
+    "max_translation_mm": 50.0,
+    "max_rotation_change_deg": 10.0
+  },
+  "validation": {
+    "mapping": "approximate_local_translation",
+    "approach_and_cycle_observed": true,
+    "part_retention_verified": false
+  }
+}

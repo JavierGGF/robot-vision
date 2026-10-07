@@ -16,7 +16,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from detection import load_calibration, process_frame
+from robot_vision.vision.detection import load_calibration, process_frame
 
 
 def main():

@@ -1,0 +1,27 @@
+{
+  "status": "failed",
+  "detection": {
+    "status": "ok",
+    "message": "Object detected",
+    "reference_x_mm": 116.83993922343696,
+    "reference_y_mm": 181.60893783459753
+  },
+  "rotation_change_deg": 0.956952190898221,
+  "target_xy_mm": [
+    61.14983922211875,
+    -273.6916834246551
+  ],
+  "pick_z_mm": 105.001335,
+  "lift_mm": 40.0,
+  "tool_orientation_deg": [
+    176.370218,
+    -1.134227,
+    -90.068392
+  ],
+  "reference_capture": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/orientation_tests/20261006_151921_979633",
+  "travel_speed_mm_s": 30.0,
+  "descent_speed_mm_s": 5.0,
+  "lift_speed_mm_s": 10.0,
+  "mapping": "approximate local translation",
+  "error": "Linear movement failed: code 3"
+}

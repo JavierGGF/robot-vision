@@ -1,0 +1,49 @@
+{
+  "status": "approximate_preview_only",
+  "camera_image": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/orientation_tests/20261006_095756_481675/camera.png",
+  "selected_image_points_px": [
+    [
+      604.8,
+      424.0
+    ],
+    [
+      1244.8,
+      438.4
+    ],
+    [
+      585.6,
+      897.6
+    ],
+    [
+      971.2,
+      720.0
+    ]
+  ],
+  "robot_marker_points_xy_mm": [
+    [
+      -27.293282,
+      -424.635712
+    ],
+    [
+      -38.432098,
+      -182.537369
+    ],
+    [
+      137.816635,
+      -418.713806
+    ]
+  ],
+  "target_pose_mm_deg": [
+    66.35508472460089,
+    -278.0306861865021,
+    200.0,
+    176.814317,
+    0.011516,
+    -2.116678
+  ],
+  "limitations": [
+    "Affine mapping approximates the camera perspective.",
+    "Tool offset and marker orientation changes are not corrected.",
+    "Target has not been checked for reachability or clearance."
+  ]
+}
