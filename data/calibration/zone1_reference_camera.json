@@ -1,0 +1,73 @@
+{
+  "calibration_version": 2,
+  "zone": 1,
+  "camera_index": 0,
+  "image_width_px": 1920,
+  "image_height_px": 1080,
+  "reference_width_mm": 215.9,
+  "reference_height_mm": 279.4,
+  "reference_type": "printed_fiducial_centers",
+  "point_order": [
+    "TL",
+    "TR",
+    "BR",
+    "BL"
+  ],
+  "image_points": [
+    [
+      600.0,
+      884.7999877929688
+    ],
+    [
+      616.0,
+      435.20001220703125
+    ],
+    [
+      1232.0,
+      449.6000061035156
+    ],
+    [
+      1230.4000244140625,
+      894.4000244140625
+    ]
+  ],
+  "reference_points_mm": [
+    [
+      21.0,
+      21.0
+    ],
+    [
+      194.89999389648438,
+      21.0
+    ],
+    [
+      194.89999389648438,
+      258.3999938964844
+    ],
+    [
+      21.0,
+      258.3999938964844
+    ]
+  ],
+  "pixel_to_mm_matrix": [
+    [
+      0.005539105912382318,
+      -0.38955573241111074,
+      363.07166395890533
+    ],
+    [
+      0.38436624275081427,
+      0.0147804602608054,
+      -221.98127648452072
+    ],
+    [
+      -1.9514106278737838e-05,
+      5.177914966490782e-05,
+      1.0
+    ]
+  ],
+  "created_at": "2026-10-07T12:53:02.855044",
+  "source_image": "data/orientation_tests/20261006_151921_979633/camera.png",
+  "reference_capture": "data/orientation_tests/20261006_151921_979633",
+  "purpose": "preserved_pick_reference"
+}

@@ -1,22 +1,15 @@
 """
-Reusable pick cycle for Robot 1.
+Reusable Robot 1 picking and placement.
 
-Receive a target already expressed in robot X,Y coordinates.
-Load the tested motion parameters from the Robot 1 profile.
+Build one explicit plan for both route checking and execution.
+Keep picking and placement descents vertical.
+Use the configured intermediate turn above Zone 2.
 
-Sequence:
-1. Raise from the measured starting pose.
-2. Restore the taught tool orientation at height.
-3. Open the gripper.
-4. Approach the target.
-5. Descend vertically.
-6. Close the gripper.
-7. Lift by the configured distance.
+All movements remain Cartesian linear movements.
+Do not retry failed movements or fall back to joint motion.
 
-All movements use the controller's Cartesian linear interface.
-No joint-motion fallback, automatic retry, or automatic release is used.
-
-Executing this module directly only displays the profile.
+Controller checks do not model external obstacles or verify that
+the gripper retains the part.
 """
 
 import copy
@@ -27,18 +20,16 @@ from datetime import datetime
 from pathlib import Path
 
 
-# Resolve paths relative to the project instead of the current terminal folder.
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_PROFILE_PATH = PROJECT_ROOT / "config" / "robot1_pick.json"
+DEFAULT_TRANSFER_PATH = PROJECT_ROOT / "config" / "robot1_transfer.json"
 
-# Check the measured position before closing and after lifting.
-# These checks verify robot position, not whether the part is retained.
 POSITION_TOLERANCE_MM = 1.0
 ORIENTATION_TOLERANCE_DEG = 2.0
 
 
 class PickCycleError(RuntimeError):
-    """Report a stopped cycle together with its stage and recorded parameters."""
+    """Preserve the failed stage and completed operations."""
 
     def __init__(self, message, result):
         super().__init__(message)
@@ -46,77 +37,90 @@ class PickCycleError(RuntimeError):
 
 
 def _number(value, name):
-    """Convert a setting to a finite number."""
+    """Accept finite numbers and reject Boolean values."""
 
     if isinstance(value, bool):
-        raise ValueError(f"{name} must be a number.")
+        raise ValueError(f"{name} must be numeric.")
 
-    number = float(value)
+    value = float(value)
 
-    if not math.isfinite(number):
+    if not math.isfinite(value):
         raise ValueError(f"{name} must be finite.")
 
-    return number
+    return value
 
 
 def _positive(value, name):
-    """Validate positive speeds, accelerations, and distances."""
+    """Validate a strictly positive setting."""
 
-    number = _number(value, name)
+    value = _number(value, name)
 
-    if number <= 0:
+    if value <= 0:
         raise ValueError(f"{name} must be greater than zero.")
 
-    return number
+    return value
 
 
 def _nonnegative(value, name):
-    """Validate a delay that may be zero."""
+    """Validate delays, including zero."""
 
-    number = _number(value, name)
+    value = _number(value, name)
 
-    if number < 0:
+    if value < 0:
         raise ValueError(f"{name} must not be negative.")
 
-    return number
+    return value
+
+
+def _vector(value, length, name):
+    """Validate a pose, orientation, or coordinate vector."""
+
+    if not isinstance(value, (list, tuple)) or len(value) != length:
+        raise ValueError(f"{name} requires {length} values.")
+
+    return [_number(item, name) for item in value]
+
+
+def _wrap_angle(angle):
+    """Represent an angle in the interval [-180, 180)."""
+
+    return (angle + 180.0) % 360.0 - 180.0
+
+
+def _read_profile(path):
+    """Read configuration without changing the original file."""
+
+    path = Path(path)
+
+    if not path.is_absolute():
+        path = PROJECT_ROOT / path
+
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def _validated_profile(profile):
-    """Validate all required motion settings before issuing any commands."""
+    """Validate pick settings before planning or motion."""
 
-    # Work with a copy so validation does not modify the caller's profile.
-    validated = copy.deepcopy(profile)
+    settings = copy.deepcopy(profile)
 
-    if validated.get("profile_version") != 1:
+    if settings.get("profile_version") != 1:
         raise ValueError("Unsupported pick profile version.")
 
-    motion = validated.get("motion")
+    motion = settings.get("motion")
 
     if not isinstance(motion, dict):
-        raise ValueError("Pick profile must contain a motion section.")
+        raise ValueError("Pick profile requires a motion section.")
 
-    orientation = motion.get("tool_orientation_deg")
+    motion["tool_orientation_deg"] = _vector(
+        motion["tool_orientation_deg"], 3, "Tool orientation"
+    )
 
-    if not isinstance(orientation, (list, tuple)) or len(orientation) != 3:
-        raise ValueError(
-            "Tool orientation must contain roll, pitch, and yaw."
-        )
-
-    motion["tool_orientation_deg"] = [
-        _number(value, "Tool orientation")
-        for value in orientation
-    ]
-
-    # Heights are absolute robot-base Z coordinates in millimeters.
     for name in ("pick_z_mm", "approach_z_mm"):
         motion[name] = _number(motion[name], name)
 
     if motion["approach_z_mm"] <= motion["pick_z_mm"]:
-        raise ValueError(
-            "Approach height must be above the grasp height."
-        )
+        raise ValueError("Approach height must exceed pick height.")
 
-    # Retain the profile settings exercised in the demonstration.
     for name in (
         "lift_mm",
         "travel_speed_mm_s",
@@ -131,265 +135,450 @@ def _validated_profile(profile):
     for name in ("open_delay_s", "close_delay_s"):
         motion[name] = _nonnegative(motion[name], name)
 
-    return validated
+    return settings
+
+
+def _validated_transfer(profile):
+    """Validate the selected transfer strategy and taught poses."""
+
+    settings = copy.deepcopy(profile)
+
+    if settings.get("profile_version") != 1:
+        raise ValueError("Unsupported transfer profile version.")
+
+    if settings.get("transfer_strategy") != "after_travel_longer_turn":
+        raise ValueError(
+            "Transfer strategy must be after_travel_longer_turn."
+        )
+
+    for name in ("placement_pose_mm_deg", "retreat_pose_mm_deg"):
+        settings[name] = _vector(settings[name], 6, name)
+
+    motion = settings.get("motion")
+
+    if not isinstance(motion, dict):
+        raise ValueError("Transfer profile requires a motion section.")
+
+    motion["transfer_z_mm"] = _number(
+        motion["transfer_z_mm"], "Transfer height"
+    )
+
+    for name in (
+        "travel_speed_mm_s",
+        "orientation_speed",
+        "placement_speed_mm_s",
+        "clearance_speed_mm_s",
+        "travel_acceleration",
+        "placement_acceleration",
+    ):
+        motion[name] = _positive(motion[name], name)
+
+    motion["release_delay_s"] = _nonnegative(
+        motion["release_delay_s"], "Release delay"
+    )
+
+    for name in ("placement_pose_mm_deg", "retreat_pose_mm_deg"):
+        if motion["transfer_z_mm"] <= settings[name][2]:
+            raise ValueError(f"Transfer height must exceed {name}.")
+
+    return settings
 
 
 def load_pick_profile(path=None):
-    """Read the Robot 1 profile without connecting or modifying any files."""
+    """Load pick settings without connecting to the robot."""
 
-    profile_path = (
-        DEFAULT_PROFILE_PATH if path is None else Path(path)
+    return _validated_profile(
+        _read_profile(DEFAULT_PROFILE_PATH if path is None else path)
     )
 
-    if not profile_path.is_absolute():
-        profile_path = PROJECT_ROOT / profile_path
 
-    if not profile_path.is_file():
-        raise FileNotFoundError(
-            f"Pick profile not found: {profile_path}"
-        )
+def load_transfer_profile(path=None):
+    """Load transfer settings without connecting to the robot."""
 
-    with profile_path.open("r", encoding="utf-8") as file:
-        profile = json.load(file)
-
-    return _validated_profile(profile)
-
-
-def _validated_target(target_xy_mm):
-    """Validate a target already converted to robot-base coordinates."""
-
-    if len(target_xy_mm) != 2:
-        raise ValueError("Target must contain robot X and Y.")
-
-    return [
-        _number(target_xy_mm[0], "Target X"),
-        _number(target_xy_mm[1], "Target Y"),
-    ]
+    return _validated_transfer(
+        _read_profile(DEFAULT_TRANSFER_PATH if path is None else path)
+    )
 
 
 def _check_measured_pose(measured, expected):
-    """Verify position and orientation before continuing the sequence."""
+    """Require the commanded pose before continuing the sequence."""
 
-    # Compare Cartesian position in millimeters.
+    measured = _vector(list(measured), 6, "Measured pose")
+    expected = _vector(list(expected), 6, "Expected pose")
+
     position_error = math.sqrt(
-        sum(
-            (float(measured[index]) - float(expected[index])) ** 2
-            for index in range(3)
-        )
+        sum((measured[i] - expected[i]) ** 2 for i in range(3))
     )
 
     if position_error > POSITION_TOLERANCE_MM:
         raise RuntimeError(
-            f"Measured position differs from target by "
-            f"{position_error:.3f} mm."
+            f"Position error is {position_error:.3f} mm."
         )
 
-    # Compare angles using the shortest difference across the +/-180 boundary.
-    orientation_errors = [
-        abs(
-            (
-                float(measured[index])
-                - float(expected[index])
-                + 180.0
-            ) % 360.0 - 180.0
-        )
-        for index in range(3, 6)
+    angle_errors = [
+        abs(_wrap_angle(measured[i] - expected[i]))
+        for i in range(3, 6)
     ]
 
-    if max(orientation_errors) > ORIENTATION_TOLERANCE_DEG:
+    if max(angle_errors) > ORIENTATION_TOLERANCE_DEG:
         raise RuntimeError(
-            "Measured orientation differs from the requested orientation."
+            "Measured tool orientation differs from target."
         )
+
+
+def build_cycle_plan(
+    start_pose,
+    target_xy_mm,
+    profile,
+    transfer_profile=None,
+    above_only=False,
+):
+    """
+    Build the exact ordered operations without issuing commands.
+
+    An elevated preview contains movement operations only.
+    The full cycle includes explicit gripper operations.
+    """
+
+    settings = _validated_profile(profile)
+    transfer = (
+        None if transfer_profile is None
+        else _validated_transfer(transfer_profile)
+    )
+
+    start = _vector(list(start_pose), 6, "Starting pose")
+    target = _vector(list(target_xy_mm), 2, "Target X,Y")
+    motion = settings["motion"]
+    orientation = motion["tool_orientation_deg"]
+
+    # Use the same elevated plane throughout the transfer plan.
+    height = max(start[2], motion["approach_z_mm"])
+
+    if transfer is not None:
+        height = max(
+            height,
+            transfer["motion"]["transfer_z_mm"],
+            motion["pick_z_mm"] + motion["lift_mm"],
+        )
+
+    plan = []
+
+    def move(label, pose, speed, acceleration):
+        """Append one explicit Cartesian movement."""
+
+        plan.append({
+            "operation": "move",
+            "label": label,
+            "pose": list(pose),
+            "speed": speed,
+            "mvacc": acceleration,
+        })
+
+    def gripper(label, opening, delay):
+        """Append a gripper operation only for the physical cycle."""
+
+        if not above_only:
+            plan.append({
+                "operation": "gripper",
+                "label": label,
+                "opening": opening,
+                "delay_s": delay,
+            })
+
+    # Raise vertically before approaching the detected target.
+    move(
+        "raise",
+        [start[0], start[1], height, *start[3:6]],
+        motion["travel_speed_mm_s"],
+        motion["travel_acceleration"],
+    )
+
+    gripper("open_before_pick", True, motion["open_delay_s"])
+
+    move(
+        "above_zone1_and_orient",
+        [*target, height, *orientation],
+        motion["travel_speed_mm_s"],
+        motion["travel_acceleration"],
+    )
+
+    if not above_only:
+        # Keep X,Y and orientation fixed throughout the descent.
+        move(
+            "descend_to_pick",
+            [*target, motion["pick_z_mm"], *orientation],
+            motion["descent_speed_mm_s"],
+            motion["descent_acceleration"],
+        )
+
+        gripper("close_gripper", False, motion["close_delay_s"])
+
+        # Use the planned height so checking and execution agree.
+        move(
+            "lift_after_pick",
+            [
+                *target,
+                motion["pick_z_mm"] + motion["lift_mm"],
+                *orientation,
+            ],
+            motion["lift_speed_mm_s"],
+            motion["descent_acceleration"],
+        )
+
+    if transfer is None:
+        return plan
+
+    placement = transfer["placement_pose_mm_deg"]
+    retreat = transfer["retreat_pose_mm_deg"]
+    travel = transfer["motion"]
+
+    if not above_only:
+        move(
+            "raise_for_transfer",
+            [*target, height, *orientation],
+            travel["clearance_speed_mm_s"],
+            travel["placement_acceleration"],
+        )
+
+    # Travel while preserving the grasp orientation.
+    move(
+        "travel_to_zone2_with_pick_orientation",
+        [placement[0], placement[1], height, *orientation],
+        travel["travel_speed_mm_s"],
+        travel["travel_acceleration"],
+    )
+
+    # Split the longer yaw turn using the previously tested construction.
+    # Every new target still requires a fresh controller route check.
+    shortest_turn = _wrap_angle(placement[5] - orientation[2])
+    longer_turn = (
+        shortest_turn - 360.0
+        if shortest_turn >= 0.0
+        else shortest_turn + 360.0
+    )
+    midpoint_yaw = _wrap_angle(
+        orientation[2] + longer_turn / 2.0
+    )
+
+    move(
+        "intermediate_orientation",
+        [
+            placement[0],
+            placement[1],
+            height,
+            placement[3],
+            placement[4],
+            midpoint_yaw,
+        ],
+        travel["orientation_speed"],
+        travel["travel_acceleration"],
+    )
+
+    move(
+        "set_zone2_orientation",
+        [placement[0], placement[1], height, *placement[3:6]],
+        travel["orientation_speed"],
+        travel["travel_acceleration"],
+    )
+
+    if not above_only:
+        # Place only after reaching the complete elevated orientation.
+        move(
+            "descend_to_place",
+            placement,
+            travel["placement_speed_mm_s"],
+            travel["placement_acceleration"],
+        )
+
+        gripper("release_in_zone2", True, travel["release_delay_s"])
+
+        move(
+            "clear_zone2",
+            [placement[0], placement[1], height, *placement[3:6]],
+            travel["clearance_speed_mm_s"],
+            travel["placement_acceleration"],
+        )
+
+    move(
+        "approach_retreat_and_orient",
+        [retreat[0], retreat[1], height, *retreat[3:6]],
+        travel["travel_speed_mm_s"],
+        travel["travel_acceleration"],
+    )
+
+    if not above_only:
+        move(
+            "finish_retreat",
+            retreat,
+            travel["clearance_speed_mm_s"],
+            travel["placement_acceleration"],
+        )
+
+    return plan
+
+
+def movement_segments(plan):
+    """Extract the ordered movements for controller route checking."""
+
+    return [
+        {
+            "label": step["label"],
+            "pose": list(step["pose"]),
+            "speed": step["speed"],
+            "mvacc": step["mvacc"],
+        }
+        for step in plan
+        if step["operation"] == "move"
+    ]
+
+
+def _run_cycle(controller, target_xy_mm, settings, transfer=None):
+    """Check the complete plan before any movement or gripper action."""
+
+    result = {
+        "started_at": datetime.now().astimezone().isoformat(),
+        "robot_name": settings.get("robot_name", "Robot 1"),
+        "part_name": settings.get("part_name", "Part 1"),
+        "target_xy_mm": list(target_xy_mm),
+        "motion": copy.deepcopy(settings["motion"]),
+        "transfer": copy.deepcopy(transfer),
+        "stage": "read_start_pose",
+        "status": "started",
+        "completed_steps": [],
+        "measured_poses": {},
+        "part_retention_verified": False,
+        "placement_verified": False,
+    }
+
+    try:
+        start = list(controller.get_pose())
+        result["start_pose_mm_deg"] = start
+
+        plan = build_cycle_plan(
+            start, target_xy_mm, settings, transfer
+        )
+        result["plan"] = copy.deepcopy(plan)
+
+        # A rejected later segment prevents even the initial gripper action.
+        result["stage"] = "check_complete_route"
+        result["path_check"] = controller.check_linear_route(
+            movement_segments(plan)
+        )
+
+        # Reject a changed starting pose before executing the saved plan.
+        result["stage"] = "verify_start_pose"
+        _check_measured_pose(controller.get_pose(), start)
+
+        for step in plan:
+            label = step["label"]
+            result["stage"] = label
+            print(label)
+
+            if step["operation"] == "move":
+                # The controller also checks each segment immediately
+                # before sending its actual movement command.
+                controller.move_linear(
+                    step["pose"],
+                    speed=step["speed"],
+                    mvacc=step["mvacc"],
+                    wait=True,
+                )
+
+                measured = list(controller.get_pose())
+                result["measured_poses"][label] = measured
+                _check_measured_pose(measured, step["pose"])
+                result["final_pose_mm_deg"] = measured
+
+                if label == "descend_to_pick":
+                    result["grasp_pose_mm_deg"] = measured
+
+            elif step["operation"] == "gripper":
+                if step["opening"]:
+                    controller.open_gripper()
+                else:
+                    controller.close_gripper()
+
+                time.sleep(step["delay_s"])
+
+            else:
+                raise RuntimeError("Unknown plan operation.")
+
+            result["completed_steps"].append(label)
+
+        result["stage"] = "completed"
+        result["status"] = (
+            "cycle_completed_grasp_not_verified"
+            if transfer is None
+            else "pick_place_completed_not_verified"
+        )
+        result["finished_at"] = datetime.now().astimezone().isoformat()
+
+        print("Cycle completed.")
+        print("Part retention and placement require visual verification.")
+        return result
+
+    except Exception as error:
+        # Preserve diagnostics without retrying or opening the gripper.
+        result["status"] = "failed"
+        result["error"] = str(error)
+        result["finished_at"] = datetime.now().astimezone().isoformat()
+
+        if result["stage"] == "check_complete_route":
+            result["path_check"] = copy.deepcopy(
+                getattr(controller, "last_path_check", None)
+            )
+
+        raise PickCycleError(
+            f"Cycle stopped during '{result['stage']}': {error}",
+            result,
+        ) from error
 
 
 def run_pick_cycle(controller, target_xy_mm, profile=None):
-    """
-    Execute one pick cycle using an already connected controller.
-
-    Parameters:
-        controller:
-            Connected Lite6Controller.
-        target_xy_mm:
-            Robot-base [X, Y] calculated by the vision layer.
-        profile:
-            Loaded pick profile, or None to load Robot 1's default profile.
-
-    Returns:
-        A serializable result describing the executed sequence.
-
-    Raises:
-        PickCycleError if the sequence stops during a robot operation.
-
-    Connection lifetime and file logging belong to the calling program.
-    Completing the cycle does not verify that the part remains held.
-    """
-
-    # Validate the destination and all motion settings before moving.
-    target_xy = _validated_target(target_xy_mm)
+    """Preserve the existing pick-only interface."""
 
     settings = (
         load_pick_profile()
         if profile is None
         else _validated_profile(profile)
     )
-    motion = settings["motion"]
 
-    orientation = motion["tool_orientation_deg"]
-    pick_z = motion["pick_z_mm"]
+    return _run_cycle(controller, target_xy_mm, settings)
 
-    result = {
-        "started_at": datetime.now().astimezone().isoformat(),
-        "robot_name": settings.get("robot_name", "Robot 1"),
-        "part_name": settings.get("part_name", "Part 1"),
-        "target_xy_mm": target_xy,
-        "motion": copy.deepcopy(motion),
-        "status": "started",
-        "stage": "read_start_pose",
-        "completed_steps": [],
-        "part_retention_verified": False,
-    }
 
-    try:
-        # The caller connects explicitly; this function never reconnects.
-        start_pose = controller.get_pose()
-        result["start_pose_mm_deg"] = start_pose
+def run_pick_and_place_cycle(
+    controller,
+    target_xy_mm,
+    profile=None,
+    transfer_profile=None,
+):
+    """Pick, transfer through the intermediate turn, place, and retreat."""
 
-        # Do not lower a robot that already starts above the approach height.
-        approach_z = max(
-            motion["approach_z_mm"],
-            float(start_pose[2]),
-        )
-        result["effective_approach_z_mm"] = approach_z
+    settings = (
+        load_pick_profile()
+        if profile is None
+        else _validated_profile(profile)
+    )
+    transfer = (
+        load_transfer_profile()
+        if transfer_profile is None
+        else _validated_transfer(transfer_profile)
+    )
 
-        # Raise at the starting X,Y before changing orientation.
-        result["stage"] = "raise"
-        controller.move_linear(
-            [
-                start_pose[0],
-                start_pose[1],
-                approach_z,
-                *start_pose[3:6],
-            ],
-            speed=motion["travel_speed_mm_s"],
-            mvacc=motion["travel_acceleration"],
-            wait=True,
-        )
-        result["completed_steps"].append("raise")
-
-        # Restore the taught orientation while elevated.
-        result["stage"] = "orient"
-        controller.move_linear(
-            [
-                start_pose[0],
-                start_pose[1],
-                approach_z,
-                *orientation,
-            ],
-            speed=motion["orientation_speed_deg_s"],
-            mvacc=motion["travel_acceleration"],
-            wait=True,
-        )
-        result["completed_steps"].append("orient")
-
-        # Always open before descending, regardless of the prior pin state.
-        result["stage"] = "open_gripper"
-        controller.open_gripper()
-        time.sleep(motion["open_delay_s"])
-        result["completed_steps"].append("open_gripper")
-
-        # Approach the supplied target at height.
-        result["stage"] = "approach"
-        controller.move_linear(
-            [*target_xy, approach_z, *orientation],
-            speed=motion["travel_speed_mm_s"],
-            mvacc=motion["travel_acceleration"],
-            wait=True,
-        )
-        result["completed_steps"].append("approach")
-
-        # Descend vertically with unchanged X,Y and orientation.
-        result["stage"] = "descend"
-        grasp_target = [*target_xy, pick_z, *orientation]
-
-        controller.move_linear(
-            grasp_target,
-            speed=motion["descent_speed_mm_s"],
-            mvacc=motion["descent_acceleration"],
-            wait=True,
-        )
-        result["completed_steps"].append("descend")
-
-        # Confirm the measured pose before issuing the close command.
-        result["stage"] = "verify_grasp_pose"
-        grasp_pose = controller.get_pose()
-        result["grasp_pose_mm_deg"] = grasp_pose
-
-        _check_measured_pose(grasp_pose, grasp_target)
-        result["completed_steps"].append("verify_grasp_pose")
-
-        # Close and allow the fingers to settle.
-        result["stage"] = "close_gripper"
-        controller.close_gripper()
-        time.sleep(motion["close_delay_s"])
-        result["completed_steps"].append("close_gripper")
-
-        # Lift relative to the actual measured grasp position.
-        result["stage"] = "lift"
-        lift_target = [
-            grasp_pose[0],
-            grasp_pose[1],
-            grasp_pose[2] + motion["lift_mm"],
-            *grasp_pose[3:6],
-        ]
-
-        controller.move_linear(
-            lift_target,
-            speed=motion["lift_speed_mm_s"],
-            mvacc=motion["descent_acceleration"],
-            wait=True,
-        )
-        result["completed_steps"].append("lift")
-
-        # Verify the final robot pose without claiming successful retention.
-        result["stage"] = "verify_lift_pose"
-        final_pose = controller.get_pose()
-        result["final_pose_mm_deg"] = final_pose
-
-        _check_measured_pose(final_pose, lift_target)
-        result["completed_steps"].append("verify_lift_pose")
-
-        result["stage"] = "completed"
-        result["status"] = "cycle_completed_grasp_not_verified"
-        result["finished_at"] = datetime.now().astimezone().isoformat()
-
-        print("Pick cycle completed.")
-        print("Gripper remains closed.")
-        print("Part retention requires visual verification.")
-
-        return result
-
-    except Exception as error:
-        # Never retry a motion or release a possibly suspended part.
-        result["status"] = "failed"
-        result["error"] = str(error)
-        result["finished_at"] = datetime.now().astimezone().isoformat()
-
-        message = (
-            f"Pick cycle stopped during '{result['stage']}': {error}"
-        )
-        raise PickCycleError(message, result) from error
+    return _run_cycle(controller, target_xy_mm, settings, transfer)
 
 
 def main():
-    """Display the saved profile without connecting or executing a cycle."""
+    """Print configuration only; do not connect to the robot."""
 
-    profile = load_pick_profile()
-
-    print()
     print("ROBOT 1 PICK PROFILE")
-    print(json.dumps(profile, indent=2))
-    print()
-    print("No robot connection, movement, or gripper command was issued.")
+    print(json.dumps(load_pick_profile(), indent=2))
+
+    if DEFAULT_TRANSFER_PATH.is_file():
+        print("\nROBOT 1 TRANSFER PROFILE")
+        print(json.dumps(load_transfer_profile(), indent=2))
+
+    print("\nNo robot connection or movement was issued.")
 
 
 if __name__ == "__main__":

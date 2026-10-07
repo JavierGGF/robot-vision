@@ -1,0 +1,44 @@
+{
+  "planning_only": true,
+  "executed": false,
+  "home_joints_deg": [
+    -68.238586,
+    8.699505,
+    14.37723,
+    196.699219,
+    -6.234755,
+    68.708469
+  ],
+  "checks": [
+    {
+      "speed_deg_s": 5.0,
+      "acceleration_deg_s2": 5.0,
+      "return_code": 1,
+      "planner_result": 24,
+      "passed": false
+    },
+    {
+      "speed_deg_s": 2.0,
+      "acceleration_deg_s2": 2.0,
+      "return_code": 1,
+      "planner_result": 24,
+      "passed": false
+    }
+  ],
+  "start_pose": [
+    141.782822,
+    -31.918631,
+    167.679718,
+    -175.656255,
+    -10.092079,
+    -32.785504
+  ],
+  "start_joints": [
+    -12.8672,
+    5.189279,
+    12.500048,
+    169.595966,
+    3.71248,
+    209.970697
+  ]
+}

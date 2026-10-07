@@ -1,0 +1,45 @@
+{
+  "profile_version": 1,
+  "robot_name": "Robot 1",
+  "destination": "Zone 2",
+  "transfer_strategy": "after_travel_longer_turn",
+  "placement_pose_mm_deg": [
+    304.321136,
+    -212.433182,
+    107.178635,
+    178.907217,
+    0.50489,
+    89.921715
+  ],
+  "retreat_pose_mm_deg": [
+    52.925541,
+    -129.464905,
+    161.763901,
+    -179.806016,
+    -1.888354,
+    26.422694
+  ],
+  "motion": {
+    "transfer_z_mm": 200.0,
+    "travel_speed_mm_s": 30.0,
+    "orientation_speed": 15.0,
+    "placement_speed_mm_s": 5.0,
+    "clearance_speed_mm_s": 10.0,
+    "travel_acceleration": 20.0,
+    "placement_acceleration": 20.0,
+    "release_delay_s": 1.0
+  },
+  "source_records": {
+    "placement": "data/taught_poses/robot1_zone2_placement_20261007_160642_589921.json",
+    "retreat": "data/route_checks/return_to_start_20261007_164246_166732.json",
+    "previous_retreat": "data/taught_poses/robot1_retreat_20261007_160412_438653.json"
+  },
+  "validation": {
+    "saved_route_check_passed": true,
+    "route_check_record": "data/route_checks/return_to_start_20261007_164246_166732.json",
+    "check_required_before_each_execution": true,
+    "automatic_transfer_path_verified": false,
+    "part_retention_verified": false,
+    "placement_verified": false
+  }
+}

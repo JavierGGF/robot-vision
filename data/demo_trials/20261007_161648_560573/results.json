@@ -1,0 +1,374 @@
+{
+  "started_at": "2026-10-07T16:16:48.560717-05:00",
+  "status": "failed",
+  "mode": "execute",
+  "above_only": true,
+  "pick_profile": {
+    "profile_version": 1,
+    "robot_name": "Robot 1",
+    "part_name": "Part 1",
+    "motion": {
+      "tool_orientation_deg": [
+        176.370218,
+        -1.134227,
+        -90.068392
+      ],
+      "pick_z_mm": 105.001335,
+      "approach_z_mm": 200.0,
+      "lift_mm": 40.0,
+      "travel_speed_mm_s": 60.0,
+      "orientation_speed_deg_s": 15.0,
+      "descent_speed_mm_s": 5.0,
+      "lift_speed_mm_s": 10.0,
+      "travel_acceleration": 50.0,
+      "descent_acceleration": 20.0,
+      "open_delay_s": 1.0,
+      "close_delay_s": 1.5
+    },
+    "local_reference": {
+      "capture_directory": "data/orientation_tests/20261006_151921_979633",
+      "marker_record": "data/orientation_tests/20261006_095756_481675/approximate_approach_preview.json",
+      "taught_robot_xy_mm": [
+        70.42083,
+        -295.349182
+      ],
+      "max_translation_mm": 50.0,
+      "max_rotation_change_deg": 10.0
+    },
+    "validation": {
+      "mapping": "approximate_local_translation",
+      "approach_and_cycle_observed": true,
+      "part_retention_verified": false
+    }
+  },
+  "transfer_profile": {
+    "profile_version": 1,
+    "robot_name": "Robot 1",
+    "destination": "Zone 2",
+    "placement_pose_mm_deg": [
+      304.321136,
+      -212.433182,
+      107.178635,
+      178.907217,
+      0.50489,
+      89.921715
+    ],
+    "retreat_pose_mm_deg": [
+      -116.087997,
+      -6.530323,
+      164.1474,
+      179.983232,
+      4.960611,
+      1.824584
+    ],
+    "motion": {
+      "transfer_z_mm": 200.0,
+      "travel_speed_mm_s": 60.0,
+      "placement_speed_mm_s": 5.0,
+      "clearance_speed_mm_s": 10.0,
+      "travel_acceleration": 50.0,
+      "placement_acceleration": 20.0,
+      "release_delay_s": 1.0
+    },
+    "source_records": {
+      "placement": "data/taught_poses/robot1_zone2_placement_20261007_160642_589921.json",
+      "retreat": "data/taught_poses/robot1_retreat_20261007_160412_438653.json"
+    },
+    "validation": {
+      "poses_manually_taught": true,
+      "automatic_transfer_path_verified": false,
+      "part_retention_verified": false
+    }
+  },
+  "current_calibration": {
+    "calibration_version": 2,
+    "zone": 1,
+    "camera_index": 0,
+    "image_width_px": 1920,
+    "image_height_px": 1080,
+    "reference_width_mm": 215.9,
+    "reference_height_mm": 279.4,
+    "reference_type": "printed_fiducial_centers",
+    "point_order": [
+      "TL",
+      "TR",
+      "BR",
+      "BL"
+    ],
+    "image_points": [
+      [
+        715.2000122070312,
+        1041.5999755859375
+      ],
+      [
+        304.0,
+        1028.800048828125
+      ],
+      [
+        288.0,
+        473.6000061035156
+      ],
+      [
+        680.0,
+        436.79998779296875
+      ]
+    ],
+    "reference_points_mm": [
+      [
+        21.0,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        258.3999938964844
+      ],
+      [
+        21.0,
+        258.3999938964844
+      ]
+    ],
+    "pixel_to_mm_matrix": [
+      [
+        -0.484226299758135,
+        0.030078470587258932,
+        341.49867300457555
+      ],
+      [
+        0.02018432237213684,
+        -0.47335848095194055,
+        505.1241063319379
+      ],
+      [
+        0.0002571560953921029,
+        7.531786661661726e-05,
+        1.0
+      ]
+    ],
+    "created_at": "2026-10-07T12:45:34.056942",
+    "source_image": "data/workspace_calibrations/zone1_20261007_124534_015793/camera.png"
+  },
+  "reference_calibration": {
+    "calibration_version": 2,
+    "zone": 1,
+    "camera_index": 0,
+    "image_width_px": 1920,
+    "image_height_px": 1080,
+    "reference_width_mm": 215.9,
+    "reference_height_mm": 279.4,
+    "reference_type": "printed_fiducial_centers",
+    "point_order": [
+      "TL",
+      "TR",
+      "BR",
+      "BL"
+    ],
+    "image_points": [
+      [
+        600.0,
+        884.7999877929688
+      ],
+      [
+        616.0,
+        435.20001220703125
+      ],
+      [
+        1232.0,
+        449.6000061035156
+      ],
+      [
+        1230.4000244140625,
+        894.4000244140625
+      ]
+    ],
+    "reference_points_mm": [
+      [
+        21.0,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        258.3999938964844
+      ],
+      [
+        21.0,
+        258.3999938964844
+      ]
+    ],
+    "pixel_to_mm_matrix": [
+      [
+        0.005539105912382318,
+        -0.38955573241111074,
+        363.07166395890533
+      ],
+      [
+        0.38436624275081427,
+        0.0147804602608054,
+        -221.98127648452072
+      ],
+      [
+        -1.9514106278737838e-05,
+        5.177914966490782e-05,
+        1.0
+      ]
+    ],
+    "created_at": "2026-10-07T12:53:02.855044",
+    "source_image": "data/orientation_tests/20261006_151921_979633/camera.png",
+    "reference_capture": "data/orientation_tests/20261006_151921_979633",
+    "purpose": "preserved_pick_reference"
+  },
+  "source_image": "live_camera",
+  "analysis": {
+    "mapping": "rotated_grasp_with_preserved_taught_anchor",
+    "detection": {
+      "status": "ok",
+      "message": "Object detected",
+      "reference_x_mm": 105.15310189431253,
+      "reference_y_mm": 122.2905768425105
+    },
+    "reference_detection": {
+      "status": "ok",
+      "message": "Object detected",
+      "reference_x_mm": 84.80452338845025,
+      "reference_y_mm": 145.9319808588704
+    },
+    "current_geometry": {
+      "direction_image_deg": 212.65750342789886,
+      "mouth_start_px": [
+        314.0,
+        243.0
+      ],
+      "mouth_end_px": [
+        206.0,
+        389.0
+      ],
+      "mouth_center_px": [
+        260.0,
+        316.0
+      ],
+      "bottom_px": [
+        357.1818181818182,
+        378.2878787878788
+      ],
+      "deepest_contour_point_px": [
+        356.0,
+        387.0
+      ],
+      "depth_px": 119.40234375,
+      "depth_ratio": 0.2527748544150977,
+      "second_depth_px": 28.2109375,
+      "mouth_width_px": 181.60396471443016
+    },
+    "reference_geometry": {
+      "direction_image_deg": 179.26156195286933,
+      "mouth_start_px": [
+        241.0,
+        302.0
+      ],
+      "mouth_end_px": [
+        243.0,
+        503.0
+      ],
+      "mouth_center_px": [
+        242.0,
+        402.5
+      ],
+      "bottom_px": [
+        358.37931034482756,
+        401.0
+      ],
+      "deepest_contour_point_px": [
+        362.0,
+        389.0
+      ],
+      "depth_px": 120.12890625,
+      "depth_ratio": 0.27631542644674467,
+      "second_depth_px": 35.12890625,
+      "mouth_width_px": 201.00995000248122
+    },
+    "current_center_sheet_mm": [
+      105.15310189431253,
+      122.2905768425105
+    ],
+    "reference_center_sheet_mm": [
+      84.80452338845025,
+      145.9319808588704
+    ],
+    "reference_grasp_sheet_mm": [
+      75.50581265201465,
+      147.9783103213986
+    ],
+    "reference_grasp_offset_sheet_mm": [
+      -9.298710736435595,
+      2.046329462528206
+    ],
+    "grasp_sheet_mm": [
+      96.26338659669968,
+      118.88081914488716
+    ],
+    "rotation_change_deg": -33.39594147502953,
+    "robot_yaw_change_deg": -35.62254878603139,
+    "target_xy_mm": [
+      52.994791822286246,
+      -324.65050409161194
+    ],
+    "target_orientation_deg": [
+      176.370218,
+      -1.134227,
+      -125.69094078603139
+    ],
+    "translation_distance_mm": 34.09155735497461,
+    "tool_rotation_enabled": true
+  },
+  "cycle": {
+    "status": "failed",
+    "stage": "above_retreat_and_orient",
+    "completed_steps": [
+      "raise",
+      "open_gripper",
+      "above_zone1_and_orient",
+      "above_zone2_and_orient"
+    ],
+    "measured_poses": {
+      "raise": [
+        94.17437,
+        -36.713932,
+        199.999924,
+        -178.868428,
+        -2.251724,
+        126.772928
+      ],
+      "above_zone1_and_orient": [
+        52.994801,
+        -324.650452,
+        200.0,
+        176.370218,
+        -1.134227,
+        -125.690955
+      ],
+      "above_zone2_and_orient": [
+        304.321136,
+        -212.433182,
+        200.0,
+        178.907217,
+        0.50489,
+        89.921715
+      ]
+    },
+    "started_at": "2026-10-07T16:16:51.228767-05:00",
+    "part_retention_verified": false,
+    "placement_verified": false,
+    "travel_z_mm": 200.0,
+    "error": "Linear movement failed with code -9.",
+    "finished_at": "2026-10-07T16:17:12.208300-05:00"
+  },
+  "error": "Elevated route stopped during 'above_retreat_and_orient': Linear movement failed with code -9.",
+  "finished_at": "2026-10-07T16:17:14.218327-05:00"
+}

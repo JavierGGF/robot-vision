@@ -1,0 +1,14 @@
+{
+  "purpose": "robot1_zone2_placement_pose",
+  "recorded_at": "2026-10-07T16:06:42.589874-05:00",
+  "pose_mm_deg": [
+    304.321136,
+    -212.433182,
+    107.178635,
+    178.907217,
+    0.50489,
+    89.921715
+  ],
+  "manually_taught": true,
+  "automatic_path_verified": false
+}

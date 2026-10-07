@@ -1,0 +1,34 @@
+{
+  "planning_only": true,
+  "executed": false,
+  "home_joints_deg": [
+    -68.238586,
+    8.699505,
+    14.37723,
+    196.699219,
+    -6.234755,
+    68.708469
+  ],
+  "speed_deg_s": 10.0,
+  "acceleration_deg_s2": 20.0,
+  "start_pose": [
+    141.782822,
+    -31.918631,
+    167.679718,
+    -175.656255,
+    -10.092079,
+    -32.785504
+  ],
+  "start_joints": [
+    -12.8672,
+    5.189279,
+    12.500048,
+    169.595966,
+    3.71248,
+    209.970697
+  ],
+  "return_code": 1,
+  "planner_result": 24,
+  "status": "failed",
+  "error": "Home route rejected: code=1, planner_result=24"
+}

@@ -1,0 +1,161 @@
+{
+  "planning_only": true,
+  "executed": false,
+  "candidates": [
+    {
+      "name": "direct_to_elevated_retreat",
+      "route": [
+        {
+          "label": "travel_and_orient",
+          "pose": [
+            52.925541,
+            -129.464905,
+            200.0,
+            -179.806016,
+            -1.888354,
+            26.422694
+          ],
+          "speed": 10.0,
+          "mvacc": 20.0
+        }
+      ],
+      "status": "rejected",
+      "error": "Cartesian limits rejected or unknown: True.",
+      "path_check": {
+        "status": "failed",
+        "start_pose_mm_deg": [
+          141.782822,
+          -31.918631,
+          167.679718,
+          -175.656255,
+          -10.092079,
+          -32.785504
+        ],
+        "start_joints_deg": [
+          -12.8672,
+          5.189279,
+          12.500048,
+          169.595966,
+          3.71248,
+          209.970697
+        ],
+        "segments": [
+          {
+            "label": "travel_and_orient",
+            "pose": [
+              52.925541,
+              -129.464905,
+              200.0,
+              -179.806016,
+              -1.888354,
+              26.422694
+            ],
+            "speed": 10.0,
+            "mvacc": 20.0
+          }
+        ],
+        "external_obstacles_checked": false,
+        "error": "Cartesian limits rejected or unknown: True."
+      }
+    },
+    {
+      "name": "translate_then_raise_then_orient",
+      "route": [
+        {
+          "label": "translate_at_current_height",
+          "pose": [
+            52.925541,
+            -129.464905,
+            167.679718,
+            -175.656255,
+            -10.092079,
+            -32.785504
+          ],
+          "speed": 10.0,
+          "mvacc": 20.0
+        },
+        {
+          "label": "raise_at_retreat_xy",
+          "pose": [
+            52.925541,
+            -129.464905,
+            200.0,
+            -175.656255,
+            -10.092079,
+            -32.785504
+          ],
+          "speed": 10.0,
+          "mvacc": 20.0
+        },
+        {
+          "label": "orient_at_retreat",
+          "pose": [
+            52.925541,
+            -129.464905,
+            200.0,
+            -179.806016,
+            -1.888354,
+            26.422694
+          ],
+          "speed": 10.0,
+          "mvacc": 20.0
+        }
+      ],
+      "status": "rejected",
+      "error": "Cartesian limits rejected or unknown: True.",
+      "path_check": {
+        "status": "failed",
+        "start_pose_mm_deg": [
+          141.782822,
+          -31.918631,
+          167.679718,
+          -175.656255,
+          -10.092079,
+          -32.785504
+        ],
+        "start_joints_deg": [
+          -12.8672,
+          5.189279,
+          12.500048,
+          169.595966,
+          3.71248,
+          209.970697
+        ],
+        "segments": [
+          {
+            "label": "translate_at_current_height",
+            "pose": [
+              52.925541,
+              -129.464905,
+              167.679718,
+              -175.656255,
+              -10.092079,
+              -32.785504
+            ],
+            "speed": 10.0,
+            "mvacc": 20.0
+          }
+        ],
+        "external_obstacles_checked": false,
+        "error": "Cartesian limits rejected or unknown: True."
+      }
+    }
+  ],
+  "start_pose_mm_deg": [
+    141.782822,
+    -31.918631,
+    167.679718,
+    -175.656255,
+    -10.092079,
+    -32.785504
+  ],
+  "start_joints_deg": [
+    -12.8672,
+    5.189279,
+    12.500048,
+    169.595966,
+    3.71248,
+    209.970697
+  ],
+  "passed_candidates": []
+}

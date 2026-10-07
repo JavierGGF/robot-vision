@@ -1,0 +1,14 @@
+{
+  "purpose": "robot1_retreat_pose",
+  "recorded_at": "2026-10-07T16:04:12.437819-05:00",
+  "pose_mm_deg": [
+    -116.087997,
+    -6.530323,
+    164.1474,
+    179.983232,
+    4.960611,
+    1.824584
+  ],
+  "manually_taught": true,
+  "automatic_path_verified": false
+}

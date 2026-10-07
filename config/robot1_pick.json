@@ -15,7 +15,7 @@
     "orientation_speed_deg_s": 15.0,
     "descent_speed_mm_s": 5.0,
     "lift_speed_mm_s": 10.0,
-    "travel_acceleration": 50.0,
+    "travel_acceleration": 20.0,
     "descent_acceleration": 20.0,
     "open_delay_s": 1.0,
     "close_delay_s": 1.5
