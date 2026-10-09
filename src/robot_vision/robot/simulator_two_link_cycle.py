@@ -72,12 +72,15 @@ def ask(message):
         raise KeyboardInterrupt('Cancelled at operator pause.')
 
 
-def execute_blocks(controller, blocks, start, record, output):
+def execute_blocks(controller, blocks, start, record, output, automatic=False):
     """Keep each block's measured arrivals and existing failure handling."""
     expected = list(start)
     record['blocks'] = []
     for name, plan in blocks:
-        ask('\nLOCAL SIMULATOR ONLY - '+name+'.')
+        if not automatic:
+            ask('\nLOCAL SIMULATOR ONLY - '+name+'.')
+        else:
+            print('\nAUTOMATIC LOCAL SIMULATOR - '+name)
         demo.require_ready(controller)
         demo.require_pose(controller.get_pose(), expected)
         block = {'name': name, 'status': 'started'}
@@ -108,7 +111,10 @@ def main():
                         metavar=('DX', 'DY', 'DZ'), help='Entry minus final TCP pose in robot-base mm.')
     parser.add_argument('--coupling-speed', type=float, default=2.0)
     parser.add_argument('--execute', action='store_true', help='Verified LOCAL simulator only.')
+    parser.add_argument('--auto', action='store_true', help='Skip operator pauses in LOCAL simulator execution.')
     args = parser.parse_args()
+    if args.auto and not args.execute:
+        parser.error('--auto requires --execute.')
     output = demo.PROJECT_ROOT / 'data/two_link_simulator_cycles' / datetime.now().strftime('%Y%m%d_%H%M%S_%f')
     output.mkdir(parents=True, exist_ok=False)
     record = {'status': 'started', 'mode': 'local_simulator' if args.execute else 'offline_preview',
@@ -178,7 +184,7 @@ def main():
             demo.require_pose(controller.get_pose(), start)
             if np.max(np.abs(vector(controller.get_joints(), 6, 'Joints')-vector(reference_joints, 6, 'Reference joints'))) > 2:
                 raise ValueError('Simulator must start at the saved retreat joint configuration.')
-            execute_blocks(controller, blocks, start, record, output)
+            execute_blocks(controller, blocks, start, record, output, automatic=args.auto)
             record['status'] = 'two_link_simulator_motion_completed_not_physical_assembly'
         else:
             record['status'] = 'two_link_offline_preview_not_executed'
