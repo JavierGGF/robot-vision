@@ -33,7 +33,7 @@ def heading(title):
     print("=" * 54)
 
 
-def run_module(module):
+def run_module(module, *arguments):
     """Run a project activity using the current Python environment."""
 
     environment = os.environ.copy()
@@ -45,7 +45,7 @@ def run_module(module):
 
     try:
         result = subprocess.run(
-            [sys.executable, "-m", module],
+            [sys.executable, "-m", module, *arguments],
             cwd=PROJECT_ROOT,
             env=environment,
             check=False,
@@ -326,10 +326,14 @@ def simulation_menu():
         print("3. View Saved Setup - Read Only")
         print("4. Check Docker Simulator Setup")
         print("5. Start Robot Simulator - Lite6")
+        print("6. Preview Pick and Place - Saved Image")
+        print("7. Run Pick and Place - Local Simulator Movement")
         print("0. Back")
         print()
         print("Start Robot Simulator opens the local simulator in your browser.")
-        print("Assembly motion simulation: integration pending.")
+        print("Pick and place uses a saved image and virtual gripper events.")
+        print("Run starts from the verified retreat pose; start the simulator first.")
+        print("Link insertion and Robot 2 are not included yet.")
         print("No real-robot execution is available in this menu.")
 
         choice = input("\nSelect an option: ").strip()
@@ -346,6 +350,10 @@ def simulation_menu():
             simulator_status()
         elif choice == "5":
             run_module("robot_vision.robot.start_simulator")
+        elif choice == "6":
+            run_module("robot_vision.robot.simulator_demo_cycle")
+        elif choice == "7":
+            run_module("robot_vision.robot.simulator_demo_cycle", "--execute")
         elif choice:
             print("Please select an available option.")
 
