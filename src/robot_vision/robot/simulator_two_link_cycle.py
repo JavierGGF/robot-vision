@@ -22,6 +22,17 @@ from robot_vision.robot.test_rotated_pick import sheet_to_robot_matrix
 DEFAULT_GEOMETRY = 'data/link_coupling_previews/20261009_123745_720054/geometry.json'
 
 
+class TwoLinkLocalSimulator(demo.LocalSimulator):
+    """Allow slow local motions to settle without the planner's 10 s cutoff."""
+
+    def wait_stationary(self, timeout=120.0, stable_seconds=1.0):
+        # Preserve idle state, joint stability, diagnostics and connection checks.
+        # No motion retry, warning reset or controller protection change.
+        return super().wait_stationary(
+            timeout=timeout, stable_seconds=stable_seconds
+        )
+
+
 def rotation(angle):
     radians = math.radians(angle)
     return np.array([[math.cos(radians), -math.sin(radians)],
@@ -39,8 +50,10 @@ def build_two_plans(start, target, pick, transfer, offset, entry_offset, couplin
     """Build ordinary first placement and staged second placement."""
     offset = vector(offset, 3, 'Second placement offset')
     entry_offset = vector(entry_offset, 3, 'Entry offset')
-    if entry_offset[2] <= 0:
-        raise ValueError('Entry Z offset must be positive for elevated approach.')
+    if entry_offset[2] < 0:
+        raise ValueError('Entry Z offset must be nonnegative.')
+    if np.linalg.norm(entry_offset) < 1e-6:
+        raise ValueError('Entry offset must define a nonzero coupling movement.')
     if not math.isfinite(coupling_speed) or coupling_speed <= 0 or coupling_speed > 5:
         raise ValueError('Coupling speed must be in (0, 5] mm/s.')
     second_transfer = copy.deepcopy(transfer)
@@ -49,7 +62,7 @@ def build_two_plans(start, target, pick, transfer, offset, entry_offset, couplin
     second_transfer['placement_pose_mm_deg'] = second_pose.tolist()
     entry = second_pose.copy()
     entry[:3] += entry_offset
-    if entry[2] >= transfer['motion']['transfer_z_mm']:
+    if max(entry[2], second_pose[2]) >= transfer['motion']['transfer_z_mm']:
         raise ValueError('Coupling entry must be below transfer height.')
     first = demo.build_cycle_plan(start, target, pick, transfer)
     second = demo.build_cycle_plan(transfer['retreat_pose_mm_deg'], target, pick, second_transfer)
@@ -92,10 +105,35 @@ def execute_blocks(controller, blocks, start, record, output, automatic=False):
         try:
             demo.run_cycle(controller, plan, expected, block, block_output)
             block['status'] = 'completed'
-        except BaseException:
+        except BaseException as error:
             block['status'] = 'failed'
+            block['error'] = str(error) or 'Interrupted'
+            execution = block.get('execution', [])
+            if execution and execution[-1].get('status') != 'completed':
+                failed = execution[-1]
+                failed['status'] = 'failed'
+                failed['error'] = block['error']
+                failed['failure_phase'] = (
+                    'after_command_return' if 'return_code' in failed
+                    else 'command_call_or_before_return'
+                )
+            # The shared runner may already have stopped the simulator.
+            snapshot = {'timing': 'after_shared_runner_failure_handling'}
+            for key, read in (
+                ('state', controller.arm.get_state),
+                ('diagnostics', controller.arm.get_err_warn_code),
+                ('pose', controller.get_pose),
+                ('joints', controller.get_joints),
+            ):
+                try:
+                    snapshot[key] = read()
+                except Exception as diagnostic_error:
+                    snapshot[key + '_error'] = str(diagnostic_error)
+            block['failure_snapshot'] = snapshot
             raise
         finally:
+            # Persist in-memory command return and stop results on failure too.
+            demo.save_record(block_output, block)
             demo.save_record(output, record)
         moves = [step for step in plan if step['operation'] == 'move']
         if moves:
@@ -108,7 +146,7 @@ def main():
     parser.add_argument('--offset-robot', nargs=3, type=float, metavar=('DX', 'DY', 'DZ'),
                         help='Override second TCP placement offset in ROBOT BASE millimeters.')
     parser.add_argument('--entry-offset', nargs=3, type=float, default=[0, 0, 10],
-                        metavar=('DX', 'DY', 'DZ'), help='Entry minus final TCP pose in robot-base mm.')
+                        metavar=('DX', 'DY', 'DZ'), help='Entry minus final TCP pose in robot-base mm; DZ=0 allows horizontal coupling.')
     parser.add_argument('--coupling-speed', type=float, default=2.0)
     parser.add_argument('--execute', action='store_true', help='Verified LOCAL simulator only.')
     parser.add_argument('--auto', action='store_true', help='Skip operator pauses in LOCAL simulator execution.')
@@ -178,7 +216,7 @@ def main():
                 print(step['label'], step.get('pose', 'virtual gripper event'))
         demo.save_record(output, record)
         if args.execute:
-            controller = demo.LocalSimulator()
+            controller = TwoLinkLocalSimulator()
             controller.connect()
             demo.require_ready(controller)
             demo.require_pose(controller.get_pose(), start)
