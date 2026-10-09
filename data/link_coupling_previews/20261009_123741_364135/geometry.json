@@ -1,0 +1,109 @@
+{
+  "profile_version": 1,
+  "status": "offline_geometry_only",
+  "physical_validation": false,
+  "robot_execution_enabled": false,
+  "coordinate_frame": "rectified_zone1_sheet_axes_relative_to_reference_link_center",
+  "source_image": "data/demo_trials/20261007_165106_644344/camera.png",
+  "source_calibration": "data/calibration/zone1_camera.json",
+  "anchor_offsets_mm": {
+    "receiving": [
+      -17.385135135135137,
+      -6.685810810810814
+    ],
+    "mating": [
+      23.060810810810807,
+      20.195945945945944
+    ],
+    "grasp": [
+      4.564189189189186,
+      9.34459459459459
+    ]
+  },
+  "reference_center_sheet_mm": [
+    100.5,
+    115.0
+  ],
+  "link_count": 2,
+  "relative_turn_deg": 0,
+  "correction_in_previous_link_axes_mm": [
+    0.0,
+    0.0
+  ],
+  "links": [
+    {
+      "link_index": 1,
+      "center_offset_sheet_mm": [
+        0.0,
+        0.0
+      ],
+      "rotation_from_reference_deg": 0.0,
+      "grasp_offset_from_first_grasp_sheet_mm": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "link_index": 2,
+      "center_offset_sheet_mm": [
+        -40.445945945945944,
+        -26.881756756756758
+      ],
+      "rotation_from_reference_deg": 0.0,
+      "grasp_offset_from_first_grasp_sheet_mm": [
+        -40.445945945945944,
+        -26.881756756756758
+      ]
+    }
+  ],
+  "provisional_pin_centers": [
+    {
+      "joining_links": [
+        1,
+        2
+      ],
+      "pin_center_offset_sheet_mm": [
+        -17.385135135135137,
+        -6.685810810810814
+      ]
+    }
+  ],
+  "sequence": [
+    {
+      "robot": "Robot 1",
+      "action": "place_first_link",
+      "link_index": 1
+    },
+    {
+      "robot": "Robot 1",
+      "action": "retreat_before_robot2",
+      "link_index": 1
+    },
+    {
+      "robot": "Robot 1",
+      "action": "couple_new_mating_end_into_previous_horseshoe",
+      "link_index": 2
+    },
+    {
+      "robot": "Robot 1",
+      "action": "retreat_before_robot2",
+      "link_index": 2
+    },
+    {
+      "robot": "Robot 2",
+      "action": "insert_pin_pending",
+      "joining_links": [
+        1,
+        2
+      ]
+    }
+  ],
+  "pending": [
+    "Verify selected joint centers physically",
+    "Teach sheet-to-assembly robot transform",
+    "Confirm tool-to-part orientation and grasp offset",
+    "Teach coupling approach and insertion path",
+    "Check each new route",
+    "Teach pin grasp, pin axis and insertion depth"
+  ]
+}

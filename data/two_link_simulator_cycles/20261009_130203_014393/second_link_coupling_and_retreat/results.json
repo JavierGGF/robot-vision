@@ -1,0 +1,146 @@
+{
+  "name": "second_link_coupling_and_retreat",
+  "status": "started",
+  "execution": [
+    {
+      "operation": "move",
+      "label": "couple_second_link",
+      "pose": [
+        259.2040392626388,
+        -213.57393389968593,
+        107.178635,
+        178.907217,
+        0.50489,
+        89.921715
+      ],
+      "speed": 2.0,
+      "mvacc": 20.0,
+      "status": "completed",
+      "motion_requested": true,
+      "return_code": 0,
+      "actual_pose": [
+        259.204041,
+        -213.573929,
+        107.178635,
+        178.907217,
+        0.50489,
+        89.921715
+      ],
+      "actual_joints": [
+        -39.543026,
+        58.28459,
+        79.82024,
+        180.875614,
+        -20.373291,
+        49.712683
+      ]
+    },
+    {
+      "operation": "gripper",
+      "label": "release_in_zone2",
+      "opening": true,
+      "delay_s": 1.0,
+      "status": "completed",
+      "virtual_event": "OPEN"
+    },
+    {
+      "operation": "move",
+      "label": "clear_zone2",
+      "pose": [
+        259.2040392626388,
+        -213.57393389968593,
+        200.0,
+        178.907217,
+        0.50489,
+        89.921715
+      ],
+      "speed": 10.0,
+      "mvacc": 20.0,
+      "status": "completed",
+      "motion_requested": true,
+      "return_code": 0,
+      "actual_pose": [
+        259.204041,
+        -213.573929,
+        200.0,
+        178.907217,
+        0.50489,
+        89.921715
+      ],
+      "actual_joints": [
+        -39.543026,
+        40.776088,
+        76.69974,
+        180.534647,
+        -34.760261,
+        50.09433
+      ]
+    },
+    {
+      "operation": "move",
+      "label": "approach_retreat_and_orient",
+      "pose": [
+        52.925541,
+        -129.464905,
+        200.0,
+        -179.806016,
+        -1.888354,
+        26.422694
+      ],
+      "speed": 30.0,
+      "mvacc": 20.0,
+      "status": "completed",
+      "motion_requested": true,
+      "return_code": 0,
+      "actual_pose": [
+        52.925541,
+        -129.464905,
+        200.0,
+        -179.806016,
+        -1.888354,
+        26.422694
+      ],
+      "actual_joints": [
+        -68.58471,
+        -6.747781,
+        14.552842,
+        185.039699,
+        -21.735039,
+        80.300493
+      ]
+    },
+    {
+      "operation": "move",
+      "label": "finish_retreat",
+      "pose": [
+        52.925541,
+        -129.464905,
+        161.763901,
+        -179.806016,
+        -1.888354,
+        26.422694
+      ],
+      "speed": 10.0,
+      "mvacc": 20.0,
+      "status": "completed",
+      "motion_requested": true,
+      "return_code": 0,
+      "actual_pose": [
+        52.925541,
+        -129.464905,
+        161.763901,
+        -179.806016,
+        -1.888354,
+        26.422694
+      ],
+      "actual_joints": [
+        -68.58471,
+        8.850364,
+        14.626467,
+        196.939804,
+        -6.410309,
+        68.143647
+      ]
+    }
+  ]
+}
