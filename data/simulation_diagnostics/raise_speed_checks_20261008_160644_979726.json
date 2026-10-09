@@ -1,0 +1,50 @@
+{
+  "planning_only": true,
+  "checks": [
+    {
+      "speed_mm_s": 30.0,
+      "acceleration_mm_s2": 20.0,
+      "return_code": 0,
+      "planner_result": 0,
+      "passed": true
+    },
+    {
+      "speed_mm_s": 10.0,
+      "acceleration_mm_s2": 10.0,
+      "return_code": 0,
+      "planner_result": 0,
+      "passed": true
+    },
+    {
+      "speed_mm_s": 2.0,
+      "acceleration_mm_s2": 2.0,
+      "return_code": 0,
+      "planner_result": 0,
+      "passed": true
+    }
+  ],
+  "start_pose": [
+    53.324238,
+    -128.404251,
+    161.653549,
+    -179.850936,
+    -1.806479,
+    26.440054
+  ],
+  "start_joints": [
+    -68.238586,
+    8.699505,
+    14.37723,
+    196.699219,
+    -6.234755,
+    68.708469
+  ],
+  "target_pose": [
+    53.324238,
+    -128.404251,
+    200.0,
+    -179.850936,
+    -1.806479,
+    26.440054
+  ]
+}

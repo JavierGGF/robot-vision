@@ -1,0 +1,8 @@
+{
+  "simulation_only": true,
+  "baseline_commit": "f936e3b",
+  "virtual_preflight_used": false,
+  "movements": [],
+  "status": "failed",
+  "error": "Simulator state rejected: 0, 4"
+}

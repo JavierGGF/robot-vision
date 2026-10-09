@@ -1,0 +1,88 @@
+{
+  "planning_only": true,
+  "motion_executed": false,
+  "checks": [
+    {
+      "speed_mm_s": 30.0,
+      "acceleration_mm_s2": 20.0,
+      "return_code": 0,
+      "planner_result": 0,
+      "passed": true
+    },
+    {
+      "speed_mm_s": 10.0,
+      "acceleration_mm_s2": 10.0,
+      "return_code": 0,
+      "planner_result": 0,
+      "passed": true
+    },
+    {
+      "speed_mm_s": 2.0,
+      "acceleration_mm_s2": 2.0,
+      "return_code": 0,
+      "planner_result": 0,
+      "passed": true
+    }
+  ],
+  "source": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/simulation_trials/20261008_202934_194228/results.json",
+  "segment": {
+    "operation": "move",
+    "label": "above_zone1_and_orient",
+    "pose": [
+      53.029582749091674,
+      -324.5821892537206,
+      200.0,
+      176.370218,
+      -1.134227,
+      -125.00810896483868
+    ],
+    "speed": 30.0,
+    "mvacc": 20.0
+  },
+  "start_pose": [
+    53.324238,
+    -128.404251,
+    200.0,
+    -179.850936,
+    -1.806479,
+    26.440054
+  ],
+  "start_joints": [
+    -68.238586,
+    -7.046636,
+    14.298792,
+    184.839049,
+    -21.71172,
+    80.817187
+  ],
+  "diagnostics_before": [
+    0,
+    [
+      0,
+      14
+    ]
+  ],
+  "endpoint_ik": [
+    -80.09132413213561,
+    39.86792688348573,
+    75.17898377917074,
+    -5.578542917342751,
+    37.204969314786574,
+    49.45289868539929
+  ],
+  "end_joints": [
+    -68.238586,
+    -7.046636,
+    14.298792,
+    184.839049,
+    -21.71172,
+    80.817187
+  ],
+  "diagnostics_after": [
+    0,
+    [
+      0,
+      14
+    ]
+  ]
+}

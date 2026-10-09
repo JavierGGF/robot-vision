@@ -1,0 +1,89 @@
+{
+  "planning_only": true,
+  "motion_executed": false,
+  "checks": [
+    {
+      "run": 1,
+      "method": "direct_actual_state",
+      "code": 0,
+      "planner_result": 0,
+      "passed": true
+    },
+    {
+      "run": 1,
+      "method": "explicit_joint_seed",
+      "seed": {
+        "code": 0,
+        "planner_result": 0
+      },
+      "code": 0,
+      "planner_result": 0,
+      "passed": true
+    },
+    {
+      "run": 2,
+      "method": "direct_actual_state",
+      "code": 0,
+      "planner_result": 0,
+      "passed": true
+    },
+    {
+      "run": 2,
+      "method": "explicit_joint_seed",
+      "seed": {
+        "code": 0,
+        "planner_result": 0
+      },
+      "code": 0,
+      "planner_result": 0,
+      "passed": true
+    }
+  ],
+  "source": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/simulation_trials/20261008_204306_555739/results.json",
+  "target": {
+    "operation": "move",
+    "label": "lift_after_pick",
+    "pose": [
+      53.029582749091674,
+      -324.5821892537206,
+      145.00133499999998,
+      176.370218,
+      -1.134227,
+      -125.00810896483868
+    ],
+    "speed": 10.0,
+    "mvacc": 20.0
+  },
+  "start_pose": [
+    53.029583,
+    -324.582184,
+    105.001335,
+    176.370218,
+    -1.134227,
+    -125.008104
+  ],
+  "start_joints": [
+    -80.091306,
+    58.033291,
+    78.497452,
+    171.15252,
+    -22.468368,
+    233.189927
+  ],
+  "firmware": "6,9, ,XX0000,v2.4.0",
+  "endpoint_ik": [
+    -80.09132413213561,
+    49.72660144091463,
+    75.79289484214982,
+    -7.188674209921809,
+    28.01638241871283,
+    51.35817653927976
+  ],
+  "final_diagnostics": [
+    0,
+    [
+      0,
+      14
+    ]
+  ]
+}

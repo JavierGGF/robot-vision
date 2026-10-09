@@ -1,0 +1,31 @@
+{
+  "planning_only": true,
+  "motion_executed": false,
+  "starting_joints_deg": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "home_joints_deg": [
+    -68.238586,
+    8.699505,
+    14.37723,
+    196.699219,
+    -6.234755,
+    68.708469
+  ],
+  "return_code": 0,
+  "planner_result": 0,
+  "passed": true,
+  "diagnostics": [
+    0,
+    [
+      0,
+      14
+    ]
+  ]
+}

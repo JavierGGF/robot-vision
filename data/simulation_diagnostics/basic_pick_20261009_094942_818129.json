@@ -1,0 +1,138 @@
+{
+  "simulation_only": true,
+  "virtual_preflight_used": false,
+  "gripper_mode": "virtual_events_only",
+  "part_retention_verified": false,
+  "execution": [
+    {
+      "label": "open_before_pick",
+      "event": "OPEN",
+      "delay": 1.0,
+      "status": "completed"
+    },
+    {
+      "label": "descend_to_pick",
+      "pose": [
+        53.029583,
+        -324.582184,
+        105.001335,
+        176.370218,
+        -1.134227,
+        -125.008104
+      ],
+      "speed": 5.0,
+      "acceleration": 20.0,
+      "status": "completed",
+      "return_code": 0,
+      "actual_pose": [
+        53.029583,
+        -324.582184,
+        105.001335,
+        176.370218,
+        -1.134227,
+        -125.008104
+      ],
+      "actual_joints": [
+        -80.091306,
+        58.033291,
+        78.497452,
+        171.15252,
+        -22.468368,
+        233.189927
+      ]
+    },
+    {
+      "label": "close_at_pick",
+      "event": "CLOSE",
+      "delay": 1.5,
+      "status": "completed"
+    },
+    {
+      "label": "lift_40_mm",
+      "pose": [
+        53.029583,
+        -324.582184,
+        145.00133499999998,
+        176.370218,
+        -1.134227,
+        -125.008104
+      ],
+      "speed": 10.0,
+      "acceleration": 20.0,
+      "status": "completed",
+      "return_code": 0,
+      "actual_pose": [
+        53.029583,
+        -324.582184,
+        145.001328,
+        176.370218,
+        -1.134227,
+        -125.008104
+      ],
+      "actual_joints": [
+        -80.091306,
+        49.726606,
+        75.79292,
+        172.811348,
+        -28.016376,
+        231.35818
+      ]
+    }
+  ],
+  "source": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/simulation_trials/20261008_213316_604881/results.json",
+  "pick_profile": {
+    "profile_version": 1,
+    "robot_name": "Robot 1",
+    "part_name": "Part 1",
+    "motion": {
+      "tool_orientation_deg": [
+        176.370218,
+        -1.134227,
+        -90.068392
+      ],
+      "pick_z_mm": 105.001335,
+      "approach_z_mm": 200.0,
+      "lift_mm": 40.0,
+      "travel_speed_mm_s": 30.0,
+      "orientation_speed_deg_s": 15.0,
+      "descent_speed_mm_s": 5.0,
+      "lift_speed_mm_s": 10.0,
+      "travel_acceleration": 20.0,
+      "descent_acceleration": 20.0,
+      "open_delay_s": 1.0,
+      "close_delay_s": 1.5
+    },
+    "local_reference": {
+      "capture_directory": "data/orientation_tests/20261006_151921_979633",
+      "marker_record": "data/orientation_tests/20261006_095756_481675/approximate_approach_preview.json",
+      "taught_robot_xy_mm": [
+        70.42083,
+        -295.349182
+      ],
+      "max_translation_mm": 50.0,
+      "max_rotation_change_deg": 10.0
+    },
+    "validation": {
+      "mapping": "approximate_local_translation",
+      "approach_and_cycle_observed": true,
+      "part_retention_verified": false
+    }
+  },
+  "start_pose": [
+    53.029583,
+    -324.582184,
+    200.0,
+    176.370218,
+    -1.134227,
+    -125.008104
+  ],
+  "start_joints": [
+    -80.091306,
+    39.86795,
+    75.178996,
+    174.421474,
+    -37.204957,
+    229.452924
+  ],
+  "status": "basic_pick_motion_passed"
+}
