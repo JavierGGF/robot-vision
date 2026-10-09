@@ -46,7 +46,8 @@ def vector(value, length, name):
     return result
 
 
-def build_two_plans(start, target, pick, transfer, offset, entry_offset, coupling_speed):
+def build_two_plans(start, target, pick, transfer, offset, entry_offset, coupling_speed,
+                    second_target=None, second_pick=None):
     """Build ordinary first placement and staged second placement."""
     offset = vector(offset, 3, 'Second placement offset')
     entry_offset = vector(entry_offset, 3, 'Entry offset')
@@ -65,7 +66,11 @@ def build_two_plans(start, target, pick, transfer, offset, entry_offset, couplin
     if max(entry[2], second_pose[2]) >= transfer['motion']['transfer_z_mm']:
         raise ValueError('Coupling entry must be below transfer height.')
     first = demo.build_cycle_plan(start, target, pick, transfer)
-    second = demo.build_cycle_plan(transfer['retreat_pose_mm_deg'], target, pick, second_transfer)
+    second = demo.build_cycle_plan(
+        transfer['retreat_pose_mm_deg'],
+        target if second_target is None else second_target,
+        pick if second_pick is None else second_pick, second_transfer
+    )
     placement_index = next(i for i, step in enumerate(second) if step['label'] == 'descend_to_place')
     step = copy.deepcopy(second[placement_index])
     # Keep lateral approach above the requested entry, then descend vertically.
@@ -143,6 +148,8 @@ def execute_blocks(controller, blocks, start, record, output, automatic=False):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--geometry', default=DEFAULT_GEOMETRY)
+    parser.add_argument('--second-image', type=Path,
+                        help='Independent second pick image using the unchanged Zone 1 calibration.')
     parser.add_argument('--offset-robot', nargs=3, type=float, metavar=('DX', 'DY', 'DZ'),
                         help='Override second TCP placement offset in ROBOT BASE millimeters.')
     parser.add_argument('--entry-offset', nargs=3, type=float, default=[0, 0, 10],
@@ -158,7 +165,9 @@ def main():
     record = {'status': 'started', 'mode': 'local_simulator' if args.execute else 'offline_preview',
               'started_at': datetime.now().astimezone().isoformat(),
               'physical_validation': False, 'gripper_mode': 'virtual_events_only',
-              'pin_insertion': 'pending_not_executed', 'arguments': vars(args)}
+              'pin_insertion': 'pending_not_executed',
+              'arguments': {key: str(value) if isinstance(value, Path) else value
+                            for key, value in vars(args).items()}}
     controller = None
     exit_code = 0
     try:
@@ -187,6 +196,23 @@ def main():
         demo.save_images(output, {'camera.png': frame, **images})
         runtime = copy.deepcopy(pick)
         runtime['motion']['tool_orientation_deg'] = analysis['target_orientation_deg']
+        second_analysis = analysis
+        second_runtime = copy.deepcopy(runtime)
+        second_image_path = demo.IMAGE
+        if args.second_image is not None:
+            second_image_path = args.second_image
+            if not second_image_path.is_absolute():
+                second_image_path = demo.PROJECT_ROOT / second_image_path
+            second_frame = cv2.imread(str(second_image_path))
+            if second_frame is None:
+                raise ValueError(f'Second pick image is missing: {second_image_path}')
+            second_analysis, second_images = demo.calculate_rotated_target(
+                second_frame, calibration, reference, pick
+            )
+            second_output = output / 'second_pick_vision'
+            second_output.mkdir()
+            demo.save_images(second_output, {'camera.png': second_frame, **second_images})
+            second_runtime['motion']['tool_orientation_deg'] = second_analysis['target_orientation_deg']
         # Approximate rigid in-plane transfer. Requires physical confirmation:
         # roll/pitch tilt and part slip are not represented by this yaw model.
         mapping = sheet_to_robot_matrix(pick, reference)
@@ -197,9 +223,14 @@ def main():
         if np.linalg.norm(offset) > 150:
             raise ValueError('Second placement offset exceeds this initial demo limit of 150 mm.')
         plans = build_two_plans(start, analysis['target_xy_mm'], runtime, transfer,
-                                offset, args.entry_offset, args.coupling_speed)
+                                offset, args.entry_offset, args.coupling_speed,
+                                second_target=second_analysis['target_xy_mm'],
+                                second_pick=second_runtime)
         blocks = list(zip(('first_link_cycle', 'second_link_approach', 'second_link_coupling_and_retreat'), plans))
         record.update(geometry=geometry, analysis=analysis, pick_profile=runtime,
+                      second_pick_analysis=second_analysis, second_pick_profile=second_runtime,
+                      second_pick_source_image=str(second_image_path),
+                      independent_second_image_requested=args.second_image is not None,
                       transfer_profile=transfer, estimated_offset_robot_mm=estimated.tolist(),
                       selected_offset_robot_mm=offset.tolist(), offset_estimate_physically_verified=False,
                       mapping_assumption='rigid_planar_transfer_using_tool_yaw_change',
@@ -208,7 +239,13 @@ def main():
         print('Estimated second TCP offset in robot base [mm]:', estimated.round(3).tolist())
         print('Selected second TCP offset [mm]:', offset.round(3).tolist())
         print('Entry offset [mm]:', args.entry_offset)
-        print('SAME source image reused for BOTH virtual picks; no two-part detection.')
+        if args.second_image is None:
+            print('SAME source image reused for BOTH virtual picks; no two-part detection.')
+        else:
+            print('Independent saved image for second virtual pick:', second_image_path)
+            print('No live capture or simultaneous two-part detection.')
+        print('First pick X,Y [mm]:', analysis['target_xy_mm'])
+        print('Second pick X,Y [mm]:', second_analysis['target_xy_mm'])
         print('Offset is provisional. Contact, obstacles and insertion are NOT simulated.')
         for name, plan in blocks:
             print('\n'+name)
