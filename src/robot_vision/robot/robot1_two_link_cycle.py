@@ -71,9 +71,21 @@ class PhysicalCouplingController(Lite6Controller):
         super().connect()
         if self.arm.axis != 6 or self.arm.device_type != 9:
             raise RuntimeError('This program requires the Lite6 and its Lite6 gripper.')
-        self._require_motion_ready()
         if self.arm.mode != 0:
-            raise RuntimeError('Position mode 0 is required; no automatic mode reset.')
+            raise RuntimeError("Disable manual mode; position mode 0 is required.")
+        code, diagnostics = self.arm.get_err_warn_code()
+        if code != 0 or any(diagnostics):
+            raise RuntimeError(f"Resolve diagnostics first: {code}, {diagnostics}")
+        code, state = self.arm.get_state()
+        if code != 0:
+            raise RuntimeError(f"State read failed: {code}")
+        if state == 4:
+            print("Enabling stopped controller for this new execution.")
+            code = self.arm.set_state(0)
+            if code != 0:
+                raise RuntimeError(f"Enable rejected: {code}")
+            time.sleep(1.0)
+        self._require_motion_ready()
 
     def wait_stationary(self, timeout=120.0, stable_seconds=1.0):
         deadline = time.monotonic() + timeout
@@ -158,8 +170,7 @@ class PhysicalCouplingController(Lite6Controller):
         time.sleep(0.3)
         code = super().open_gripper()
         time.sleep(2.0)
-        if input("Verify jaws physically OPEN. Type OPEN: ").strip() != "OPEN":
-            raise RuntimeError("Physical opening not confirmed; movement cancelled")
+        print("Opening commands sent; physical opening not verified")
         return code
 
     def close_gripper(self):
@@ -167,8 +178,7 @@ class PhysicalCouplingController(Lite6Controller):
         time.sleep(0.3)
         code = super().close_gripper()
         time.sleep(2.0)
-        if input("Verify jaws CLOSED and part held. Type HELD: ").strip() != "HELD":
-            raise RuntimeError("Grasp not confirmed; lift cancelled")
+        print("Closing commands sent; physical grasp not verified")
         return code
 
     def move_linear(self, target, speed=10.0, mvacc=20.0, wait=True):
@@ -293,6 +303,36 @@ def taught_second_plans(start, target, pick, transfer, station, speed):
     return plan[:split+1], coupling
 
 
+def move_to_start_retreat(controller, transfer, expected, record, output):
+    """Park before vision, retaining orientation during translation."""
+    retreat = list(transfer['retreat_pose_mm_deg'])
+    if len(retreat) != 6 or not all(math.isfinite(float(v)) for v in retreat):
+        raise ValueError('Invalid startup retreat pose')
+    clearance = float(transfer['motion']['transfer_z_mm'])
+    if not retreat[2] <= clearance <= 190.0:
+        raise ValueError('Startup clearance must cover retreat and be at most 190 mm')
+    current = list(expected)
+    vertical = list(current)
+    vertical[2] = clearance
+    travel = list(retreat)
+    travel[2] = clearance
+    travel[3:6] = current[3:6]
+    orient = list(retreat)
+    orient[2] = clearance
+    plan = [
+        {'operation':'move', 'label':'startup_vertical_clearance',
+         'pose':vertical, 'speed':20.0, 'mvacc':20.0},
+        {'operation':'move', 'label':'startup_travel_to_retreat',
+         'pose':travel, 'speed':20.0, 'mvacc':20.0},
+        {'operation':'move', 'label':'startup_orient_at_retreat',
+         'pose':orient, 'speed':10.0, 'mvacc':20.0},
+        {'operation':'move', 'label':'startup_finish_retreat',
+         'pose':retreat, 'speed':10.0, 'mvacc':20.0},
+    ]
+    print('STARTUP RETREAT: route checked before movement; no gripper command.')
+    return run_block(controller, 'startup_retreat', plan, current, record, output)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--execute', action='store_true', help='Physical Robot 1; live capture and operator pauses.')
@@ -358,15 +398,17 @@ def main(argv=None):
         build_two_plans(transfer['retreat_pose_mm_deg'], [0,0], pick, transfer,
                         args.offset_robot, args.entry_offset, args.coupling_speed)
         if args.execute:
-            print('PHYSICAL ROBOT EXECUTION. No automatic return, retry or gripper release.')
+            print('PHYSICAL ROBOT EXECUTION. Startup retreat before vision; no movement retry or automatic recovery.')
             print('Verify camera/sheet registration, taught poses, TCP, gripper and first-link support.')
-            confirm('Confirm current physical station calibration and tooling.', word='VERIFIED')
+            confirm('Confirm calibration, EMPTY gripper, and clear vertical/retreat paths. Restart only after freeing any held or jammed part.', word='VERIFIED')
             controller = PhysicalCouplingController()
             controller.connect()
             controller.wait_stationary()
             expected = controller.get_pose()
             # Start from the actual stationary pose; routes remain checked.
             record['start_joints'] = controller.get_joints()
+            record['start_pose_before_retreat'] = list(expected)
+            expected = move_to_start_retreat(controller, transfer, expected, record, output)
         else:
             expected = list(transfer['retreat_pose_mm_deg'])
             print('OFFLINE PREVIEW: no camera or robot connection.')
@@ -485,7 +527,21 @@ def main(argv=None):
             for block_name, original_plan in plans:
                 adjusted = []
                 for step in original_plan:
+                    original_index = original_plan.index(step)
                     step = copy.deepcopy(step)
+                    if step["label"] == "intermediate_orientation":
+                        previous = next(
+                            item for item in reversed(original_plan[:original_index])
+                            if item["operation"] == "move"
+                        )
+                        following = next(
+                            item for item in original_plan[original_index + 1:]
+                            if item["operation"] == "move"
+                        )
+                        start_yaw = previous["pose"][5]
+                        end_yaw = following["pose"][5]
+                        turn = (end_yaw - start_yaw + 180) % 360 - 180
+                        step["pose"][5] = (start_yaw + turn / 2 + 180) % 360 - 180
                     if step['operation'] == 'move':
                         step['pose'][2] = min(step['pose'][2], 190.0)
                     if step["operation"] == "move" and step["label"] in (
@@ -496,7 +552,21 @@ def main(argv=None):
                         approach["pose"][2] += 20.0
                         approach["speed"] = 30.0
                         adjusted.append(approach)
-                    adjusted.append(step)
+                    if step["label"] == "approach_retreat_and_orient":
+                        previous = next(
+                            item for item in reversed(original_plan[:original_index])
+                            if item["operation"] == "move"
+                        )
+                        orientation_step = copy.deepcopy(step)
+                        orientation_step["label"] = "orient_at_retreat"
+                        orientation_step["speed"] = 10.0
+                        step["label"] = "travel_to_retreat"
+                        step["pose"][3:6] = previous["pose"][3:6]
+                        step["speed"] = 20.0
+                        adjusted.append(step)
+                        adjusted.append(orientation_step)
+                    else:
+                        adjusted.append(step)
                 adjusted_plans.append((block_name, adjusted))
             plans = adjusted_plans
             for name, plan in plans:
