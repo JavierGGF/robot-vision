@@ -1,0 +1,236 @@
+{
+  "name": "first_link_cycle",
+  "status": "started",
+  "execution": [
+    {
+      "operation": "move",
+      "label": "raise",
+      "pose": [
+        52.925541,
+        -129.464905,
+        200.0,
+        -179.806016,
+        -1.888354,
+        26.422694
+      ],
+      "speed": 30.0,
+      "mvacc": 20.0,
+      "status": "completed",
+      "motion_requested": true,
+      "return_code": 0,
+      "actual_pose": [
+        52.925541,
+        -129.464905,
+        200.0,
+        -179.806016,
+        -1.888354,
+        26.422694
+      ],
+      "actual_joints": [
+        -68.58471,
+        -6.747781,
+        14.552842,
+        185.039699,
+        -21.735039,
+        80.300493
+      ]
+    },
+    {
+      "operation": "gripper",
+      "label": "open_before_pick",
+      "opening": true,
+      "delay_s": 1.0,
+      "status": "completed",
+      "virtual_event": "OPEN"
+    },
+    {
+      "operation": "move",
+      "label": "above_zone1_and_orient",
+      "pose": [
+        53.029582749091674,
+        -324.5821892537206,
+        200.0,
+        176.370218,
+        -1.134227,
+        -125.00810896483868
+      ],
+      "speed": 30.0,
+      "mvacc": 20.0,
+      "status": "completed",
+      "motion_requested": true,
+      "return_code": 0,
+      "actual_pose": [
+        53.029583,
+        -324.582184,
+        200.0,
+        176.370218,
+        -1.134227,
+        -125.008104
+      ],
+      "actual_joints": [
+        -80.091306,
+        39.86795,
+        75.178996,
+        174.421474,
+        -37.204957,
+        229.452924
+      ]
+    },
+    {
+      "operation": "move",
+      "label": "descend_to_pick",
+      "pose": [
+        53.029582749091674,
+        -324.5821892537206,
+        105.001335,
+        176.370218,
+        -1.134227,
+        -125.00810896483868
+      ],
+      "speed": 5.0,
+      "mvacc": 20.0,
+      "status": "completed",
+      "motion_requested": true,
+      "return_code": 0,
+      "actual_pose": [
+        53.029583,
+        -324.582184,
+        105.001335,
+        176.370218,
+        -1.134227,
+        -125.008104
+      ],
+      "actual_joints": [
+        -80.091306,
+        58.033291,
+        78.497452,
+        171.15252,
+        -22.468368,
+        233.189927
+      ]
+    },
+    {
+      "operation": "gripper",
+      "label": "close_gripper",
+      "opening": false,
+      "delay_s": 1.5,
+      "status": "completed",
+      "virtual_event": "CLOSE"
+    },
+    {
+      "operation": "move",
+      "label": "lift_after_pick",
+      "pose": [
+        53.029582749091674,
+        -324.5821892537206,
+        145.00133499999998,
+        176.370218,
+        -1.134227,
+        -125.00810896483868
+      ],
+      "speed": 10.0,
+      "mvacc": 20.0,
+      "status": "completed",
+      "motion_requested": true,
+      "return_code": 0,
+      "actual_pose": [
+        53.029583,
+        -324.582184,
+        145.001328,
+        176.370218,
+        -1.134227,
+        -125.008104
+      ],
+      "actual_joints": [
+        -80.091306,
+        49.726606,
+        75.79292,
+        172.811348,
+        -28.016376,
+        231.35818
+      ]
+    },
+    {
+      "operation": "move",
+      "label": "raise_for_transfer",
+      "pose": [
+        53.029582749091674,
+        -324.5821892537206,
+        200.0,
+        176.370218,
+        -1.134227,
+        -125.00810896483868
+      ],
+      "speed": 10.0,
+      "mvacc": 20.0,
+      "status": "completed",
+      "motion_requested": true,
+      "return_code": 0,
+      "actual_pose": [
+        53.029583,
+        -324.582184,
+        200.0,
+        176.370218,
+        -1.134227,
+        -125.008104
+      ],
+      "actual_joints": [
+        -80.091306,
+        39.86795,
+        75.178996,
+        174.421474,
+        -37.204957,
+        229.452924
+      ]
+    },
+    {
+      "operation": "move",
+      "label": "travel_to_zone2_with_pick_orientation",
+      "pose": [
+        304.321136,
+        -212.433182,
+        200.0,
+        176.370218,
+        -1.134227,
+        -125.00810896483868
+      ],
+      "speed": 30.0,
+      "mvacc": 20.0,
+      "status": "completed",
+      "motion_requested": true,
+      "return_code": 0,
+      "actual_pose": [
+        304.321136,
+        -212.433182,
+        200.0,
+        176.370218,
+        -1.134227,
+        -125.008104
+      ],
+      "actual_joints": [
+        -34.73253,
+        51.307225,
+        94.348559,
+        178.468217,
+        -46.687466,
+        271.397789
+      ]
+    },
+    {
+      "operation": "move",
+      "label": "intermediate_orientation",
+      "pose": [
+        304.321136,
+        -212.433182,
+        200.0,
+        178.907217,
+        0.50489,
+        -17.543196982419317
+      ],
+      "speed": 15.0,
+      "mvacc": 20.0,
+      "status": "started",
+      "motion_requested": true
+    }
+  ]
+}

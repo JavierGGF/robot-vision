@@ -1,0 +1,14 @@
+{
+  "robot_ip": "192.168.1.185",
+  "zone": 1,
+  "marker": "TR",
+  "alignment": "cross_center_over_black_fiducial_center",
+  "pose_mm_deg": [
+    129.135986,
+    -187.11763,
+    110.128304,
+    179.903648,
+    0.695743,
+    -177.005112
+  ]
+}

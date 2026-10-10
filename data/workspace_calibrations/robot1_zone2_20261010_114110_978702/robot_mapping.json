@@ -1,0 +1,87 @@
+{
+  "status": "capturing",
+  "created_at": "2026-10-10T11:41:10.978995-05:00",
+  "robot_ip": "192.168.1.185",
+  "robot_name": "Robot 1",
+  "zone": 2,
+  "camera_calibration": {
+    "calibration_version": 2,
+    "zone": 2,
+    "camera_index": 0,
+    "image_width_px": 1920,
+    "image_height_px": 1080,
+    "reference_width_mm": 215.9,
+    "reference_height_mm": 279.4,
+    "reference_type": "printed_fiducial_centers",
+    "point_order": [
+      "TL",
+      "TR",
+      "BR",
+      "BL"
+    ],
+    "image_points": [
+      [
+        830.4000244140625,
+        115.19999694824219
+      ],
+      [
+        1208.0,
+        115.19999694824219
+      ],
+      [
+        1252.800048828125,
+        604.7999877929688
+      ],
+      [
+        840.0,
+        619.2000122070312
+      ]
+    ],
+    "reference_points_mm": [
+      [
+        21.0,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        258.3999938964844
+      ],
+      [
+        21.0,
+        258.3999938964844
+      ]
+    ],
+    "pixel_to_mm_matrix": [
+      [
+        0.4318663608719909,
+        -0.004333361750242368,
+        -337.83630772513607
+      ],
+      [
+        -0.00140316204960696,
+        0.5029487163255125,
+        -36.48817915939691
+      ],
+      [
+        -6.681723942887279e-05,
+        0.00018663666064980546,
+        1.0
+      ]
+    ],
+    "created_at": "2026-10-10T08:59:51.363667",
+    "source_image": "data/workspace_calibrations/zone2_20261010_085951_312404/camera.png"
+  },
+  "marker_order": [
+    "TL",
+    "TR",
+    "BL"
+  ],
+  "markers": [],
+  "alignment": "pointer_cross_center_over_printed_fiducial_center",
+  "cycle_profiles_updated": false,
+  "pointer_poses": []
+}

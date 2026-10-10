@@ -1,0 +1,32 @@
+{
+  "status": "failed",
+  "started_at": "2026-10-10T10:54:10.278643-05:00",
+  "mode": "offline_preview",
+  "arguments": {
+    "execute": false,
+    "first_image": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/orientation_tests/20261010_105015_008545/camera.png",
+    "second_image": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/orientation_tests/20261010_105015_008545/camera.png",
+    "pick_profile": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/orientation_tests/20261010_094517_994548/station_20261010_100335_354623/pick_profile.json",
+    "transfer_profile": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/orientation_tests/20261010_094517_994548/station_20261010_100335_354623/transfer_profile.json",
+    "offset_robot": [
+      -6.731384999999989,
+      -42.453773999999996,
+      2.876625000000004
+    ],
+    "entry_offset": [
+      6.283051,
+      -2.793059999999997,
+      33.869789
+    ],
+    "coupling_speed": 1.0,
+    "station": "data/orientation_tests/20261010_094517_994548/station_20261010_100335_354623",
+    "reference_calibration": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/orientation_tests/20261010_105015_008545/reference_camera.json"
+  },
+  "physical_assembly_verified": false,
+  "pin_insertion": "not_included",
+  "external_obstacles_checked": false,
+  "blocks": [],
+  "vision": [],
+  "error": "Transfer height must exceed retreat_pose_mm_deg.",
+  "finished_at": "2026-10-10T10:54:10.279096-05:00"
+}
