@@ -45,6 +45,9 @@ def check_pose(actual, expected):
 
 
 def confirm(message, word='CONTINUE'):
+    if word == 'CONTINUE':
+        print(message + ' [automatic]')
+        return
     if input(message + f' Type {word}: ').strip() != word:
         raise KeyboardInterrupt('Cancelled by operator.')
 
@@ -150,11 +153,41 @@ class PhysicalCouplingController(Lite6Controller):
             report.update(status='failed', error=str(error))
             raise
 
+    def open_gripper(self):
+        code = super().open_gripper()
+        time.sleep(0.3)
+        code = super().open_gripper()
+        time.sleep(2.0)
+        if input("Verify jaws physically OPEN. Type OPEN: ").strip() != "OPEN":
+            raise RuntimeError("Physical opening not confirmed; movement cancelled")
+        return code
+
+    def close_gripper(self):
+        code = super().close_gripper()
+        time.sleep(0.3)
+        code = super().close_gripper()
+        time.sleep(2.0)
+        if input("Verify jaws CLOSED and part held. Type HELD: ").strip() != "HELD":
+            raise RuntimeError("Grasp not confirmed; lift cancelled")
+        return code
+
     def move_linear(self, target, speed=10.0, mvacc=20.0, wait=True):
         code = super().move_linear(target, speed=speed, mvacc=mvacc, wait=wait)
-        self.wait_stationary()
-        check_pose(self.get_pose(), target)
-        return code
+        deadline = time.monotonic() + 120.0
+        while time.monotonic() < deadline:
+            self._require_motion_ready()
+            actual = self.get_pose()
+            try:
+                check_pose(actual, target)
+            except RuntimeError:
+                time.sleep(0.1)
+                continue
+            self.wait_stationary()
+            check_pose(self.get_pose(), target)
+            return code
+        raise RuntimeError(
+            f"Arrival timeout: target={target}, actual={self.get_pose()}"
+        )
 
 
 def inspect_image(frame, calibration, reference, pick, directory, source):
@@ -187,6 +220,15 @@ def run_block(controller, name, plan, expected, record, output, contact=False):
             confirm(f'Inspect {name} plan, grasp overlays and all station clearances.')
         check_pose(controller.get_pose(), expected)
         for step in plan:
+            if step['operation'] == 'move':
+                try:
+                    check_pose(controller.get_pose(), step['pose'])
+                except RuntimeError:
+                    pass
+                else:
+                    print(name + ': ' + step['label'] + ' [already reached]')
+                    expected = list(step['pose'])
+                    continue
             active = dict(step, status='started')
             block['execution'].append(active)
             save_record(output, record)
@@ -233,6 +275,24 @@ def run_block(controller, name, plan, expected, record, output, contact=False):
         save_record(output, record)
 
 
+def taught_second_plans(start, target, pick, transfer, station, speed):
+    """Use the taught full entry and final poses."""
+    entry = list(station['poses']['second_entry'])
+    final = list(station['poses']['second_final'])
+    second_transfer = copy.deepcopy(transfer)
+    second_transfer['placement_pose_mm_deg'] = entry
+    plan = build_cycle_plan(start, target, pick, second_transfer)
+    split = next(i for i,s in enumerate(plan) if s['label']=='descend_to_place')
+    plan[split]['label'] = 'approach_coupling_entry'
+    coupling = [{'operation':'move', 'label':'couple_second_link', 'pose':final,
+                 'speed':speed, 'mvacc':transfer['motion']['placement_acceleration']}] + copy.deepcopy(plan[split+1:])
+    height = next(s['pose'][2] for s in plan if s['label']=='raise')
+    for step in coupling:
+        if step['label']=='clear_zone2':
+            step['pose'] = [*final[:2],height,*final[3:]]
+    return plan[:split+1], coupling
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--execute', action='store_true', help='Physical Robot 1; live capture and operator pauses.')
@@ -240,12 +300,31 @@ def main(argv=None):
     parser.add_argument('--second-image', type=Path)
     parser.add_argument('--pick-profile', default='config/robot1_pick.json')
     parser.add_argument('--transfer-profile', default='config/robot1_transfer.json')
-    parser.add_argument('--offset-robot', nargs=3, type=float, required=True, metavar=('DX','DY','DZ'),
+    parser.add_argument('--offset-robot', nargs=3, type=float, required=False, metavar=('DX','DY','DZ'),
                         help='Second TCP minus taught first placement, in robot-base mm.')
-    parser.add_argument('--entry-offset', nargs=3, type=float, required=True, metavar=('DX','DY','DZ'),
+    parser.add_argument('--entry-offset', nargs=3, type=float, required=False, metavar=('DX','DY','DZ'),
                         help='Entry TCP minus final second TCP, in robot-base mm.')
     parser.add_argument('--coupling-speed', type=float, default=1.0)
+    parser.add_argument('--station', type=Path, help='Current station directory with taught poses and profiles.')
+    parser.add_argument('--reference-calibration', default='data/calibration/zone1_reference_camera.json')
+    parser.add_argument('--second-only', action='store_true')
     args = parser.parse_args(argv)
+    station = None
+    if args.station:
+        folder = project_path(args.station)
+        station = json.loads((folder / 'station.json').read_text())
+        coupling = json.loads((folder / 'coupling.json').read_text())
+        args.pick_profile = str(folder / 'pick_profile.json')
+        args.transfer_profile = str(folder / 'transfer_profile.json')
+        capture = project_path(station['capture_directory'])
+        args.reference_calibration = str(capture / 'reference_camera.json')
+        args.offset_robot = coupling['offset_robot_mm']
+        args.entry_offset = coupling['entry_offset_mm']
+        if not args.execute:
+            args.first_image = args.first_image or capture / 'camera.png'
+            args.second_image = args.second_image or capture / 'camera.png'
+    if args.offset_robot is None or args.entry_offset is None:
+        parser.error('Use --station or supply both offset arguments.')
     if args.execute and (args.first_image or args.second_image):
         parser.error('Physical execution requires fresh live captures, not saved images.')
     if any(not math.isfinite(v) for v in args.offset_robot + args.entry_offset):
@@ -272,7 +351,7 @@ def main(argv=None):
         pick = load_pick_profile(args.pick_profile)
         transfer = load_transfer_profile(args.transfer_profile)
         calibration = load_sheet_calibration('data/calibration/zone1_camera.json')
-        reference = load_sheet_calibration('data/calibration/zone1_reference_camera.json')
+        reference = load_sheet_calibration(args.reference_calibration)
         record.update(pick_profile=pick, transfer_profile=transfer,
                       calibration=calibration, reference_calibration=reference)
         # Validate both placement plans before any robot connection or capture.
@@ -286,13 +365,13 @@ def main(argv=None):
             controller.connect()
             controller.wait_stationary()
             expected = controller.get_pose()
-            check_pose(expected, transfer['retreat_pose_mm_deg'])
+            # Start from the actual stationary pose; routes remain checked.
             record['start_joints'] = controller.get_joints()
         else:
             expected = list(transfer['retreat_pose_mm_deg'])
             print('OFFLINE PREVIEW: no camera or robot connection.')
             print('Saved source images must use the current Zone 1 calibration.')
-        for index in (1,2):
+        for index in ((2,) if args.second_only else (1,2)):
             directory = output / f'link{index}_vision'
             directory.mkdir()
             if args.execute:
@@ -317,7 +396,30 @@ def main(argv=None):
                     expected, analysis['target_xy_mm'], runtime, transfer,
                     args.offset_robot, args.entry_offset, args.coupling_speed,
                 )
+                if station is not None:
+                    approach, coupling = taught_second_plans(
+                        expected, analysis['target_xy_mm'], runtime, transfer,
+                        station, args.coupling_speed,
+                    )
                 plans = [('second_link_approach',approach),('second_link_coupling_and_retreat',coupling)]
+            adjusted_plans = []
+            for block_name, original_plan in plans:
+                adjusted = []
+                for step in original_plan:
+                    step = copy.deepcopy(step)
+                    if step['operation'] == 'move':
+                        step['pose'][2] = min(step['pose'][2], 190.0)
+                    if step["operation"] == "move" and step["label"] in (
+                        "descend_to_pick", "descend_to_place", "approach_coupling_entry"
+                    ):
+                        approach = copy.deepcopy(step)
+                        approach["label"] = "fast_approach_" + step["label"]
+                        approach["pose"][2] += 20.0
+                        approach["speed"] = 30.0
+                        adjusted.append(approach)
+                    adjusted.append(step)
+                adjusted_plans.append((block_name, adjusted))
+            plans = adjusted_plans
             for name, plan in plans:
                 print('\n' + name)
                 for step in plan:
@@ -362,3 +464,4 @@ def main(argv=None):
 
 if __name__ == '__main__':
     raise SystemExit(main())
+

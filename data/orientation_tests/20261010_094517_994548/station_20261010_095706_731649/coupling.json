@@ -1,0 +1,17 @@
+{
+  "offset_robot_mm": [
+    -0.09521499999999605,
+    -42.393951000000015,
+    -4.258232000000007
+  ],
+  "entry_offset_mm": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "orientation_difference_first_to_second_deg": 4.032076000000018,
+  "orientation_difference_entry_to_final_deg": 0.0,
+  "compatible_with_current_constant_orientation_coupling": false,
+  "physical_contact_observed_by_operator": true,
+  "automatic_execution_validated": false
+}

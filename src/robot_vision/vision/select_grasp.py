@@ -10,6 +10,8 @@ its orientation can later be recognized from 0 to 360 degrees.
 Author: Javier G. Fontanet
 """
 
+import argparse
+import copy
 import json
 from pathlib import Path
 
@@ -495,5 +497,116 @@ def main():
     cv2.destroyAllWindows()
 
 
+
+def teach_saved_capture(capture_value, markers_value):
+    """Reuse the existing grasp UI with the current saved station reference."""
+    from robot_vision.robot.test_pick_motion import (
+        PROJECT_ROOT, project_path, analyze_part, save_images, transform_points,
+    )
+    directory = project_path(capture_value)
+    frame = cv2.imread(str(directory / "camera.png"))
+    if frame is None:
+        raise FileNotFoundError("Saved camera image is missing.")
+    calibration = json.loads((PROJECT_ROOT / "data/calibration/zone1_camera.json").read_text())
+    taught = json.loads((directory / "taught_grasp_pose.json").read_text())
+    marker_path = project_path(markers_value)
+    marker_record = json.loads(marker_path.read_text())
+    if marker_record["camera_calibration"] != calibration:
+        raise ValueError("Marker measurements and current camera calibration differ.")
+    if marker_record.get("marker_order") != ["TL", "TR", "BL"] or len(marker_record["markers"]) != 3:
+        raise ValueError("Three saved markers TL, TR, BL are required.")
+    if frame.shape[:2] != (calibration["image_height_px"], calibration["image_width_px"]):
+        raise ValueError("Saved image resolution differs from current calibration.")
+    detection, center, geometry, images = analyze_part(frame, calibration)
+    pose = np.asarray(taught["pose_mm_deg"], dtype=float)
+    if pose.shape != (6,) or not np.isfinite(pose).all():
+        raise ValueError("Invalid taught grasp pose.")
+    selected = []
+    rectified = images["detection.png"]
+    scale = min(1000 / rectified.shape[1], 750 / rectified.shape[0], 1.0)
+    window = "Teach Saved Grasp - Click | ENTER: save | ESC: cancel"
+
+    def click(event, x, y, flags, parameter):
+        if event == cv2.EVENT_LBUTTONDOWN:
+            selected[:] = [[x / scale / 4.0, y / scale / 4.0]]
+
+    cv2.namedWindow(window, cv2.WINDOW_AUTOSIZE)
+    cv2.setMouseCallback(window, click)
+    print("SAVED IMAGE: click the midpoint between the jaws at the taught grasp.")
+    print("ENTER saves a NEW reference; no robot connection or movement.")
+    print("Marker mapping remains approximate: pointer offset is not corrected.")
+    try:
+        while True:
+            view = cv2.resize(rectified, (round(rectified.shape[1]*scale), round(rectified.shape[0]*scale)))
+            if selected:
+                pixel = tuple(round(v*4.0*scale) for v in selected[0])
+                cv2.drawMarker(view, pixel, (255,0,255), cv2.MARKER_TILTED_CROSS, 25, 2)
+                cv2.putText(view, "GRASP", (pixel[0]+10,pixel[1]-10), cv2.FONT_HERSHEY_SIMPLEX, .5, (255,0,255), 2)
+            cv2.imshow(window, view)
+            key = cv2.waitKey(20) & 255
+            if key == 27:
+                print("Cancelled. Existing profiles unchanged.")
+                return
+            if key in (ord("r"),ord("R")):
+                selected.clear()
+            if key in (10,13) and selected:
+                grasp = np.asarray(selected[0])
+                fiducials = np.asarray(calibration["reference_points_mm"])
+                if np.any(grasp < fiducials.min(axis=0)) or np.any(grasp > fiducials.max(axis=0)):
+                    print("Select a grasp inside the calibrated region.")
+                    continue
+                # Preserve previous trial records instead of silently replacing them.
+                if (directory / "results.json").exists():
+                    raise FileExistsError("results.json already exists in this capture. Preserve it; choose a fresh capture.")
+                record = {"status":"ok", "grasp_x_mm":float(grasp[0]), "grasp_y_mm":float(grasp[1]),
+                          "planar_calibration":calibration, "detection":detection,
+                          "reference_geometry":geometry, "taught_robot_pose_mm_deg":pose.tolist(),
+                          "physical_grasp_verified":False, "station_mapping":"approximate_uncorrected_pointer"}
+                # This record matches the existing sheet_to_robot_matrix interface.
+                paired = {"selected_image_points_px":[calibration["image_points"][i] for i in (0,1,3)],
+                          "robot_marker_points_xy_mm":[item["pose_mm_deg"][:2] for item in marker_record["markers"]],
+                          "source_marker_record":str(marker_path.relative_to(PROJECT_ROOT)),
+                          "status":"approximate_pointer_offset_uncorrected"}
+                profile = json.loads((PROJECT_ROOT / "config/robot1_pick.json").read_text())
+                profile = copy.deepcopy(profile)
+                relative = str(directory.relative_to(PROJECT_ROOT))
+                profile["motion"]["tool_orientation_deg"] = pose[3:].tolist()
+                profile["motion"]["pick_z_mm"] = float(pose[2])
+                profile["local_reference"]["capture_directory"] = relative
+                profile["local_reference"]["marker_record"] = relative + "/marker_pairs.json"
+                profile["local_reference"]["taught_robot_xy_mm"] = pose[:2].tolist()
+                profile["validation"] = {"mapping":"approximate_pointer_offset_uncorrected",
+                                         "approach_and_cycle_observed":False, "part_retention_verified":False}
+                reference = copy.deepcopy(calibration)
+                reference["reference_capture"] = relative
+                reference["source_image"] = relative + "/camera.png"
+                reference["purpose"] = "current_taught_pick_reference"
+                outputs = {"results.json":record,"marker_pairs.json":paired,
+                           "pick_profile.json":profile,"reference_camera.json":reference}
+                for name, value in outputs.items():
+                    (directory / name).write_text(json.dumps(value,indent=2)+"\n",encoding="utf-8")
+                save_images(directory, images)
+                print("GRASP SHEET [mm]:",grasp.tolist())
+                print("TAUGHT ROBOT POSE:",pose.tolist())
+                print("NEW REFERENCE SAVED:",directory)
+                print("Existing active profiles unchanged. Preview validation is still required.")
+                return
+    finally:
+        cv2.destroyAllWindows()
+
+
+def entrypoint():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--capture", help="Saved capture directory with camera.png and taught_grasp_pose.json.")
+    parser.add_argument("--markers", help="Current saved robot_mapping.json.")
+    args = parser.parse_args()
+    if bool(args.capture) != bool(args.markers):
+        parser.error("--capture and --markers must be supplied together.")
+    if args.capture:
+        teach_saved_capture(args.capture,args.markers)
+    else:
+        main()
+
+
 if __name__ == "__main__":
-    main()
+    entrypoint()

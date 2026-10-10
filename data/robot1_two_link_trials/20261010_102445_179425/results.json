@@ -1,0 +1,943 @@
+{
+  "status": "failed",
+  "started_at": "2026-10-10T10:24:45.179540-05:00",
+  "mode": "physical_execution",
+  "arguments": {
+    "execute": true,
+    "first_image": null,
+    "second_image": null,
+    "pick_profile": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/orientation_tests/20261010_094517_994548/station_20261010_100335_354623/pick_profile.json",
+    "transfer_profile": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/orientation_tests/20261010_094517_994548/station_20261010_100335_354623/transfer_profile.json",
+    "offset_robot": [
+      -6.731384999999989,
+      -42.453773999999996,
+      2.876625000000004
+    ],
+    "entry_offset": [
+      6.283051,
+      -2.793059999999997,
+      33.869789
+    ],
+    "coupling_speed": 1.0,
+    "station": "data/orientation_tests/20261010_094517_994548/station_20261010_100335_354623",
+    "reference_calibration": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/orientation_tests/20261010_094517_994548/reference_camera.json"
+  },
+  "physical_assembly_verified": false,
+  "pin_insertion": "not_included",
+  "external_obstacles_checked": false,
+  "blocks": [
+    {
+      "name": "first_link_cycle",
+      "status": "failed",
+      "execution": [
+        {
+          "operation": "move",
+          "label": "raise",
+          "pose": [
+            -122.815254,
+            -77.412308,
+            302.636658,
+            178.784948,
+            5.361166,
+            48.450629
+          ],
+          "speed": 30.0,
+          "mvacc": 20.0,
+          "status": "completed",
+          "return_code": 0,
+          "actual_pose": [
+            -122.815254,
+            -77.412308,
+            302.636597,
+            178.784948,
+            5.361166,
+            48.450629
+          ],
+          "actual_joints": [
+            -148.842575,
+            -29.194148,
+            27.04017,
+            183.402014,
+            -51.332549,
+            340.706775
+          ]
+        },
+        {
+          "operation": "gripper",
+          "label": "open_before_pick",
+          "opening": true,
+          "delay_s": 1.0,
+          "status": "completed",
+          "return_code": 0,
+          "retention_verified": false
+        },
+        {
+          "operation": "move",
+          "label": "above_zone1_and_orient",
+          "pose": [
+            61.3357386597812,
+            -248.13209628873193,
+            302.636658,
+            177.961379,
+            -2.907245,
+            -160.65094316040575
+          ],
+          "speed": 30.0,
+          "mvacc": 20.0,
+          "status": "completed",
+          "return_code": 0,
+          "actual_pose": [
+            61.335735,
+            -248.132095,
+            302.636658,
+            177.961379,
+            -2.907245,
+            -160.650949
+          ],
+          "actual_joints": [
+            -75.155963,
+            7.89639,
+            58.27611,
+            176.029766,
+            -52.167979,
+            268.020375
+          ]
+        },
+        {
+          "operation": "move",
+          "label": "descend_to_pick",
+          "pose": [
+            61.3357386597812,
+            -248.13209628873193,
+            88.07476,
+            177.961379,
+            -2.907245,
+            -160.65094316040575
+          ],
+          "speed": 5.0,
+          "mvacc": 20.0,
+          "status": "failed",
+          "error": "Linear movement failed with code -9."
+        }
+      ],
+      "plan": [
+        {
+          "operation": "move",
+          "label": "raise",
+          "pose": [
+            -122.815254,
+            -77.412308,
+            302.636658,
+            178.784948,
+            5.361166,
+            48.450629
+          ],
+          "speed": 30.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "gripper",
+          "label": "open_before_pick",
+          "opening": true,
+          "delay_s": 1.0
+        },
+        {
+          "operation": "move",
+          "label": "above_zone1_and_orient",
+          "pose": [
+            61.3357386597812,
+            -248.13209628873193,
+            302.636658,
+            177.961379,
+            -2.907245,
+            -160.65094316040575
+          ],
+          "speed": 30.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "descend_to_pick",
+          "pose": [
+            61.3357386597812,
+            -248.13209628873193,
+            88.07476,
+            177.961379,
+            -2.907245,
+            -160.65094316040575
+          ],
+          "speed": 5.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "gripper",
+          "label": "close_gripper",
+          "opening": false,
+          "delay_s": 1.5
+        },
+        {
+          "operation": "move",
+          "label": "lift_after_pick",
+          "pose": [
+            61.3357386597812,
+            -248.13209628873193,
+            128.07476,
+            177.961379,
+            -2.907245,
+            -160.65094316040575
+          ],
+          "speed": 10.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "raise_for_transfer",
+          "pose": [
+            61.3357386597812,
+            -248.13209628873193,
+            302.636658,
+            177.961379,
+            -2.907245,
+            -160.65094316040575
+          ],
+          "speed": 10.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "travel_to_zone2_with_pick_orientation",
+          "pose": [
+            287.443787,
+            -117.917976,
+            302.636658,
+            177.961379,
+            -2.907245,
+            -160.65094316040575
+          ],
+          "speed": 30.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "intermediate_orientation",
+          "pose": [
+            287.443787,
+            -117.917976,
+            302.636658,
+            176.662025,
+            -1.448323,
+            11.916158419797114
+          ],
+          "speed": 15.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "set_zone2_orientation",
+          "pose": [
+            287.443787,
+            -117.917976,
+            302.636658,
+            176.662025,
+            -1.448323,
+            -175.51674
+          ],
+          "speed": 15.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "descend_to_place",
+          "pose": [
+            287.443787,
+            -117.917976,
+            88.753395,
+            176.662025,
+            -1.448323,
+            -175.51674
+          ],
+          "speed": 5.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "gripper",
+          "label": "release_in_zone2",
+          "opening": true,
+          "delay_s": 1.0
+        },
+        {
+          "operation": "move",
+          "label": "clear_zone2",
+          "pose": [
+            287.443787,
+            -117.917976,
+            302.636658,
+            176.662025,
+            -1.448323,
+            -175.51674
+          ],
+          "speed": 10.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "approach_retreat_and_orient",
+          "pose": [
+            -122.815254,
+            -77.412308,
+            302.636658,
+            178.784948,
+            5.361166,
+            48.450629
+          ],
+          "speed": 30.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "finish_retreat",
+          "pose": [
+            -122.815254,
+            -77.412308,
+            182.760681,
+            178.784948,
+            5.361166,
+            48.450629
+          ],
+          "speed": 10.0,
+          "mvacc": 20.0
+        }
+      ],
+      "route_check": {
+        "status": "passed",
+        "method": "actual_joint_seed_cartesian_chain",
+        "start_pose": [
+          -122.815254,
+          -77.412308,
+          182.760681,
+          178.784948,
+          5.361166,
+          48.450629
+        ],
+        "start_joints": [
+          -148.831116,
+          -0.454527,
+          13.759295,
+          196.270761,
+          -9.645057,
+          326.722422
+        ],
+        "segments": [
+          {
+            "label": "raise",
+            "pose": [
+              -122.815254,
+              -77.412308,
+              302.636658,
+              178.784948,
+              5.361166,
+              48.450629
+            ],
+            "speed": 30.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "above_zone1_and_orient",
+            "pose": [
+              61.3357386597812,
+              -248.13209628873193,
+              302.636658,
+              177.961379,
+              -2.907245,
+              -160.65094316040575
+            ],
+            "speed": 30.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "descend_to_pick",
+            "pose": [
+              61.3357386597812,
+              -248.13209628873193,
+              88.07476,
+              177.961379,
+              -2.907245,
+              -160.65094316040575
+            ],
+            "speed": 5.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "lift_after_pick",
+            "pose": [
+              61.3357386597812,
+              -248.13209628873193,
+              128.07476,
+              177.961379,
+              -2.907245,
+              -160.65094316040575
+            ],
+            "speed": 10.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "raise_for_transfer",
+            "pose": [
+              61.3357386597812,
+              -248.13209628873193,
+              302.636658,
+              177.961379,
+              -2.907245,
+              -160.65094316040575
+            ],
+            "speed": 10.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "travel_to_zone2_with_pick_orientation",
+            "pose": [
+              287.443787,
+              -117.917976,
+              302.636658,
+              177.961379,
+              -2.907245,
+              -160.65094316040575
+            ],
+            "speed": 30.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "intermediate_orientation",
+            "pose": [
+              287.443787,
+              -117.917976,
+              302.636658,
+              176.662025,
+              -1.448323,
+              11.916158419797114
+            ],
+            "speed": 15.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "set_zone2_orientation",
+            "pose": [
+              287.443787,
+              -117.917976,
+              302.636658,
+              176.662025,
+              -1.448323,
+              -175.51674
+            ],
+            "speed": 15.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "descend_to_place",
+            "pose": [
+              287.443787,
+              -117.917976,
+              88.753395,
+              176.662025,
+              -1.448323,
+              -175.51674
+            ],
+            "speed": 5.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "clear_zone2",
+            "pose": [
+              287.443787,
+              -117.917976,
+              302.636658,
+              176.662025,
+              -1.448323,
+              -175.51674
+            ],
+            "speed": 10.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "approach_retreat_and_orient",
+            "pose": [
+              -122.815254,
+              -77.412308,
+              302.636658,
+              178.784948,
+              5.361166,
+              48.450629
+            ],
+            "speed": 30.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "finish_retreat",
+            "pose": [
+              -122.815254,
+              -77.412308,
+              182.760681,
+              178.784948,
+              5.361166,
+              48.450629
+            ],
+            "speed": 10.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 2
+          }
+        ],
+        "external_obstacles_checked": false,
+        "seed": {
+          "return_code": 0,
+          "planner_result": 0
+        }
+      },
+      "error": "Linear movement failed with code -9.",
+      "stop_return_code": 0,
+      "latest_path_check": {
+        "status": "passed",
+        "method": "actual_joint_seed_cartesian_chain",
+        "start_pose": [
+          61.335735,
+          -248.132095,
+          302.636658,
+          177.961379,
+          -2.907245,
+          -160.650949
+        ],
+        "start_joints": [
+          -75.155963,
+          7.89639,
+          58.27611,
+          176.029766,
+          -52.167979,
+          268.020375
+        ],
+        "segments": [
+          {
+            "label": "linear_movement",
+            "pose": [
+              61.3357386597812,
+              -248.13209628873193,
+              88.07476,
+              177.961379,
+              -2.907245,
+              -160.65094316040575
+            ],
+            "speed": 5.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 2
+          }
+        ],
+        "external_obstacles_checked": false,
+        "seed": {
+          "return_code": 0,
+          "planner_result": 0
+        }
+      }
+    }
+  ],
+  "vision": [
+    {
+      "link_index": 1,
+      "source": "fresh_live_capture",
+      "analysis": {
+        "mapping": "rotated_grasp_with_preserved_taught_anchor",
+        "detection": {
+          "status": "ok",
+          "message": "Object detected",
+          "reference_x_mm": 112.46278952457995,
+          "reference_y_mm": 94.03518868494704
+        },
+        "reference_detection": {
+          "status": "ok",
+          "message": "Object detected",
+          "reference_x_mm": 93.4133745048277,
+          "reference_y_mm": 126.52361908938624
+        },
+        "current_geometry": {
+          "direction_image_deg": 70.44498627869777,
+          "mouth_start_px": [
+            377.0,
+            602.0
+          ],
+          "mouth_end_px": [
+            570.0,
+            530.0
+          ],
+          "mouth_center_px": [
+            473.5,
+            566.0
+          ],
+          "bottom_px": [
+            430.5121951219512,
+            444.9756097560976
+          ],
+          "deepest_contour_point_px": [
+            434.0,
+            439.0
+          ],
+          "depth_px": 132.796875,
+          "depth_ratio": 0.2568398345634449,
+          "second_depth_px": 33.76953125,
+          "mouth_width_px": 205.9927183179056
+        },
+        "reference_geometry": {
+          "direction_image_deg": 1.8684036376164768,
+          "mouth_start_px": [
+            581.0,
+            519.0
+          ],
+          "mouth_end_px": [
+            584.0,
+            307.0
+          ],
+          "mouth_center_px": [
+            582.5,
+            413.0
+          ],
+          "bottom_px": [
+            457.9032258064516,
+            408.93548387096774
+          ],
+          "deepest_contour_point_px": [
+            454.0,
+            398.0
+          ],
+          "depth_px": 128.69921875,
+          "depth_ratio": 0.2598611168442446,
+          "second_depth_px": 35.03515625,
+          "mouth_width_px": 212.02122535255756
+        },
+        "current_center_sheet_mm": [
+          112.46278952457995,
+          94.03518868494704
+        ],
+        "reference_center_sheet_mm": [
+          93.4133745048277,
+          126.52361908938624
+        ],
+        "reference_grasp_sheet_mm": [
+          92.0486666666667,
+          126.70666666666666
+        ],
+        "reference_grasp_offset_sheet_mm": [
+          -1.3647078381609958,
+          0.1830475772804192
+        ],
+        "grasp_sheet_mm": [
+          111.79391984434744,
+          92.8316325998592
+        ],
+        "rotation_change_deg": -68.5765826410813,
+        "robot_yaw_change_deg": -65.68891816040576,
+        "target_xy_mm": [
+          61.3357386597812,
+          -248.13209628873193
+        ],
+        "target_orientation_deg": [
+          177.961379,
+          -2.907245,
+          -160.65094316040575
+        ],
+        "translation_distance_mm": 35.55103378381351,
+        "tool_rotation_enabled": true
+      }
+    }
+  ],
+  "pick_profile": {
+    "profile_version": 1,
+    "robot_name": "Robot 1",
+    "part_name": "Part 1",
+    "motion": {
+      "tool_orientation_deg": [
+        177.961379,
+        -2.907245,
+        -94.962025
+      ],
+      "pick_z_mm": 88.07476,
+      "approach_z_mm": 302.636658,
+      "lift_mm": 40.0,
+      "travel_speed_mm_s": 30.0,
+      "orientation_speed_deg_s": 15.0,
+      "descent_speed_mm_s": 5.0,
+      "lift_speed_mm_s": 10.0,
+      "travel_acceleration": 20.0,
+      "descent_acceleration": 20.0,
+      "open_delay_s": 1.0,
+      "close_delay_s": 1.5
+    },
+    "local_reference": {
+      "capture_directory": "data/orientation_tests/20261010_094517_994548",
+      "marker_record": "data/orientation_tests/20261010_094517_994548/marker_pairs.json",
+      "taught_robot_xy_mm": [
+        44.584087,
+        -279.489044
+      ],
+      "max_translation_mm": 50.0,
+      "max_rotation_change_deg": 10.0
+    },
+    "validation": {
+      "mapping": "approximate_pointer_offset_uncorrected",
+      "approach_and_cycle_observed": false,
+      "part_retention_verified": false
+    }
+  },
+  "transfer_profile": {
+    "profile_version": 1,
+    "robot_name": "Robot 1",
+    "destination": "Zone 2",
+    "transfer_strategy": "after_travel_longer_turn",
+    "placement_pose_mm_deg": [
+      287.443787,
+      -117.917976,
+      88.753395,
+      176.662025,
+      -1.448323,
+      -175.51674
+    ],
+    "retreat_pose_mm_deg": [
+      -122.815254,
+      -77.412308,
+      182.760681,
+      178.784948,
+      5.361166,
+      48.450629
+    ],
+    "motion": {
+      "transfer_z_mm": 302.636658,
+      "travel_speed_mm_s": 30.0,
+      "orientation_speed": 15.0,
+      "placement_speed_mm_s": 5.0,
+      "clearance_speed_mm_s": 10.0,
+      "travel_acceleration": 20.0,
+      "placement_acceleration": 20.0,
+      "release_delay_s": 1.0
+    },
+    "source_records": {
+      "current_station": "data/orientation_tests/20261010_094517_994548/station_20261010_100335_354623/station.json"
+    },
+    "validation": {
+      "check_required_before_each_execution": true,
+      "automatic_transfer_path_verified": false,
+      "placement_verified": false,
+      "part_retention_verified": false,
+      "saved_route_check_passed": false
+    }
+  },
+  "calibration": {
+    "calibration_version": 2,
+    "zone": 1,
+    "camera_index": 0,
+    "image_width_px": 1920,
+    "image_height_px": 1080,
+    "reference_width_mm": 215.9,
+    "reference_height_mm": 279.4,
+    "reference_type": "printed_fiducial_centers",
+    "point_order": [
+      "TL",
+      "TR",
+      "BR",
+      "BL"
+    ],
+    "image_points": [
+      [
+        300.79998779296875,
+        438.3999938964844
+      ],
+      [
+        644.7999877929688,
+        425.6000061035156
+      ],
+      [
+        620.7999877929688,
+        979.2000122070312
+      ],
+      [
+        259.20001220703125,
+        940.7999877929688
+      ]
+    ],
+    "reference_points_mm": [
+      [
+        21.0,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        258.3999938964844
+      ],
+      [
+        21.0,
+        258.3999938964844
+      ]
+    ],
+    "pixel_to_mm_matrix": [
+      [
+        0.659799972903083,
+        0.057462543971605745,
+        -199.02656323305163
+      ],
+      [
+        0.028978827413112588,
+        0.5914915520966727,
+        -243.39388427269697
+      ],
+      [
+        0.00033795276306994597,
+        0.00016271937304644543,
+        1.0
+      ]
+    ],
+    "created_at": "2026-10-10T08:55:34.739106",
+    "source_image": "data/workspace_calibrations/zone1_20261010_085534_698763/camera.png"
+  },
+  "reference_calibration": {
+    "calibration_version": 2,
+    "zone": 1,
+    "camera_index": 0,
+    "image_width_px": 1920,
+    "image_height_px": 1080,
+    "reference_width_mm": 215.9,
+    "reference_height_mm": 279.4,
+    "reference_type": "printed_fiducial_centers",
+    "point_order": [
+      "TL",
+      "TR",
+      "BR",
+      "BL"
+    ],
+    "image_points": [
+      [
+        300.79998779296875,
+        438.3999938964844
+      ],
+      [
+        644.7999877929688,
+        425.6000061035156
+      ],
+      [
+        620.7999877929688,
+        979.2000122070312
+      ],
+      [
+        259.20001220703125,
+        940.7999877929688
+      ]
+    ],
+    "reference_points_mm": [
+      [
+        21.0,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        258.3999938964844
+      ],
+      [
+        21.0,
+        258.3999938964844
+      ]
+    ],
+    "pixel_to_mm_matrix": [
+      [
+        0.659799972903083,
+        0.057462543971605745,
+        -199.02656323305163
+      ],
+      [
+        0.028978827413112588,
+        0.5914915520966727,
+        -243.39388427269697
+      ],
+      [
+        0.00033795276306994597,
+        0.00016271937304644543,
+        1.0
+      ]
+    ],
+    "created_at": "2026-10-10T08:55:34.739106",
+    "source_image": "data/orientation_tests/20261010_094517_994548/camera.png",
+    "reference_capture": "data/orientation_tests/20261010_094517_994548",
+    "purpose": "current_taught_pick_reference"
+  },
+  "start_joints": [
+    -148.831116,
+    -0.454527,
+    13.759295,
+    196.270761,
+    -9.645057,
+    326.722422
+  ],
+  "error": "Linear movement failed with code -9.",
+  "stop_return_code": 0,
+  "stopped_pose": [
+    61.335739,
+    -248.132095,
+    107.683197,
+    177.961379,
+    -2.907245,
+    -160.650949
+  ],
+  "stopped_joints": [
+    -75.165531,
+    45.213188,
+    52.252433,
+    160.738439,
+    -9.268337,
+    284.553587
+  ],
+  "diagnostics": [
+    0,
+    [
+      31,
+      0
+    ]
+  ],
+  "finished_at": "2026-10-10T10:26:49.382836-05:00"
+}

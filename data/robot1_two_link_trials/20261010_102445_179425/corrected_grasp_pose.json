@@ -1,0 +1,12 @@
+{
+  "pose_mm_deg": [
+    64.12159,
+    -254.611221,
+    90.139496,
+    179.579297,
+    -2.098515,
+    -158.771074
+  ],
+  "source": "operator_taught_after_failed_descent",
+  "automatic_grasp_validated": false
+}

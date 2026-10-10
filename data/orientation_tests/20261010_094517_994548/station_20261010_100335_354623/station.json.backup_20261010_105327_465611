@@ -1,0 +1,80 @@
+{
+  "status": "poses_saved_automatic_route_validation_pending",
+  "robot_ip": "192.168.1.185",
+  "first_placement": {
+    "robot_ip": "192.168.1.185",
+    "pose_mm_deg": [
+      287.443787,
+      -117.917976,
+      88.753395,
+      176.662025,
+      -1.448323,
+      -175.51674
+    ],
+    "stage": "first_link_placement",
+    "gripper_state": "closed"
+  },
+  "capture_directory": "data/robot1_two_link_trials/20261010_102445_179425/corrected_reference",
+  "poses": {
+    "first_placement": [
+      287.443787,
+      -117.917976,
+      88.753395,
+      176.662025,
+      -1.448323,
+      -175.51674
+    ],
+    "retreat": [
+      -120.758293,
+      -155.405518,
+      235.853439,
+      -162.156109,
+      -1.636769,
+      162.777653
+    ],
+    "second_entry": [
+      286.995453,
+      -163.16481,
+      125.499809,
+      179.765451,
+      0.891064,
+      -176.639909
+    ],
+    "second_final": [
+      280.712402,
+      -160.37175,
+      91.63002,
+      179.521715,
+      0.803459,
+      -178.90229
+    ],
+    "transfer_height": [
+      36.865299,
+      -313.010681,
+      302.636658,
+      -174.617024,
+      0.422327,
+      175.675334
+    ]
+  },
+  "automatic_path_validated": false,
+  "active_profiles_updated": false,
+  "coupling": {
+    "offset_robot_mm": [
+      -6.731384999999989,
+      -42.453773999999996,
+      2.876625000000004
+    ],
+    "entry_offset_mm": [
+      6.283051,
+      -2.793059999999997,
+      33.869789
+    ],
+    "orientation_difference_first_to_second_deg": 3.385549999999995,
+    "orientation_difference_entry_to_final_deg": 2.262381000000005,
+    "compatible_with_current_constant_orientation_coupling": false,
+    "physical_contact_observed_by_operator": false,
+    "final_pose_taught_as_fitted": true,
+    "automatic_execution_validated": false
+  }
+}
