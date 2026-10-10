@@ -384,7 +384,86 @@ def main(argv=None):
                 value = args.first_image if index == 1 else args.second_image
                 source = str(project_path(value or DEFAULT_IMAGE))
                 frame = cv2.imread(source)
-            analysis, runtime = inspect_image(frame, calibration, reference, pick, directory, source)
+            if station is not None:
+                import numpy as np
+                empty_dir = project_path(
+                    "data/orientation_tests/20261010_094517_994548/"
+                    "station_20261010_100335_354623/"
+                    "empty_zone1_20261010_113434_491371"
+                )
+                empty_calibration = json.loads(
+                    (empty_dir / "calibration.json").read_text()
+                )
+                if empty_calibration != calibration:
+                    raise RuntimeError("Empty-sheet reference needs recalibration")
+                empty_frame = cv2.imread(str(empty_dir / "camera.png"))
+                if empty_frame is None or empty_frame.shape != frame.shape:
+                    raise RuntimeError("Invalid empty-sheet reference")
+                matrix = np.diag([4.0, 4.0, 1.0]) @ np.asarray(
+                    calibration["pixel_to_mm_matrix"], dtype=float
+                )
+                size = (
+                    round(calibration["reference_width_mm"] * 4),
+                    round(calibration["reference_height_mm"] * 4),
+                )
+                current = cv2.cvtColor(
+                    cv2.warpPerspective(frame, matrix, size), cv2.COLOR_BGR2GRAY
+                )
+                baseline = cv2.cvtColor(
+                    cv2.warpPerspective(empty_frame, matrix, size), cv2.COLOR_BGR2GRAY
+                )
+                points = np.asarray(calibration["reference_points_mm"]) * 4
+                left, top = np.floor(points.min(axis=0)).astype(int)
+                right, bottom = np.ceil(points.max(axis=0)).astype(int)
+                current = current[top:bottom, left:right]
+                baseline = baseline[top:bottom, left:right]
+                brightness_change = float(np.median(
+                    current.astype(float) - baseline.astype(float)
+                ))
+                if abs(brightness_change) > 15:
+                    raise RuntimeError("Lighting changed; empty check uncertain")
+                corrected = np.clip(
+                    current.astype(float) - brightness_change, 0, 255
+                ).astype(np.uint8)
+                difference = cv2.absdiff(corrected, baseline)
+                changed = (difference > 25).astype(np.uint8) * 255
+                changed = cv2.medianBlur(changed, 5)
+                contours, _ = cv2.findContours(
+                    changed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+                )
+                largest_mm2 = max(
+                    (cv2.contourArea(c) / 16.0 for c in contours), default=0.0
+                )
+                save_images(directory, {
+                    "camera.png": frame,
+                    "empty_reference_difference.png": changed,
+                })
+                record.setdefault("empty_checks", []).append({
+                    "link_index": index,
+                    "largest_changed_area_mm2": largest_mm2,
+                    "brightness_change": brightness_change,
+                    "reference": str(empty_dir),
+                })
+                if largest_mm2 < 10.0:
+                    record["status"] = "stopped_zone1_matches_empty_reference"
+                    record["stopped_before_link_index"] = index
+                    save_record(output, record)
+                    print("ZONE 1 matches empty reference. No further movement.")
+                    return 0
+            try:
+                analysis, runtime = inspect_image(
+                    frame, calibration, reference, pick, directory, source
+                )
+            except ValueError as error:
+                if str(error) != "No suitable object detected.":
+                    raise
+                record["status"] = "stopped_no_pick_candidate"
+                record["stop_reason"] = "No suitable object detected in Zone 1"
+                record["stopped_before_link_index"] = index
+                record["physical_assembly_verified"] = False
+                save_record(output, record)
+                print("ZONE 1: no pick candidate. Stopping without further movement.")
+                return 0
             record['vision'].append({'link_index': index, 'source': source, 'analysis': analysis})
             if not args.execute and index == 2 and args.second_image is None:
                 print('WARNING: second pick uses the same default saved image; not independent vision.')

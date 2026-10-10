@@ -1,0 +1,265 @@
+{
+  "status": "stopped_zone1_matches_empty_reference",
+  "started_at": "2026-10-10T11:35:59.048350-05:00",
+  "mode": "offline_preview",
+  "arguments": {
+    "execute": false,
+    "first_image": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/orientation_tests/20261010_105015_008545/camera.png",
+    "second_image": "data/orientation_tests/20261010_094517_994548/station_20261010_100335_354623/empty_zone1_20261010_113434_491371/fresh_empty_camera.png",
+    "pick_profile": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/orientation_tests/20261010_094517_994548/station_20261010_100335_354623/pick_profile.json",
+    "transfer_profile": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/orientation_tests/20261010_094517_994548/station_20261010_100335_354623/transfer_profile.json",
+    "offset_robot": [
+      -6.731384999999989,
+      -42.453773999999996,
+      2.876625000000004
+    ],
+    "entry_offset": [
+      6.283051,
+      -2.793059999999997,
+      33.869789
+    ],
+    "coupling_speed": 1.0,
+    "station": "data/orientation_tests/20261010_094517_994548/station_20261010_100335_354623",
+    "reference_calibration": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/orientation_tests/20261010_105015_008545/reference_camera.json",
+    "second_only": true
+  },
+  "physical_assembly_verified": false,
+  "pin_insertion": "not_included",
+  "external_obstacles_checked": false,
+  "blocks": [],
+  "vision": [],
+  "pick_profile": {
+    "profile_version": 1,
+    "robot_name": "Robot 1",
+    "part_name": "Part 1",
+    "motion": {
+      "tool_orientation_deg": [
+        178.681644,
+        0.451777,
+        85.014504
+      ],
+      "pick_z_mm": 89.544968,
+      "approach_z_mm": 190.0,
+      "lift_mm": 40.0,
+      "travel_speed_mm_s": 40.0,
+      "orientation_speed_deg_s": 15.0,
+      "descent_speed_mm_s": 5.0,
+      "lift_speed_mm_s": 30.0,
+      "travel_acceleration": 20.0,
+      "descent_acceleration": 20.0,
+      "open_delay_s": 1.0,
+      "close_delay_s": 1.5
+    },
+    "local_reference": {
+      "capture_directory": "data/orientation_tests/20261010_105015_008545",
+      "marker_record": "data/orientation_tests/20261010_105015_008545/marker_pairs.json",
+      "taught_robot_xy_mm": [
+        46.783913,
+        -289.424164
+      ],
+      "max_translation_mm": 50.0,
+      "max_rotation_change_deg": 10.0
+    },
+    "validation": {
+      "mapping": "approximate_pointer_offset_uncorrected",
+      "approach_and_cycle_observed": false,
+      "part_retention_verified": false
+    }
+  },
+  "transfer_profile": {
+    "profile_version": 1,
+    "robot_name": "Robot 1",
+    "destination": "Zone 2",
+    "transfer_strategy": "after_travel_longer_turn",
+    "placement_pose_mm_deg": [
+      287.443787,
+      -117.917976,
+      88.753395,
+      176.662025,
+      -1.448323,
+      -175.51674
+    ],
+    "retreat_pose_mm_deg": [
+      -120.758293,
+      -155.405518,
+      180.0,
+      -162.156109,
+      -1.636769,
+      162.777653
+    ],
+    "motion": {
+      "transfer_z_mm": 190.0,
+      "travel_speed_mm_s": 40.0,
+      "orientation_speed": 15.0,
+      "placement_speed_mm_s": 5.0,
+      "clearance_speed_mm_s": 30.0,
+      "travel_acceleration": 20.0,
+      "placement_acceleration": 20.0,
+      "release_delay_s": 1.0
+    },
+    "source_records": {
+      "current_station": "data/orientation_tests/20261010_094517_994548/station_20261010_100335_354623/station.json"
+    },
+    "validation": {
+      "check_required_before_each_execution": true,
+      "automatic_transfer_path_verified": false,
+      "placement_verified": false,
+      "part_retention_verified": false,
+      "saved_route_check_passed": false
+    }
+  },
+  "calibration": {
+    "calibration_version": 2,
+    "zone": 1,
+    "camera_index": 0,
+    "image_width_px": 1920,
+    "image_height_px": 1080,
+    "reference_width_mm": 215.9,
+    "reference_height_mm": 279.4,
+    "reference_type": "printed_fiducial_centers",
+    "point_order": [
+      "TL",
+      "TR",
+      "BR",
+      "BL"
+    ],
+    "image_points": [
+      [
+        300.79998779296875,
+        438.3999938964844
+      ],
+      [
+        644.7999877929688,
+        425.6000061035156
+      ],
+      [
+        620.7999877929688,
+        979.2000122070312
+      ],
+      [
+        259.20001220703125,
+        940.7999877929688
+      ]
+    ],
+    "reference_points_mm": [
+      [
+        21.0,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        258.3999938964844
+      ],
+      [
+        21.0,
+        258.3999938964844
+      ]
+    ],
+    "pixel_to_mm_matrix": [
+      [
+        0.659799972903083,
+        0.057462543971605745,
+        -199.02656323305163
+      ],
+      [
+        0.028978827413112588,
+        0.5914915520966727,
+        -243.39388427269697
+      ],
+      [
+        0.00033795276306994597,
+        0.00016271937304644543,
+        1.0
+      ]
+    ],
+    "created_at": "2026-10-10T08:55:34.739106",
+    "source_image": "data/workspace_calibrations/zone1_20261010_085534_698763/camera.png"
+  },
+  "reference_calibration": {
+    "calibration_version": 2,
+    "zone": 1,
+    "camera_index": 0,
+    "image_width_px": 1920,
+    "image_height_px": 1080,
+    "reference_width_mm": 215.9,
+    "reference_height_mm": 279.4,
+    "reference_type": "printed_fiducial_centers",
+    "point_order": [
+      "TL",
+      "TR",
+      "BR",
+      "BL"
+    ],
+    "image_points": [
+      [
+        300.79998779296875,
+        438.3999938964844
+      ],
+      [
+        644.7999877929688,
+        425.6000061035156
+      ],
+      [
+        620.7999877929688,
+        979.2000122070312
+      ],
+      [
+        259.20001220703125,
+        940.7999877929688
+      ]
+    ],
+    "reference_points_mm": [
+      [
+        21.0,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        258.3999938964844
+      ],
+      [
+        21.0,
+        258.3999938964844
+      ]
+    ],
+    "pixel_to_mm_matrix": [
+      [
+        0.659799972903083,
+        0.057462543971605745,
+        -199.02656323305163
+      ],
+      [
+        0.028978827413112588,
+        0.5914915520966727,
+        -243.39388427269697
+      ],
+      [
+        0.00033795276306994597,
+        0.00016271937304644543,
+        1.0
+      ]
+    ],
+    "created_at": "2026-10-10T08:55:34.739106",
+    "source_image": "data/orientation_tests/20261010_105015_008545/camera.png",
+    "reference_capture": "data/orientation_tests/20261010_105015_008545",
+    "purpose": "current_taught_pick_reference"
+  },
+  "empty_checks": [
+    {
+      "link_index": 2,
+      "largest_changed_area_mm2": 0.0,
+      "brightness_change": 0.0,
+      "reference": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/orientation_tests/20261010_094517_994548/station_20261010_100335_354623/empty_zone1_20261010_113434_491371"
+    }
+  ],
+  "stopped_before_link_index": 2,
+  "finished_at": "2026-10-10T11:35:59.142459-05:00"
+}
