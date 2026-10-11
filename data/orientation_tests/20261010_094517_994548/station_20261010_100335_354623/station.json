@@ -14,7 +14,7 @@
     "stage": "first_link_placement",
     "gripper_state": "closed"
   },
-  "capture_directory": "data/orientation_tests/20261010_105015_008545",
+  "capture_directory": "data/orientation_tests/20261010_152316_891999",
   "poses": {
     "first_placement": [
       287.443787,

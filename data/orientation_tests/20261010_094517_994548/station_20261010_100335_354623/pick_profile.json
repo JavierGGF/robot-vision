@@ -4,11 +4,11 @@
   "part_name": "Part 1",
   "motion": {
     "tool_orientation_deg": [
-      178.681644,
-      0.451777,
-      85.014504
+      179.762643,
+      -5.802974,
+      -176.610516
     ],
-    "pick_z_mm": 89.544968,
+    "pick_z_mm": 87.319885,
     "approach_z_mm": 190.0,
     "lift_mm": 40.0,
     "travel_speed_mm_s": 40.0,
@@ -21,11 +21,11 @@
     "close_delay_s": 1.5
   },
   "local_reference": {
-    "capture_directory": "data/orientation_tests/20261010_105015_008545",
-    "marker_record": "data/orientation_tests/20261010_105015_008545/marker_pairs.json",
+    "capture_directory": "data/orientation_tests/20261010_152316_891999",
+    "marker_record": "data/orientation_tests/20261010_152316_891999/marker_pairs.json",
     "taught_robot_xy_mm": [
-      46.783913,
-      -289.424164
+      60.608788,
+      -293.002838
     ],
     "max_translation_mm": 50.0,
     "max_rotation_change_deg": 10.0

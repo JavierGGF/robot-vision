@@ -126,6 +126,13 @@ def main():
     window = tk.Tk()
     window.title("Robot Vision Lab - read-only student dashboard")
     window.configure(bg="#101419")
+    window.attributes('-topmost', True)
+    def foreground():
+        window.lift()
+        window.focus_force()
+    window.after(100, foreground)
+    window.after(1000, foreground)
+    window.bind('<Escape>', lambda event:window.attributes('-topmost', False))
     label = tk.Label(window,bg="#101419")
     label.pack()
     info = {"photo":None,"folder":None,"record":{}}

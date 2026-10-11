@@ -87,7 +87,7 @@ class PhysicalCouplingController(Lite6Controller):
             time.sleep(1.0)
         self._require_motion_ready()
 
-    def wait_stationary(self, timeout=120.0, stable_seconds=1.0):
+    def wait_stationary(self, timeout=120.0, stable_seconds=0.35):
         deadline = time.monotonic() + timeout
         anchor = None
         stable_since = None
@@ -181,6 +181,15 @@ class PhysicalCouplingController(Lite6Controller):
         print("Closing commands sent; physical grasp not verified")
         return code
 
+    def stop_gripper_after_completion(self):
+        """Stop Lite6 gripper drive after normal release and retreat."""
+        self.wait_stationary()
+        self._require_motion_ready()
+        code = self.arm.stop_lite6_gripper(sync=False)
+        self._check_code(code, 'Gripper drive stop')
+        print('GRIPPER DRIVE STOPPED')
+        return code
+
     def move_linear(self, target, speed=10.0, mvacc=20.0, wait=True):
         code = super().move_linear(target, speed=speed, mvacc=mvacc, wait=wait)
         deadline = time.monotonic() + 120.0
@@ -215,14 +224,18 @@ def inspect_image(frame, calibration, reference, pick, directory, source):
 
 
 def run_block(controller, name, plan, expected, record, output, contact=False):
-    block = {'name': name, 'status': 'started', 'execution': [], 'plan': plan}
+    block_started = time.monotonic()
+    block = {'name': name, 'status': 'started', 'execution': [], 'plan': plan,
+             'started_at':datetime.now().astimezone().isoformat()}
     record['blocks'].append(block)
     save_record(output, record)
     active = None
     try:
         controller.wait_stationary()
         check_pose(controller.get_pose(), expected)
+        route_started = time.monotonic()
         block['route_check'] = controller.check_linear_route(movement_segments(plan))
+        block['route_check_seconds'] = time.monotonic() - route_started
         save_record(output, record)
         if contact:
             confirm('Verify entry alignment, first-link restraint and clearance before coupling.')
@@ -239,7 +252,9 @@ def run_block(controller, name, plan, expected, record, output, contact=False):
                     print(name + ': ' + step['label'] + ' [already reached]')
                     expected = list(step['pose'])
                     continue
-            active = dict(step, status='started')
+            step_started = time.monotonic()
+            active = dict(step, status='started',
+                          started_at=datetime.now().astimezone().isoformat())
             block['execution'].append(active)
             save_record(output, record)
             controller._require_motion_ready()
@@ -267,6 +282,8 @@ def run_block(controller, name, plan, expected, record, output, contact=False):
             else:
                 raise ValueError('Unknown operation.')
             active['status'] = 'completed'
+            active['duration_seconds'] = time.monotonic() - step_started
+            active['finished_at'] = datetime.now().astimezone().isoformat()
             save_record(output, record)
         block['status'] = 'completed'
         return expected
@@ -281,6 +298,8 @@ def run_block(controller, name, plan, expected, record, output, contact=False):
             block['stop_error'] = str(stop_error)
         raise
     finally:
+        block['duration_seconds'] = time.monotonic() - block_started
+        block['finished_at'] = datetime.now().astimezone().isoformat()
         block['latest_path_check'] = controller.last_path_check
         save_record(output, record)
 
@@ -402,7 +421,9 @@ def main(argv=None):
             print('Verify camera/sheet registration, taught poses, TCP, gripper and first-link support.')
             confirm('Confirm calibration, EMPTY gripper, and clear vertical/retreat paths. Restart only after freeing any held or jammed part.', word='VERIFIED')
             controller = PhysicalCouplingController()
+            connected_started = time.monotonic()
             controller.connect()
+            record.setdefault('timings', {})['connect_seconds'] = time.monotonic() - connected_started
             controller.wait_stationary()
             expected = controller.get_pose()
             # Start from the actual stationary pose; routes remain checked.
@@ -420,7 +441,10 @@ def main(argv=None):
                 controller.wait_stationary()
                 check_pose(controller.get_pose(), expected)
                 confirm(f'Place ONE link in Zone 1 for pick {index}; keep robot outside camera view.')
+                capture_started = time.monotonic()
                 frame = capture_frame(calibration)
+                record.setdefault('capture_timings', []).append({
+                    'link_index':index, 'seconds':time.monotonic()-capture_started})
                 source = 'fresh_live_capture'
             else:
                 value = args.first_image if index == 1 else args.second_image
@@ -493,6 +517,7 @@ def main(argv=None):
                     print("ZONE 1 matches empty reference. No further movement.")
                     return 0
             try:
+                vision_started = time.monotonic()
                 analysis, runtime = inspect_image(
                     frame, calibration, reference, pick, directory, source
                 )
@@ -506,7 +531,8 @@ def main(argv=None):
                 save_record(output, record)
                 print("ZONE 1: no pick candidate. Stopping without further movement.")
                 return 0
-            record['vision'].append({'link_index': index, 'source': source, 'analysis': analysis})
+            record['vision'].append({'link_index': index, 'source': source, 'analysis': analysis,
+                                    'duration_seconds':time.monotonic()-vision_started})
             if not args.execute and index == 2 and args.second_image is None:
                 print('WARNING: second pick uses the same default saved image; not independent vision.')
             print(f'Link {index} grasp X,Y: {analysis["target_xy_mm"]}; tool: {analysis["target_orientation_deg"]}')
@@ -603,7 +629,20 @@ def main(argv=None):
     finally:
         try:
             if controller is not None:
-                controller.disconnect()
+                try:
+                    if record.get('status') in (
+                        'physical_motion_completed_assembly_not_verified',
+                        'stopped_zone1_matches_empty_reference', 'stopped_no_pick_candidate'
+                    ):
+                        record['gripper_shutdown_return_code'] = controller.stop_gripper_after_completion()
+                    else:
+                        record['gripper_shutdown'] = 'preserved_after_failure_or_interruption'
+                except Exception as shutdown_error:
+                    record['gripper_shutdown_error'] = str(shutdown_error)
+                    exit_code = 1
+                    print('Gripper drive stop failed:', shutdown_error)
+                finally:
+                    controller.disconnect()
         finally:
             record['finished_at'] = datetime.now().astimezone().isoformat()
             save_record(output,record)
@@ -613,4 +652,5 @@ def main(argv=None):
 
 if __name__ == '__main__':
     raise SystemExit(main())
+
 

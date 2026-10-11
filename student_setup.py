@@ -680,13 +680,7 @@ def execute_cycle(second=False, preview=False):
         print('Load one part at a time. A vacant Zone 1 ends the run; load the second only while stopped.')
         print('Keep first placement fixed for second-only. No automatic destination detection in Zone 2.')
         args.append('--execute')
-    if not preview:
-        dashboard = PROJECT_ROOT / 'student_dashboard.py'
-        if dashboard.is_file():
-            try:
-                subprocess.Popen([sys.executable, str(dashboard)], cwd=PROJECT_ROOT)
-            except OSError as error:
-                print('Student display unavailable:', error)
+    if not preview: launch_dashboard()
     run_module('robot_vision.robot.robot1_two_link_cycle', *args)
 
 
@@ -768,7 +762,21 @@ def show_workflow():
     pause()
 
 
+DASHBOARD_PROCESS = None
+
+
+def launch_dashboard():
+    global DASHBOARD_PROCESS
+    dashboard = PROJECT_ROOT / 'student_dashboard.py'
+    if not dashboard.is_file(): return
+    if DASHBOARD_PROCESS is not None and DASHBOARD_PROCESS.poll() is None: return
+    try:
+        DASHBOARD_PROCESS = subprocess.Popen([sys.executable, str(dashboard)], cwd=PROJECT_ROOT)
+    except OSError as error: print('Student display unavailable:', error)
+
+
 def main():
+    launch_dashboard()
     if SETTINGS_FILE.exists():
         try:
             saved = read(SETTINGS_FILE)
