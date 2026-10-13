@@ -90,8 +90,8 @@ def compute_mapping(records, calibration, pointer=None):
         for index, item in enumerate(records):
             raw = item["pose_mm_deg"]
             poses[index, :3] = np.asarray(raw[:3])+rotation_matrix(raw) @ offset
-    if pointer is None and any(angle_error(p, poses[0]) > 1.0 for p in poses[1:]):
-        raise ValueError("Tool orientation differs by over 1 deg. Recapture with fixed orientation.")
+    if pointer is None and any(angle_error(p, poses[0]) > 2.0 for p in poses[1:]):
+        raise ValueError("Tool orientation differs by over 2 deg. Recapture with fixed orientation.")
     if np.ptp(poses[:, 2]) > 2.0:
         raise ValueError("Height differs by over 2 mm. Recapture at a fixed height.")
     sheet_axes = np.column_stack((sheet[1]-sheet[0], sheet[2]-sheet[0]))
@@ -195,8 +195,8 @@ def main():
                 return
             try:
                 pose = read_stationary_pose(arm)
-                if not args.record_only and "pointer_calibration" not in record and count and angle_error(pose, record["markers"][0]["pose_mm_deg"]) > 1.0:
-                    raise ValueError("Keep the TL tool orientation (within 1 deg). Point not saved.")
+                if not args.record_only and "pointer_calibration" not in record and count and angle_error(pose, record["markers"][0]["pose_mm_deg"]) > 2.0:
+                    raise ValueError("Keep the TL tool orientation (within 2 deg). Point not saved.")
                 if not args.record_only and "pointer_calibration" not in record and count and abs(pose[2]-record["markers"][0]["pose_mm_deg"][2]) > 2.0:
                     raise ValueError("Keep the TL height (within 2 mm). Point not saved.")
                 label = LABELS[count]

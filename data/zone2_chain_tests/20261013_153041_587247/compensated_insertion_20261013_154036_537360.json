@@ -1,0 +1,72 @@
+{
+  "reference": "data/zone2_chain_tests/20261013_152227_815452",
+  "entry": [
+    248.110036,
+    -92.83357,
+    115.135689,
+    -177.747264,
+    -5.680819,
+    -1.520006
+  ],
+  "final": [
+    248.110078,
+    -92.833284,
+    86.205742,
+    -177.747264,
+    -5.680819,
+    -1.520006
+  ],
+  "physical_fit_verified": false,
+  "status": "target_reached",
+  "route_check": {
+    "status": "passed",
+    "method": "actual_joint_seed_cartesian_chain",
+    "start_pose": [
+      248.110031,
+      -92.833572,
+      115.135757,
+      -177.747264,
+      -5.680819,
+      -1.52
+    ],
+    "start_joints": [
+      -21.28395,
+      43.867769,
+      52.712805,
+      224.115536,
+      -5.92318,
+      -243.729829
+    ],
+    "segments": [
+      {
+        "label": "compensated_insertion",
+        "pose": [
+          248.110078,
+          -92.833284,
+          86.205742,
+          -177.747264,
+          -5.680819,
+          -1.520006
+        ],
+        "speed": 1.0,
+        "mvacc": 20.0,
+        "return_code": 0,
+        "planner_result": 0,
+        "check_type": 2
+      }
+    ],
+    "external_obstacles_checked": false,
+    "seed": {
+      "return_code": 0,
+      "planner_result": 0
+    }
+  },
+  "actual_pose": [
+    248.110077,
+    -92.833275,
+    86.205811,
+    -177.747264,
+    -5.680819,
+    -1.52
+  ]
+}

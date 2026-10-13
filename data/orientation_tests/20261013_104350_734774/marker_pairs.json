@@ -1,0 +1,32 @@
+{
+  "selected_image_points_px": [
+    [
+      796.7999877929688,
+      1025.5999755859375
+    ],
+    [
+      361.6000061035156,
+      1020.7999877929688
+    ],
+    [
+      768.0,
+      424.0
+    ]
+  ],
+  "robot_marker_points_xy_mm": [
+    [
+      132.834488,
+      -375.551361
+    ],
+    [
+      -42.006508,
+      -379.101379
+    ],
+    [
+      129.119659,
+      -138.023376
+    ]
+  ],
+  "source_marker_record": "data/workspace_calibrations/robot1_zone1_20261013_121933_334240/robot_mapping.json",
+  "status": "approximate_pointer_offset_uncorrected"
+}

@@ -1,0 +1,73 @@
+{
+  "entry": [
+    271.85495,
+    -104.291969,
+    124.680405,
+    -179.262738,
+    -4.908759,
+    -31.411953
+  ],
+  "final": [
+    271.855011,
+    -104.292,
+    92.087265,
+    -179.262738,
+    -4.908759,
+    -31.411953
+  ],
+  "physical_fit_verified": true,
+  "route_check": {
+    "status": "passed",
+    "method": "actual_joint_seed_cartesian_chain",
+    "start_pose": [
+      271.85495,
+      -104.291969,
+      124.680405,
+      -179.262738,
+      -4.908759,
+      -31.411953
+    ],
+    "start_joints": [
+      -21.040844,
+      45.646115,
+      60.560207,
+      -0.405138,
+      9.946433,
+      10.67873
+    ],
+    "segments": [
+      {
+        "label": "single_taught_insertion",
+        "pose": [
+          271.855011,
+          -104.292,
+          92.087265,
+          -179.262738,
+          -4.908759,
+          -31.411953
+        ],
+        "speed": 1.0,
+        "mvacc": 20.0,
+        "return_code": 0,
+        "planner_result": 0,
+        "check_type": 2
+      }
+    ],
+    "external_obstacles_checked": false,
+    "seed": {
+      "return_code": 0,
+      "planner_result": 0
+    }
+  },
+  "actual_pose": [
+    271.855011,
+    -104.292,
+    92.087334,
+    -179.262738,
+    -4.908759,
+    -31.411953
+  ],
+  "status": "target_reached",
+  "verification_source": "operator_confirmation",
+  "vision_rotation_compensation_tested": false
+}

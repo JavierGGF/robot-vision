@@ -1,0 +1,21 @@
+{
+  "entry": [
+    271.85495,
+    -104.291969,
+    124.680405,
+    -179.262738,
+    -4.908759,
+    -31.411953
+  ],
+  "final": [
+    271.855011,
+    -104.292,
+    92.087265,
+    -179.262738,
+    -4.908759,
+    -31.411953
+  ],
+  "physical_fit_verified": false,
+  "status": "stopped",
+  "error": "Robot is not stationary and ready: state=5."
+}

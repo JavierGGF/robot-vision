@@ -1,0 +1,119 @@
+{
+  "status": "ok",
+  "grasp_x_mm": 103.60133333333334,
+  "grasp_y_mm": 132.66933333333336,
+  "planar_calibration": {
+    "calibration_version": 2,
+    "zone": 1,
+    "camera_index": 0,
+    "image_width_px": 1920,
+    "image_height_px": 1080,
+    "reference_width_mm": 215.9,
+    "reference_height_mm": 279.4,
+    "reference_type": "printed_fiducial_centers",
+    "point_order": [
+      "TL",
+      "TR",
+      "BR",
+      "BL"
+    ],
+    "image_points": [
+      [
+        798.4000244140625,
+        1025.5999755859375
+      ],
+      [
+        363.20001220703125,
+        1020.7999877929688
+      ],
+      [
+        371.20001220703125,
+        459.20001220703125
+      ],
+      [
+        768.0,
+        422.3999938964844
+      ]
+    ],
+    "reference_points_mm": [
+      [
+        21.0,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        258.3999938964844
+      ],
+      [
+        21.0,
+        258.3999938964844
+      ]
+    ],
+    "pixel_to_mm_matrix": [
+      [
+        -0.5082711614356307,
+        0.02994157495586992,
+        404.2228468604879
+      ],
+      [
+        0.010427058391018656,
+        -0.4931803843447086,
+        526.6080441745014
+      ],
+      [
+        0.00023536282295957467,
+        0.00019412703616391872,
+        1.0
+      ]
+    ],
+    "created_at": "2026-10-13T13:37:29.771916",
+    "source_image": "data/workspace_calibrations/zone1_20261013_133729_724493/camera.png"
+  },
+  "detection": {
+    "status": "ok",
+    "message": "Object detected",
+    "reference_x_mm": 100.29577943636896,
+    "reference_y_mm": 131.79556123884
+  },
+  "reference_geometry": {
+    "direction_image_deg": 267.2506199778759,
+    "mouth_start_px": [
+      487.0,
+      237.0
+    ],
+    "mouth_end_px": [
+      295.0,
+      251.0
+    ],
+    "mouth_center_px": [
+      391.0,
+      244.0
+    ],
+    "bottom_px": [
+      396.5,
+      358.52941176470586
+    ],
+    "deepest_contour_point_px": [
+      404.0,
+      362.0
+    ],
+    "depth_px": 118.6328125,
+    "depth_ratio": 0.26498368162113395,
+    "second_depth_px": 33.24609375,
+    "mouth_width_px": 192.50974001333023
+  },
+  "taught_robot_pose_mm_deg": [
+    51.644226,
+    -262.96875,
+    87.075653,
+    -179.188196,
+    -5.540101,
+    1.957453
+  ],
+  "physical_grasp_verified": false,
+  "station_mapping": "approximate_uncorrected_pointer"
+}

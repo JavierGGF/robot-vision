@@ -1,0 +1,261 @@
+{
+  "status": "approach_completed",
+  "reference": "data/orientation_tests/20261013_134627_529996",
+  "analysis": {
+    "mapping": "rotated_grasp_with_preserved_taught_anchor",
+    "detection": {
+      "status": "ok",
+      "message": "Object detected",
+      "reference_x_mm": 125.2874174754439,
+      "reference_y_mm": 125.99216327785341
+    },
+    "reference_detection": {
+      "status": "ok",
+      "message": "Object detected",
+      "reference_x_mm": 100.29577943636896,
+      "reference_y_mm": 131.79556123884
+    },
+    "current_geometry": {
+      "direction_image_deg": 236.08480881830326,
+      "mouth_start_px": [
+        379.0,
+        220.0
+      ],
+      "mouth_end_px": [
+        230.0,
+        321.0
+      ],
+      "mouth_center_px": [
+        304.5,
+        270.5
+      ],
+      "bottom_px": [
+        368.1449275362319,
+        365.15942028985506
+      ],
+      "deepest_contour_point_px": [
+        373.0,
+        367.0
+      ],
+      "depth_px": 118.3125,
+      "depth_ratio": 0.24897689465358663,
+      "second_depth_px": 31.9140625,
+      "mouth_width_px": 180.00555546982432
+    },
+    "reference_geometry": {
+      "direction_image_deg": 267.2506199778759,
+      "mouth_start_px": [
+        487.0,
+        237.0
+      ],
+      "mouth_end_px": [
+        295.0,
+        251.0
+      ],
+      "mouth_center_px": [
+        391.0,
+        244.0
+      ],
+      "bottom_px": [
+        396.5,
+        358.52941176470586
+      ],
+      "deepest_contour_point_px": [
+        404.0,
+        362.0
+      ],
+      "depth_px": 118.6328125,
+      "depth_ratio": 0.26498368162113395,
+      "second_depth_px": 33.24609375,
+      "mouth_width_px": 192.50974001333023
+    },
+    "current_center_sheet_mm": [
+      125.2874174754439,
+      125.99216327785341
+    ],
+    "reference_center_sheet_mm": [
+      100.29577943636896,
+      131.79556123884
+    ],
+    "reference_grasp_sheet_mm": [
+      103.60133333333329,
+      132.66933333333336
+    ],
+    "reference_grasp_offset_sheet_mm": [
+      3.3055538969643266,
+      0.8737720944933471
+    ],
+    "grasp_sheet_mm": [
+      128.56808290675195,
+      125.02914792664055
+    ],
+    "rotation_change_deg": 31.165811159572627,
+    "robot_yaw_change_deg": 31.637022281370832,
+    "target_xy_mm": [
+      26.503835970863953,
+      -270.9893538438707
+    ],
+    "target_orientation_deg": [
+      -179.188196,
+      -5.540101,
+      33.59447528137082
+    ],
+    "translation_distance_mm": 26.38881006861424,
+    "tool_rotation_enabled": true
+  },
+  "calibration": {
+    "calibration_version": 2,
+    "zone": 1,
+    "camera_index": 0,
+    "image_width_px": 1920,
+    "image_height_px": 1080,
+    "reference_width_mm": 215.9,
+    "reference_height_mm": 279.4,
+    "reference_type": "printed_fiducial_centers",
+    "point_order": [
+      "TL",
+      "TR",
+      "BR",
+      "BL"
+    ],
+    "image_points": [
+      [
+        798.4000244140625,
+        1025.5999755859375
+      ],
+      [
+        363.20001220703125,
+        1020.7999877929688
+      ],
+      [
+        371.20001220703125,
+        459.20001220703125
+      ],
+      [
+        768.0,
+        422.3999938964844
+      ]
+    ],
+    "reference_points_mm": [
+      [
+        21.0,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        258.3999938964844
+      ],
+      [
+        21.0,
+        258.3999938964844
+      ]
+    ],
+    "pixel_to_mm_matrix": [
+      [
+        -0.5082711614356307,
+        0.02994157495586992,
+        404.2228468604879
+      ],
+      [
+        0.010427058391018656,
+        -0.4931803843447086,
+        526.6080441745014
+      ],
+      [
+        0.00023536282295957467,
+        0.00019412703616391872,
+        1.0
+      ]
+    ],
+    "created_at": "2026-10-13T13:37:29.771916",
+    "source_image": "data/workspace_calibrations/zone1_20261013_133729_724493/camera.png"
+  },
+  "start_pose": [
+    -52.843643,
+    -120.626801,
+    165.695297,
+    -176.75874,
+    2.695938,
+    -81.555901
+  ],
+  "plan": [
+    {
+      "label": "transfer_height",
+      "pose": [
+        -52.843643,
+        -120.626801,
+        190.0,
+        -176.75874,
+        2.695938,
+        -81.555901
+      ],
+      "speed": 20.0,
+      "mvacc": 20.0
+    },
+    {
+      "label": "above_grasp",
+      "pose": [
+        26.503835970863953,
+        -270.9893538438707,
+        190.0,
+        -179.188196,
+        -5.540101,
+        33.59447528137082
+      ],
+      "speed": 20.0,
+      "mvacc": 20.0
+    },
+    {
+      "label": "grasp_clearance",
+      "pose": [
+        26.503835970863953,
+        -270.9893538438707,
+        107.075653,
+        -179.188196,
+        -5.540101,
+        33.59447528137082
+      ],
+      "speed": 10.0,
+      "mvacc": 20.0
+    }
+  ],
+  "completed": [
+    {
+      "label": "transfer_height",
+      "actual_pose": [
+        -52.843639,
+        -120.626793,
+        189.999924,
+        -176.75874,
+        2.695938,
+        -81.555901
+      ]
+    },
+    {
+      "label": "above_grasp",
+      "actual_pose": [
+        26.503836,
+        -270.989349,
+        190.0,
+        -179.188196,
+        -5.540101,
+        33.594464
+      ]
+    },
+    {
+      "label": "grasp_clearance",
+      "actual_pose": [
+        26.503836,
+        -270.989349,
+        107.075722,
+        -179.188196,
+        -5.540101,
+        33.594464
+      ]
+    }
+  ]
+}

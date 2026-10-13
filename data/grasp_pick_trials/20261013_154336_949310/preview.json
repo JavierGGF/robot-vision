@@ -1,0 +1,178 @@
+{
+  "status": "target_calculated_no_motion",
+  "reference": "data/orientation_tests/20261013_141042_884411",
+  "calibration": {
+    "calibration_version": 2,
+    "zone": 1,
+    "camera_index": 0,
+    "image_width_px": 1920,
+    "image_height_px": 1080,
+    "reference_width_mm": 215.9,
+    "reference_height_mm": 279.4,
+    "reference_type": "printed_fiducial_centers",
+    "point_order": [
+      "TL",
+      "TR",
+      "BR",
+      "BL"
+    ],
+    "image_points": [
+      [
+        798.4000244140625,
+        1025.5999755859375
+      ],
+      [
+        363.20001220703125,
+        1020.7999877929688
+      ],
+      [
+        371.20001220703125,
+        459.20001220703125
+      ],
+      [
+        768.0,
+        422.3999938964844
+      ]
+    ],
+    "reference_points_mm": [
+      [
+        21.0,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        258.3999938964844
+      ],
+      [
+        21.0,
+        258.3999938964844
+      ]
+    ],
+    "pixel_to_mm_matrix": [
+      [
+        -0.5082711614356307,
+        0.02994157495586992,
+        404.2228468604879
+      ],
+      [
+        0.010427058391018656,
+        -0.4931803843447086,
+        526.6080441745014
+      ],
+      [
+        0.00023536282295957467,
+        0.00019412703616391872,
+        1.0
+      ]
+    ],
+    "created_at": "2026-10-13T13:37:29.771916",
+    "source_image": "data/workspace_calibrations/zone1_20261013_133729_724493/camera.png"
+  },
+  "analysis": {
+    "mapping": "rotated_grasp_with_preserved_taught_anchor",
+    "detection": {
+      "status": "ok",
+      "message": "Object detected",
+      "reference_x_mm": 123.00243334558759,
+      "reference_y_mm": 125.21767939358928
+    },
+    "reference_detection": {
+      "status": "ok",
+      "message": "Object detected",
+      "reference_x_mm": 127.47449357143067,
+      "reference_y_mm": 125.7596671767068
+    },
+    "current_geometry": {
+      "direction_image_deg": 300.91516407021015,
+      "mouth_start_px": [
+        571.0,
+        317.0
+      ],
+      "mouth_end_px": [
+        409.0,
+        223.0
+      ],
+      "mouth_center_px": [
+        490.0,
+        270.0
+      ],
+      "bottom_px": [
+        430.8615384615385,
+        368.75384615384615
+      ],
+      "deepest_contour_point_px": [
+        430.0,
+        373.0
+      ],
+      "depth_px": 119.203125,
+      "depth_ratio": 0.26088582032104474,
+      "second_depth_px": 31.26171875,
+      "mouth_width_px": 187.29655629509048
+    },
+    "reference_geometry": {
+      "direction_image_deg": 234.30296140554307,
+      "mouth_start_px": [
+        375.0,
+        219.0
+      ],
+      "mouth_end_px": [
+        223.0,
+        326.0
+      ],
+      "mouth_center_px": [
+        299.0,
+        272.5
+      ],
+      "bottom_px": [
+        365.54285714285714,
+        365.1142857142857
+      ],
+      "deepest_contour_point_px": [
+        366.0,
+        370.0
+      ],
+      "depth_px": 118.29296875,
+      "depth_ratio": 0.24894461284922845,
+      "second_depth_px": 32.16796875,
+      "mouth_width_px": 185.88437266214714
+    },
+    "current_center_sheet_mm": [
+      123.00243334558759,
+      125.21767939358928
+    ],
+    "reference_center_sheet_mm": [
+      127.47449357143067,
+      125.7596671767068
+    ],
+    "reference_grasp_sheet_mm": [
+      130.4333333333333,
+      125.96133333333347
+    ],
+    "reference_grasp_offset_sheet_mm": [
+      2.958839761902638,
+      0.20166615662667198
+    ],
+    "grasp_sheet_mm": [
+      123.99185485184557,
+      128.01347034755898
+    ],
+    "rotation_change_deg": -66.61220266466708,
+    "robot_yaw_change_deg": -67.6181105327152,
+    "target_xy_mm": [
+      32.98877154861288,
+      -268.8397355008403
+    ],
+    "target_orientation_deg": [
+      -179.188196,
+      -5.540101,
+      -34.02364653271519
+    ],
+    "translation_distance_mm": 6.831987325047942,
+    "tool_rotation_enabled": true
+  },
+  "pick_z_mm": 86.32589
+}

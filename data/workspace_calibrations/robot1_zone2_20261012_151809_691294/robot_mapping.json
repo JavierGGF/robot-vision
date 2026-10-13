@@ -1,0 +1,124 @@
+{
+  "status": "raw_poses_saved_pointer_compensation_pending",
+  "created_at": "2026-10-12T15:18:09.691394-05:00",
+  "robot_ip": "192.168.1.185",
+  "robot_name": "Robot 1",
+  "zone": 2,
+  "camera_calibration": {
+    "calibration_version": 2,
+    "zone": 2,
+    "camera_index": 0,
+    "image_width_px": 1920,
+    "image_height_px": 1080,
+    "reference_width_mm": 215.9,
+    "reference_height_mm": 279.4,
+    "reference_type": "printed_fiducial_centers",
+    "point_order": [
+      "TL",
+      "TR",
+      "BR",
+      "BL"
+    ],
+    "image_points": [
+      [
+        1339.199951171875,
+        600.0
+      ],
+      [
+        900.7999877929688,
+        624.0
+      ],
+      [
+        873.5999755859375,
+        81.5999984741211
+      ],
+      [
+        1281.5999755859375,
+        78.4000015258789
+      ]
+    ],
+    "reference_points_mm": [
+      [
+        21.0,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        258.3999938964844
+      ],
+      [
+        21.0,
+        258.3999938964844
+      ]
+    ],
+    "pixel_to_mm_matrix": [
+      [
+        -0.40271492623553107,
+        0.04728954158375268,
+        531.4920544100771
+      ],
+      [
+        -0.024184138853552216,
+        -0.40803928268044154,
+        297.7609369895962
+      ],
+      [
+        -8.008495928652534e-05,
+        0.00014303294237783673,
+        1.0
+      ]
+    ],
+    "created_at": "2026-10-12T15:17:31.225784",
+    "source_image": "data/workspace_calibrations/zone2_20261012_151731_182061/camera.png"
+  },
+  "marker_order": [
+    "TL",
+    "TR",
+    "BL"
+  ],
+  "markers": [
+    {
+      "marker": "TL",
+      "pose_mm_deg": [
+        353.34845,
+        -222.480927,
+        87.160797,
+        179.046045,
+        3.123651,
+        177.22805
+      ],
+      "captured_at": "2026-10-12T15:18:56.314035-05:00"
+    },
+    {
+      "marker": "TR",
+      "pose_mm_deg": [
+        180.11528,
+        -218.183487,
+        86.371323,
+        -178.939303,
+        1.884917,
+        179.856895
+      ],
+      "captured_at": "2026-10-12T15:19:29.317416-05:00"
+    },
+    {
+      "marker": "BL",
+      "pose_mm_deg": [
+        354.054749,
+        16.664738,
+        87.120064,
+        179.104773,
+        2.818036,
+        179.928228
+      ],
+      "captured_at": "2026-10-12T15:19:48.843949-05:00"
+    }
+  ],
+  "alignment": "pointer_cross_center_over_printed_fiducial_center",
+  "cycle_profiles_updated": false,
+  "pointer_poses": []
+}

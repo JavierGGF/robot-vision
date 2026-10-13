@@ -1,0 +1,88 @@
+{
+  "status": "above_destination_reached",
+  "physical_alignment_verified": false,
+  "start_pose": [
+    76.280151,
+    -254.65799,
+    174.095642,
+    -179.959569,
+    1.41406,
+    -9.809324
+  ],
+  "plan": [
+    {
+      "label": "transfer_height",
+      "pose": [
+        76.280151,
+        -254.65799,
+        190.0,
+        -179.959569,
+        1.41406,
+        -9.809324
+      ],
+      "speed": 20.0,
+      "mvacc": 20.0
+    },
+    {
+      "label": "travel_above_destination",
+      "pose": [
+        248.110036,
+        -92.83357,
+        190.0,
+        -179.959569,
+        1.41406,
+        -9.809324
+      ],
+      "speed": 20.0,
+      "mvacc": 20.0
+    },
+    {
+      "label": "orient_above_destination",
+      "pose": [
+        248.110036,
+        -92.83357,
+        190.0,
+        -177.747264,
+        -5.680819,
+        -1.520006
+      ],
+      "speed": 10.0,
+      "mvacc": 20.0
+    }
+  ],
+  "completed": [
+    {
+      "label": "transfer_height",
+      "actual_pose": [
+        76.280151,
+        -254.65799,
+        189.999924,
+        -179.959569,
+        1.41406,
+        -9.809324
+      ]
+    },
+    {
+      "label": "travel_above_destination",
+      "actual_pose": [
+        248.109985,
+        -92.833618,
+        190.0,
+        -179.959569,
+        1.41406,
+        -9.809324
+      ]
+    },
+    {
+      "label": "orient_above_destination",
+      "actual_pose": [
+        248.110031,
+        -92.833572,
+        190.0,
+        -177.747264,
+        -5.680819,
+        -1.52
+      ]
+    }
+  ]
+}
