@@ -1,0 +1,9 @@
+{
+  "status": "stopped",
+  "blocks": [],
+  "physical_assembly_verified": false,
+  "pointer_offset_corrected": false,
+  "external_obstacles_checked": false,
+  "mode": "physical",
+  "error": "Destination outside this local trial range (10 deg / 100 mm)"
+}

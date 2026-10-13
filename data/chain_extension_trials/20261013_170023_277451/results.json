@@ -1,0 +1,197 @@
+{
+  "status": "targets_calculated_no_robot_connection",
+  "blocks": [],
+  "physical_assembly_verified": false,
+  "pointer_offset_corrected": false,
+  "external_obstacles_checked": false,
+  "mode": "preview",
+  "reference_geometry": {
+    "direction_image_deg": 280.10394772520846,
+    "mouth_start_px": [
+      573.0,
+      699.0
+    ],
+    "mouth_end_px": [
+      389.0,
+      675.0
+    ],
+    "mouth_center_px": [
+      481.0,
+      687.0
+    ],
+    "bottom_px": [
+      461.0,
+      799.2345679012345
+    ],
+    "deepest_contour_point_px": [
+      458.0,
+      803.0
+    ],
+    "depth_px": 118.0,
+    "depth_ratio": 0.2554944611088433,
+    "second_depth_px": 29.46484375,
+    "mouth_width_px": 185.55861607589122
+  },
+  "destination_geometry": {
+    "direction_image_deg": 263.7245477717839,
+    "mouth_start_px": [
+      549.0,
+      472.0
+    ],
+    "mouth_end_px": [
+      365.0,
+      488.0
+    ],
+    "mouth_center_px": [
+      457.0,
+      480.0
+    ],
+    "bottom_px": [
+      470.0,
+      598.2168674698795
+    ],
+    "deepest_contour_point_px": [
+      474.0,
+      602.0
+    ],
+    "depth_px": 123.015625,
+    "depth_ratio": 0.19560200756020957,
+    "second_depth_px": 43.640625,
+    "mouth_width_px": 184.69434208984313
+  },
+  "rotation_sheet_deg": -16.37939995342458,
+  "opening_shift_sheet_mm": 52.09666496043677,
+  "reference_mouth_sheet_mm": [
+    120.25,
+    171.75
+  ],
+  "current_mouth_sheet_mm": [
+    114.25,
+    120.0
+  ],
+  "inspected_preview": "/Users/javier/JGF-Engineering-Portfolio/robot-vision/data/chain_destination_previews/20261013_163840_046243",
+  "inspected_preview_shift_mm": 0.2795084971874737,
+  "inspected_preview_turn_deg": -0.47901173885173876,
+  "within_physical_trial_range": false,
+  "pick_analysis": {
+    "mapping": "rotated_grasp_with_preserved_taught_anchor",
+    "detection": {
+      "status": "ok",
+      "message": "Object detected",
+      "reference_x_mm": 123.00404814355065,
+      "reference_y_mm": 125.26390297276663
+    },
+    "reference_detection": {
+      "status": "ok",
+      "message": "Object detected",
+      "reference_x_mm": 127.47449357143067,
+      "reference_y_mm": 125.7596671767068
+    },
+    "current_geometry": {
+      "direction_image_deg": 298.8954805471731,
+      "mouth_start_px": [
+        569.0,
+        316.0
+      ],
+      "mouth_end_px": [
+        406.0,
+        221.0
+      ],
+      "mouth_center_px": [
+        487.5,
+        268.5
+      ],
+      "bottom_px": [
+        431.8615384615385,
+        369.3076923076923
+      ],
+      "deepest_contour_point_px": [
+        431.0,
+        374.0
+      ],
+      "depth_px": 119.59765625,
+      "depth_ratio": 0.2617492843350841,
+      "second_depth_px": 31.31640625,
+      "mouth_width_px": 188.66372200293304
+    },
+    "reference_geometry": {
+      "direction_image_deg": 234.30296140554307,
+      "mouth_start_px": [
+        375.0,
+        219.0
+      ],
+      "mouth_end_px": [
+        223.0,
+        326.0
+      ],
+      "mouth_center_px": [
+        299.0,
+        272.5
+      ],
+      "bottom_px": [
+        365.54285714285714,
+        365.1142857142857
+      ],
+      "deepest_contour_point_px": [
+        366.0,
+        370.0
+      ],
+      "depth_px": 118.29296875,
+      "depth_ratio": 0.24894461284922845,
+      "second_depth_px": 32.16796875,
+      "mouth_width_px": 185.88437266214714
+    },
+    "current_center_sheet_mm": [
+      123.00404814355065,
+      125.26390297276663
+    ],
+    "reference_center_sheet_mm": [
+      127.47449357143067,
+      125.7596671767068
+    ],
+    "reference_grasp_sheet_mm": [
+      130.4333333333333,
+      125.96133333333347
+    ],
+    "reference_grasp_offset_sheet_mm": [
+      2.958839761902638,
+      0.20166615662667198
+    ],
+    "grasp_sheet_mm": [
+      124.09138657870943,
+      128.02308710992946
+    ],
+    "rotation_change_deg": -64.59251914163005,
+    "robot_yaw_change_deg": -65.58092951519967,
+    "target_xy_mm": [
+      32.88789929413366,
+      -268.83192260017563
+    ],
+    "target_orientation_deg": [
+      -179.188196,
+      -5.540101,
+      -31.986465515199654
+    ],
+    "translation_distance_mm": 6.738810810399101,
+    "tool_rotation_enabled": true
+  },
+  "targets": {
+    "entry": [
+      260.5660053949756,
+      -141.37727764720842,
+      115.135689,
+      -177.747264,
+      -5.680819,
+      10.722930618607592
+    ],
+    "final": [
+      260.565985042907,
+      -141.37699013341162,
+      86.205742,
+      -177.747264,
+      -5.680819,
+      10.722930618607592
+    ]
+  },
+  "yaw_change_deg": 16.2588486186076
+}

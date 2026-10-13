@@ -1,0 +1,38 @@
+{
+  "status": "candidate_not_verified",
+  "detection": {
+    "status": "ok",
+    "message": "Object detected",
+    "reference_x_mm": 118.26700242011384,
+    "reference_y_mm": 186.10784557582275
+  },
+  "geometry": {
+    "direction_image_deg": 264.2035595106356,
+    "mouth_start_px": [
+      549.0,
+      472.0
+    ],
+    "mouth_end_px": [
+      367.0,
+      487.0
+    ],
+    "mouth_center_px": [
+      458.0,
+      479.5
+    ],
+    "bottom_px": [
+      470.0,
+      597.710843373494
+    ],
+    "deepest_contour_point_px": [
+      469.0,
+      602.0
+    ],
+    "depth_px": 122.98828125,
+    "depth_ratio": 0.19555852940534735,
+    "second_depth_px": 42.64453125,
+    "mouth_width_px": 182.61708572858126
+  },
+  "robot_connected": false,
+  "free_chain_end_verified": false
+}
