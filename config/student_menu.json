@@ -1,7 +1,7 @@
 {
   "station": "data/orientation_tests/20261010_094517_994548/station_20261010_100335_354623",
-  "markers": "data/workspace_calibrations/robot1_zone1_20261010_151931_901803/robot_mapping.json",
-  "capture": "data/orientation_tests/20261010_160723_267034",
+  "markers": "data/workspace_calibrations/robot1_zone1_20261013_134014_372597/robot_mapping.json",
+  "capture": "data/orientation_tests/20261013_141042_884411",
   "robot_ip": "192.168.1.185",
   "camera": 0
 }

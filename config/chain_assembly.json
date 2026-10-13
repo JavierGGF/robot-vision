@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "robot_ip": "192.168.1.185",
+  "pick_reference": "data/orientation_tests/20261013_141042_884411",
+  "coupling_reference": "data/zone2_chain_tests/20261013_152227_815452",
+  "zone2_markers": "data/workspace_calibrations/robot1_zone2_20261013_151241_356980/robot_mapping.json",
+  "transfer_z_mm": 190.0,
+  "retreat_xy_mm": [-120.758293, -155.405518],
+  "max_insertion_rotation_deg": 10.0,
+  "max_approach_rotation_deg": 20.0,
+  "max_opening_shift_mm": 100.0,
+  "preview_match_shift_mm": 3.0,
+  "preview_match_rotation_deg": 2.0,
+  "coupling_speed_mm_s": 1.0,
+  "local_fit_record": "data/chain_extension_trials/20261013_171000_491423/operator_fitted_pose_20261013_171634_273054.json",
+  "apply_local_fit_automatically": false
+}

@@ -1,0 +1,245 @@
+{
+  "status": "completed",
+  "blocks": [
+    {
+      "name": "release_and_retreat",
+      "status": "completed",
+      "execution": [
+        {
+          "operation": "gripper",
+          "label": "release_before_retreat",
+          "opening": true,
+          "delay_s": 1.0,
+          "status": "completed",
+          "started_at": "2026-10-13T17:17:19.960915-05:00",
+          "return_code": 0,
+          "retention_verified": false,
+          "duration_seconds": 3.3202648329897784,
+          "finished_at": "2026-10-13T17:17:23.281207-05:00"
+        },
+        {
+          "operation": "move",
+          "label": "clear_zone2",
+          "pose": [
+            255.627686,
+            -141.457581,
+            190.0,
+            -177.747264,
+            -5.680819,
+            9.750997
+          ],
+          "speed": 10.0,
+          "mvacc": 20.0,
+          "status": "completed",
+          "started_at": "2026-10-13T17:17:23.283648-05:00",
+          "return_code": 0,
+          "actual_pose": [
+            255.627686,
+            -141.457581,
+            189.999924,
+            -177.747264,
+            -5.680819,
+            9.750997
+          ],
+          "actual_joints": [
+            -29.921059,
+            32.287318,
+            59.708447,
+            192.827399,
+            -25.033557,
+            -231.353482
+          ],
+          "duration_seconds": 12.43098404200282,
+          "finished_at": "2026-10-13T17:17:35.714712-05:00"
+        },
+        {
+          "operation": "move",
+          "label": "travel_to_retreat",
+          "pose": [
+            -120.758293,
+            -155.405518,
+            190.0,
+            -177.747264,
+            -5.680819,
+            9.750997
+          ],
+          "speed": 20.0,
+          "mvacc": 20.0,
+          "status": "completed",
+          "started_at": "2026-10-13T17:17:35.716173-05:00",
+          "return_code": 0,
+          "actual_pose": [
+            -120.758224,
+            -155.405518,
+            190.0,
+            -177.747264,
+            -5.680819,
+            9.750997
+          ],
+          "actual_joints": [
+            -128.308856,
+            13.071516,
+            32.008001,
+            184.929004,
+            -24.59788,
+            -322.779785
+          ],
+          "duration_seconds": 22.42022787500173,
+          "finished_at": "2026-10-13T17:17:58.136546-05:00"
+        }
+      ],
+      "plan": [
+        {
+          "operation": "gripper",
+          "label": "release_before_retreat",
+          "opening": true,
+          "delay_s": 1.0
+        },
+        {
+          "operation": "move",
+          "label": "clear_zone2",
+          "pose": [
+            255.627686,
+            -141.457581,
+            190.0,
+            -177.747264,
+            -5.680819,
+            9.750997
+          ],
+          "speed": 10.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "travel_to_retreat",
+          "pose": [
+            -120.758293,
+            -155.405518,
+            190.0,
+            -177.747264,
+            -5.680819,
+            9.750997
+          ],
+          "speed": 20.0,
+          "mvacc": 20.0
+        }
+      ],
+      "started_at": "2026-10-13T17:17:16.743087-05:00",
+      "route_check": {
+        "status": "passed",
+        "method": "actual_joint_seed_cartesian_chain",
+        "start_pose": [
+          255.627686,
+          -141.457581,
+          86.578529,
+          -177.747264,
+          -5.680819,
+          9.750997
+        ],
+        "start_joints": [
+          -29.890635,
+          55.257138,
+          64.901622,
+          219.26751,
+          -8.633271,
+          -258.620887
+        ],
+        "segments": [
+          {
+            "label": "clear_zone2",
+            "pose": [
+              255.627686,
+              -141.457581,
+              190.0,
+              -177.747264,
+              -5.680819,
+              9.750997
+            ],
+            "speed": 10.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "travel_to_retreat",
+            "pose": [
+              -120.758293,
+              -155.405518,
+              190.0,
+              -177.747264,
+              -5.680819,
+              9.750997
+            ],
+            "speed": 20.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 2
+          }
+        ],
+        "external_obstacles_checked": false,
+        "seed": {
+          "return_code": 0,
+          "planner_result": 0
+        }
+      },
+      "route_check_seconds": 2.7941915830015205,
+      "duration_seconds": 41.39420145901386,
+      "finished_at": "2026-10-13T17:17:58.137554-05:00",
+      "latest_path_check": {
+        "status": "passed",
+        "method": "actual_joint_seed_cartesian_chain",
+        "start_pose": [
+          255.627686,
+          -141.457581,
+          189.999924,
+          -177.747264,
+          -5.680819,
+          9.750997
+        ],
+        "start_joints": [
+          -29.921059,
+          32.287318,
+          59.708447,
+          192.827399,
+          -25.033557,
+          -231.353482
+        ],
+        "segments": [
+          {
+            "label": "linear_movement",
+            "pose": [
+              -120.758293,
+              -155.405518,
+              190.0,
+              -177.747264,
+              -5.680819,
+              9.750997
+            ],
+            "speed": 20.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 2
+          }
+        ],
+        "external_obstacles_checked": false,
+        "seed": {
+          "return_code": 0,
+          "planner_result": 0
+        }
+      }
+    }
+  ],
+  "physical_opening_verified": false,
+  "external_obstacles_checked": false,
+  "final_pose": [
+    -120.758293,
+    -155.405518,
+    190.0,
+    -177.747264,
+    -5.680819,
+    9.750997
+  ]
+}

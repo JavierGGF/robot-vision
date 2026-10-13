@@ -1,0 +1,191 @@
+{
+  "status": "completed",
+  "blocks": [
+    {
+      "name": "release_and_retreat",
+      "status": "completed",
+      "execution": [
+        {
+          "operation": "gripper",
+          "label": "release_before_retreat",
+          "opening": true,
+          "delay_s": 1.0,
+          "status": "completed",
+          "started_at": "2026-10-13T16:36:48.889277-05:00",
+          "return_code": 0,
+          "retention_verified": false,
+          "duration_seconds": 3.3218149580061436,
+          "finished_at": "2026-10-13T16:36:52.211121-05:00"
+        }
+      ],
+      "plan": [
+        {
+          "operation": "gripper",
+          "label": "release_before_retreat",
+          "opening": true,
+          "delay_s": 1.0
+        },
+        {
+          "operation": "move",
+          "label": "clear_zone2",
+          "pose": [
+            -120.758224,
+            -155.405502,
+            190.0,
+            -177.747264,
+            -5.680819,
+            -1.52
+          ],
+          "speed": 10.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "travel_to_retreat",
+          "pose": [
+            -120.758293,
+            -155.405518,
+            190.0,
+            -177.747264,
+            -5.680819,
+            -1.52
+          ],
+          "speed": 20.0,
+          "mvacc": 20.0
+        }
+      ],
+      "started_at": "2026-10-13T16:36:48.022472-05:00",
+      "route_check": {
+        "status": "passed",
+        "method": "actual_joint_seed_cartesian_chain",
+        "start_pose": [
+          -120.758224,
+          -155.405502,
+          190.0,
+          -177.747264,
+          -5.680819,
+          -1.52
+        ],
+        "start_joints": [
+          -128.624155,
+          12.940195,
+          31.843275,
+          187.592169,
+          -24.169881,
+          -314.312958
+        ],
+        "segments": [
+          {
+            "label": "clear_zone2",
+            "pose": [
+              -120.758224,
+              -155.405502,
+              190.0,
+              -177.747264,
+              -5.680819,
+              -1.52
+            ],
+            "speed": 10.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "travel_to_retreat",
+            "pose": [
+              -120.758293,
+              -155.405518,
+              190.0,
+              -177.747264,
+              -5.680819,
+              -1.52
+            ],
+            "speed": 20.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 2
+          }
+        ],
+        "external_obstacles_checked": false,
+        "seed": {
+          "return_code": 0,
+          "planner_result": 0
+        }
+      },
+      "route_check_seconds": 0.44340770796407014,
+      "duration_seconds": 4.190810625033919,
+      "finished_at": "2026-10-13T16:36:52.213318-05:00",
+      "latest_path_check": {
+        "status": "passed",
+        "method": "actual_joint_seed_cartesian_chain",
+        "start_pose": [
+          -120.758224,
+          -155.405502,
+          190.0,
+          -177.747264,
+          -5.680819,
+          -1.52
+        ],
+        "start_joints": [
+          -128.624155,
+          12.940195,
+          31.843275,
+          187.592169,
+          -24.169881,
+          -314.312958
+        ],
+        "segments": [
+          {
+            "label": "clear_zone2",
+            "pose": [
+              -120.758224,
+              -155.405502,
+              190.0,
+              -177.747264,
+              -5.680819,
+              -1.52
+            ],
+            "speed": 10.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "travel_to_retreat",
+            "pose": [
+              -120.758293,
+              -155.405518,
+              190.0,
+              -177.747264,
+              -5.680819,
+              -1.52
+            ],
+            "speed": 20.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 2
+          }
+        ],
+        "external_obstacles_checked": false,
+        "seed": {
+          "return_code": 0,
+          "planner_result": 0
+        }
+      }
+    }
+  ],
+  "physical_opening_verified": false,
+  "external_obstacles_checked": false,
+  "final_pose": [
+    -120.758293,
+    -155.405518,
+    190.0,
+    -177.747264,
+    -5.680819,
+    -1.52
+  ]
+}

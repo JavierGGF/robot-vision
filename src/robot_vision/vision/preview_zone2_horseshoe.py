@@ -23,7 +23,7 @@ def project_path(value):
 
 
 def analyze(frame, calibration):
-    """Measure one isolated part; reject unsuitable opening geometry."""
+    """Measure the dominant contour; reject ambiguous opening geometry."""
     detection, rectified, mask = process_frame(frame, calibration)
     geometry = horseshoe_direction(mask)
     mouth = np.asarray(geometry['mouth_center_px'])
@@ -37,7 +37,7 @@ def analyze(frame, calibration):
     cv2.drawMarker(rectified, tuple(np.rint(mouth).astype(int)),
                    (255, 0, 255), cv2.MARKER_CROSS, 24, 3)
     labels = [
-        'ZONE 2 - ONE ISOLATED PART',
+        'ZONE 2 - OPENING CANDIDATE',
         f"Opening direction: {geometry['direction_image_deg']:.1f} deg",
         f'Opening mouth: X={mouth[0]/4:.2f} Y={mouth[1]/4:.2f} mm',
         'Sheet coordinates - NOT a robot target',
@@ -84,3 +84,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

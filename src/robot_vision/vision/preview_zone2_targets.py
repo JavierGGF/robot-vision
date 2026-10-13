@@ -1,6 +1,6 @@
 """Preview locally anchored coupling targets; no robot access or file writes.
 
-Only translations at the taught destination orientation are supported.
+Translation and planar rotation are estimated about the detected opening.
 Pointer geometry, height effects and physical target accuracy remain unvalidated.
 """
 import argparse
@@ -12,6 +12,7 @@ import cv2
 import numpy as np
 
 from robot_vision.vision.preview_zone2_horseshoe import analyze
+from robot_vision.vision.chain_targets import matching_calibration, displacement_matrix, opening_targets
 
 ROOT = Path(__file__).resolve().parents[3]
 
@@ -25,35 +26,14 @@ def read(path):
     return json.loads(path.read_text(encoding='utf-8'))
 
 
-def matching_calibration(a, b):
-    return all(a.get(key) == b.get(key) for key in (
-        'zone', 'camera_index', 'image_width_px', 'image_height_px',
-        'reference_points_mm', 'pixel_to_mm_matrix'))
-
-
 def pose_record(folder, prefix):
-    paths = sorted(folder.glob(prefix + '*.json'))
+    paths = sorted(folder.glob(prefix.rstrip('_') + '*.json'))
     if len(paths) != 1:
         raise ValueError(f'Expected exactly one {prefix} record; found {len(paths)}')
     pose = np.asarray(read(paths[0])['pose_mm_deg'], dtype=float)
     if pose.shape != (6,) or not np.isfinite(pose).all():
         raise ValueError('Invalid taught pose')
     return pose
-
-
-def displacement_matrix(record, calibration):
-    if record.get('zone') != 2 or not matching_calibration(record['camera_calibration'], calibration):
-        raise ValueError('Marker record and reference calibration do not match')
-    by_name = {item['marker']: item['pose_mm_deg'] for item in record['markers']}
-    robot = np.asarray([by_name[key][:2] for key in ('TL', 'TR', 'BL')])
-    sheet = np.asarray(calibration['reference_points_mm'])[[0, 1, 3]]
-    matrix = np.column_stack((robot[1]-robot[0], robot[2]-robot[0])) @ np.linalg.inv(
-        np.column_stack((sheet[1]-sheet[0], sheet[2]-sheet[0])))
-    scales = np.linalg.norm(matrix, axis=0)
-    cosine = np.dot(matrix[:, 0], matrix[:, 1]) / np.prod(scales)
-    if not np.isfinite(matrix).all() or np.linalg.cond(matrix) > 10 or np.any(abs(scales-1) > .1) or abs(cosine) > .15:
-        raise ValueError('Invalid marker geometry')
-    return matrix
 
 
 def main():
@@ -75,7 +55,8 @@ def main():
         if not matches:
             raise FileNotFoundError('No matching Zone 2 marker record')
         marker_path = matches[-1]
-    matrix = displacement_matrix(read(marker_path), calibration)
+    markers = read(marker_path)
+    displacement_matrix(markers, calibration)
     entry = pose_record(reference, 'taught_coupling_entry_')
     final = pose_record(reference, 'taught_coupling_final_')
     frames = [cv2.imread(str(folder/'camera.png')) for folder in (reference, current)]
@@ -83,20 +64,15 @@ def main():
         raise FileNotFoundError('Reference or current camera.png missing')
     _, _, ref_geometry = analyze(frames[0], calibration)
     preview, _, geometry = analyze(frames[1], calibration)
-    delta_sheet = (np.asarray(geometry['mouth_center_px']) - ref_geometry['mouth_center_px']) / 4.
-    delta_robot = matrix @ delta_sheet
-    rotation = (geometry['direction_image_deg'] - ref_geometry['direction_image_deg'] + 180) % 360 - 180
-    if abs(rotation) > 2 or np.linalg.norm(delta_sheet) > 30:
-        raise ValueError(f'Local preview rejected: rotation={rotation:.2f} deg; shift={np.linalg.norm(delta_sheet):.2f} mm. Supports <=2 deg and <=30 mm only.')
+    targets, diagnostics = opening_targets(ref_geometry, geometry, markers, calibration,
+                                           {'ENTRY': entry, 'FINAL': final})
     lines = ['ESTIMATED TARGETS - NO ROBOT CONNECTION',
-             f'Shift robot XY: {delta_robot[0]:.2f}, {delta_robot[1]:.2f} mm',
-             f'Opening rotation change: {rotation:.2f} deg (orientation kept)',
+             f"Opening shift: {diagnostics['opening_shift_sheet_mm']:.2f} mm",
+             f"Sheet rotation: {diagnostics['rotation_sheet_deg']:.2f} deg; robot yaw: {diagnostics['yaw_change_deg']:.2f} deg",
              'Pointer / height accuracy NOT physically validated']
-    for label, pose in [('ENTRY', entry), ('FINAL', final)]:
-        target = pose.copy()
-        target[:2] += delta_robot
+    for label, target in targets.items():
         lines.append(label + ' XYZ: ' + ', '.join(f'{v:.2f}' for v in target[:3]))
-        print(label, target.tolist())
+        print(label, target)
     print('MARKERS:', marker_path)
     print('Reference must correspond to the fixed part used when teaching the poses.')
     panel = np.zeros((190, 1000, 3), dtype=np.uint8)
@@ -122,3 +98,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

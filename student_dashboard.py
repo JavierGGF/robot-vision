@@ -63,10 +63,11 @@ def render(folder=None, record=None):
     vision = record.get("vision",[])
     latest = vision[-1] if vision else {}
     index = latest.get("link_index",1)
-    analysis = latest.get("analysis",{})
+    analysis = record.get("pick_analysis", latest.get("analysis",{}))
+    is_chain = "destination_geometry" in record or "pick_analysis" in record
     frame = detection = geometry = None
     if folder:
-        image_dir = folder / f"link{index}_vision"
+        image_dir = folder / "zone1" if is_chain else folder / f"link{index}_vision"
         frame = load_image(image_dir/"camera.png")
         detection = load_image(image_dir/"detection.png")
         geometry = load_image(image_dir/"current_geometry.png")
@@ -84,10 +85,13 @@ def render(folder=None, record=None):
                 round(calibration["reference_height_mm"]*2)))
         except (KeyError,ValueError,cv2.error):
             zone2 = None
-    picture(canvas,zone2,670,190,550,330)
+    opening_preview = load_image(folder / "zone2/opening_preview.png") if folder and is_chain else None
+    picture(canvas,opening_preview if opening_preview is not None else zone2,670,190,550,330)
     text(canvas,"Last shared-camera snapshot (not live)",670,548,.52)
-    text(canvas,"Zone 2 angle is taught; not measured by vision",670,574,.48)
-    text(canvas,f"PART {index} / 2" if vision else "PART -- / 2",45,548,.7)
+    opening_angle = record.get("destination_geometry",{}).get("direction_image_deg")
+    text(canvas,f"Measured opening direction: {opening_angle:.1f} deg" if isinstance(opening_angle,(int,float))
+         else "Zone 2 angle is taught; not measured by vision",670,574,.48)
+    text(canvas,"NEXT LINK / EXISTING CHAIN" if is_chain else (f"PART {index} / 2" if vision else "PART -- / 2"),45,548,.7)
     rotation = analysis.get("rotation_change_deg")
     text(canvas,f"Rotation vs reference: {rotation:+.1f} deg" if isinstance(rotation,(int,float))
          else "Rotation: waiting for measurement",45,574,.52)
@@ -96,13 +100,13 @@ def render(folder=None, record=None):
     text(canvas,"GRASP TARGET",35,622,.65,accent)
     text(canvas,f"X {xy[0]:.1f} mm    Y {xy[1]:.1f} mm" if xy else "X --    Y --",35,652,.65)
     text(canvas,f"Tool yaw: {tool[2]:.1f} deg" if tool else "Tool yaw: --",35,682,.65)
-    destination = record.get("transfer_profile",{}).get("placement_pose_mm_deg",[])
+    destination = record.get("targets",{}).get("final", record.get("transfer_profile",{}).get("placement_pose_mm_deg",[]))
     # Prefer the actual taught coupling destination once its plan exists.
     for block in blocks:
         for step in block.get("plan",[]):
             if step.get("label") == "couple_second_link":
                 destination = step.get("pose",destination)
-    text(canvas,"TAUGHT ASSEMBLY TARGET",665,622,.65,accent)
+    text(canvas,"VISION-ESTIMATED ASSEMBLY TARGET" if is_chain else "TAUGHT ASSEMBLY TARGET",665,622,.6,accent)
     if len(destination)==6:
         text(canvas,f"X {destination[0]:.1f}  Y {destination[1]:.1f}  Z {destination[2]:.1f} mm",665,652,.6)
         text(canvas,f"Tool yaw: {destination[5]:.1f} deg",665,682,.65)
@@ -110,9 +114,25 @@ def render(folder=None, record=None):
         text(canvas,"Waiting for station data...",665,652,.6)
     labels = ("Startup","First link","Second pick","Coupling")
     names = ("startup_retreat","first_link_cycle","second_link_approach","second_link_coupling_and_retreat")
-    for i,(label,name) in enumerate(zip(labels,names)):
-        block = next((b for b in blocks if b.get("name")==name),{})
-        state = block.get("status","pending")
+    states = []
+    if is_chain:
+        labels = ("Pick", "Transfer", "Coupling", "Release / retreat")
+        groups = ({'descend_to_pick','close_gripper','lift_after_pick'},
+                  {'travel_to_zone2','set_zone2_orientation','above_entry'},
+                  {'coupling_entry','couple_next_link'},
+                  {'release_in_zone2','clear_zone2','travel_to_retreat'})
+        actions = [action for block in blocks for action in block.get('execution', [])]
+        for group in groups:
+            relevant = [action for action in actions if action.get('label') in group]
+            completed = {action['label'] for action in relevant if action.get('status') == 'completed'}
+            if any(action.get('status') == 'failed' for action in relevant): state = 'failed'
+            elif completed == group: state = 'completed'
+            elif relevant: state = 'started'
+            else: state = 'pending'
+            states.append(state)
+    else:
+        states = [next((b for b in blocks if b.get('name') == name), {}).get('status','pending') for name in names]
+    for i,(label,state) in enumerate(zip(labels,states)):
         color = accent if state=="completed" else ((65,180,245) if state=="started" else (100,105,110))
         cv2.rectangle(canvas,(30+i*310,713),(320+i*310,757),color,-1)
         text(canvas,label+": "+state,40+i*310,742,.5,(15,20,25))
@@ -131,15 +151,15 @@ def main():
         window.lift()
         window.focus_force()
     window.after(100, foreground)
-    window.after(1000, foreground)
+    window.after(650, lambda:window.attributes('-topmost', False))
     window.bind('<Escape>', lambda event:window.attributes('-topmost', False))
     label = tk.Label(window,bg="#101419")
     label.pack()
     info = {"photo":None,"folder":None,"record":{}}
     def refresh():
         try:
-            root = ROOT/"data/robot1_two_link_trials"
-            candidates = [p for p in root.glob("*/results.json") if p.stat().st_mtime >= started-2]
+            roots = [ROOT/"data"/name for name in ("robot1_two_link_trials", "chain_extension_trials", "release_retreat_trials")]
+            candidates = [p for root in roots for p in root.glob("*/results.json") if p.stat().st_mtime >= started-2]
             if candidates:
                 path = max(candidates,key=lambda p:p.stat().st_mtime)
                 record = read_json(path)
@@ -160,3 +180,4 @@ def main():
 
 if __name__=="__main__":
     main()
+

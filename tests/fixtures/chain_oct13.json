@@ -1,0 +1,344 @@
+{
+  "source_commit": "0b035b1",
+  "calibration": {
+    "calibration_version": 2,
+    "zone": 2,
+    "camera_index": 0,
+    "image_width_px": 1920,
+    "image_height_px": 1080,
+    "reference_width_mm": 215.9,
+    "reference_height_mm": 279.4,
+    "reference_type": "printed_fiducial_centers",
+    "point_order": [
+      "TL",
+      "TR",
+      "BR",
+      "BL"
+    ],
+    "image_points": [
+      [
+        1337.5999755859375,
+        600
+      ],
+      [
+        904,
+        622.4000244140625
+      ],
+      [
+        872,
+        80
+      ],
+      [
+        1280,
+        78.4000015258789
+      ]
+    ],
+    "reference_points_mm": [
+      [
+        21,
+        21
+      ],
+      [
+        194.89999389648438,
+        21
+      ],
+      [
+        194.89999389648438,
+        258.3999938964844
+      ],
+      [
+        21,
+        258.3999938964844
+      ]
+    ],
+    "pixel_to_mm_matrix": [
+      [
+        -0.4015418613307648,
+        0.046736875310665026,
+        529.311536282806
+      ],
+      [
+        -0.022874233424980926,
+        -0.4069167637597626,
+        294.9979098831012
+      ],
+      [
+        -0.0000818643993020779,
+        0.0001230806154840862,
+        1
+      ]
+    ],
+    "created_at": "2026-10-13T13:37:58.486619",
+    "source_image": "data/workspace_calibrations/zone2_20261013_133758_444203/camera.png"
+  },
+  "markers": {
+    "status": "directions_calibrated_absolute_anchor_pending",
+    "created_at": "2026-10-13T15:12:41.357404-05:00",
+    "robot_ip": "192.168.1.185",
+    "robot_name": "Robot 1",
+    "zone": 2,
+    "camera_calibration": {
+      "calibration_version": 2,
+      "zone": 2,
+      "camera_index": 0,
+      "image_width_px": 1920,
+      "image_height_px": 1080,
+      "reference_width_mm": 215.9,
+      "reference_height_mm": 279.4,
+      "reference_type": "printed_fiducial_centers",
+      "point_order": [
+        "TL",
+        "TR",
+        "BR",
+        "BL"
+      ],
+      "image_points": [
+        [
+          1337.5999755859375,
+          600
+        ],
+        [
+          904,
+          622.4000244140625
+        ],
+        [
+          872,
+          80
+        ],
+        [
+          1280,
+          78.4000015258789
+        ]
+      ],
+      "reference_points_mm": [
+        [
+          21,
+          21
+        ],
+        [
+          194.89999389648438,
+          21
+        ],
+        [
+          194.89999389648438,
+          258.3999938964844
+        ],
+        [
+          21,
+          258.3999938964844
+        ]
+      ],
+      "pixel_to_mm_matrix": [
+        [
+          -0.4015418613307648,
+          0.046736875310665026,
+          529.311536282806
+        ],
+        [
+          -0.022874233424980926,
+          -0.4069167637597626,
+          294.9979098831012
+        ],
+        [
+          -0.0000818643993020779,
+          0.0001230806154840862,
+          1
+        ]
+      ],
+      "created_at": "2026-10-13T13:37:58.486619",
+      "source_image": "data/workspace_calibrations/zone2_20261013_133758_444203/camera.png"
+    },
+    "marker_order": [
+      "TL",
+      "TR",
+      "BL"
+    ],
+    "markers": [
+      {
+        "marker": "TL",
+        "pose_mm_deg": [
+          355.832916,
+          -215.101074,
+          87.053085,
+          -179.490259,
+          -3.238243,
+          -92.010433
+        ],
+        "captured_at": "2026-10-13T15:14:01.385601-05:00"
+      },
+      {
+        "marker": "TR",
+        "pose_mm_deg": [
+          182.090134,
+          -215.101089,
+          87.053055,
+          -179.490259,
+          -3.238243,
+          -92.010433
+        ],
+        "captured_at": "2026-10-13T15:14:26.376771-05:00"
+      },
+      {
+        "marker": "BL",
+        "pose_mm_deg": [
+          356.927765,
+          23.793295,
+          88.053055,
+          -179.490259,
+          -3.2383,
+          -92.010433
+        ],
+        "captured_at": "2026-10-13T15:15:30.135774-05:00"
+      }
+    ],
+    "alignment": "pointer_cross_center_over_printed_fiducial_center",
+    "cycle_profiles_updated": false,
+    "pointer_poses": [],
+    "mapping": {
+      "sheet_to_robot_linear_matrix": [
+        [
+          -0.9990959637607696,
+          0.004611832469032865
+        ],
+        [
+          -8.625647220826957e-8,
+          1.006294756284481
+        ]
+      ],
+      "provisional_sheet_origin_robot_xy_mm": [
+        376.7170827571265,
+        -236.23326207058818
+      ],
+      "absolute_origin_validated": false,
+      "axis_scales": [
+        0.9990959637607733,
+        1.0063053242055144
+      ],
+      "axis_cosine": -0.00458302190803821,
+      "tool_to_pointer_offset_corrected": false,
+      "physical_robot_execution_enabled": false
+    }
+  },
+  "poses": {
+    "entry": [
+      247.665787,
+      -87.55764,
+      115.135689,
+      -177.747264,
+      -5.680819,
+      -5.535918
+    ],
+    "final": [
+      247.665848,
+      -87.557358,
+      86.205742,
+      -177.747264,
+      -5.680819,
+      -5.535918
+    ]
+  },
+  "reference_geometry": {
+    "direction_image_deg": 280.10394772520846,
+    "mouth_start_px": [
+      573,
+      699
+    ],
+    "mouth_end_px": [
+      389,
+      675
+    ],
+    "mouth_center_px": [
+      481,
+      687
+    ],
+    "bottom_px": [
+      461,
+      799.2345679012345
+    ],
+    "deepest_contour_point_px": [
+      458,
+      803
+    ],
+    "depth_px": 118,
+    "depth_ratio": 0.2554944611088433,
+    "second_depth_px": 29.46484375,
+    "mouth_width_px": 185.55861607589122
+  },
+  "current_geometry": {
+    "direction_image_deg": 264.70249340797363,
+    "mouth_start_px": [
+      549,
+      472
+    ],
+    "mouth_end_px": [
+      369,
+      487
+    ],
+    "mouth_center_px": [
+      459,
+      479.5
+    ],
+    "bottom_px": [
+      470,
+      598.1325301204819
+    ],
+    "deepest_contour_point_px": [
+      474,
+      602
+    ],
+    "depth_px": 123.32421875,
+    "depth_ratio": 0.19609268959365478,
+    "second_depth_px": 42.68359375,
+    "mouth_width_px": 180.62391868188442
+  },
+  "expected_targets": {
+    "entry": [
+      259.62756919817036,
+      -141.45736286876382,
+      115.135689,
+      -177.747264,
+      -5.680819,
+      9.750972778419765
+    ],
+    "final": [
+      259.6275537228229,
+      -141.45707502433214,
+      86.205742,
+      -177.747264,
+      -5.680819,
+      9.750972778419765
+    ]
+  },
+  "expected_correction": {
+    "created_at": "2026-10-13T17:16:34.272981-05:00",
+    "planned_final_pose_mm_deg": [
+      259.6275537228229,
+      -141.45707502433214,
+      86.205742,
+      -177.747264,
+      -5.680819,
+      9.750972778419765
+    ],
+    "fitted_pose_mm_deg": [
+      255.627686,
+      -141.457581,
+      86.578529,
+      -177.747264,
+      -5.680819,
+      9.750997
+    ],
+    "correction_xyz_mm": [
+      -3.99986772282287,
+      -0.0005059756678633676,
+      0.3727870000000024
+    ],
+    "correction_orientation_deg": [
+      0,
+      0,
+      0.0000242215802472856
+    ],
+    "physical_fit_verified_by_operator": true,
+    "scope": "current_destination_and_current_grasp_only",
+    "automatic_corrected_insertion_validated": false
+  }
+}

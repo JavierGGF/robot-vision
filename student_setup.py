@@ -535,10 +535,10 @@ def live_analysis():
     from robot_vision.robot.test_rotated_pick import calculate_rotated_target
     from robot_vision.robot.test_pick_motion import show_preview
     import cv2
-    folder = resolve(STATE['station']); record = read(folder / 'station.json')
+    folder = resolve(STATE['capture'])
     pick = read(folder / 'pick_profile.json')
     calibration = read('data/calibration/zone1_camera.json')
-    reference = read(resolve(record['capture_directory']) / 'reference_camera.json')
+    reference = read(folder / 'reference_camera.json')
     print('ONE part in Zone 1; keep robot outside image. Camera preview only, no robot connection.')
     frame = capture_frame(calibration)
     output = PROJECT_ROOT / 'data/student_vision_previews' / datetime.now().strftime('%Y%m%d_%H%M%S_%f')
@@ -587,7 +587,7 @@ def calibration_tools_menu():
         '1': camera_preview,
         '2': lambda: run_module('robot_vision.vision.calibrate_zone','--camera',str(STATE['camera']),'--zone','1'),
         '3': lambda: run_module('robot_vision.vision.calibrate_zone','--camera',str(STATE['camera']),'--zone','2'),
-        '4': lambda: run_module('robot_vision.robot.capture_workspace_robot','--ip',STATE['robot_ip'],'--zone','1','--record-only'),
+        '4': lambda: run_module('robot_vision.robot.capture_workspace_robot','--ip',STATE['robot_ip'],'--zone','1'),
         '5': select_markers,
         '6': capture_reference,
         '7': lambda: capture_pose('grasp'),
@@ -637,7 +637,7 @@ def calibration_menu():
     grasp_steps = [
         ('Capture part reference image', capture_reference),
         ('Save taught grasp pose and height', lambda:capture_pose('grasp')),
-        ('Click grasp point in saved image', lambda:run_module('robot_vision.vision.select_grasp','--capture',STATE['capture'],'--markers',STATE['markers'])),
+        ('Click grasp point in saved image', teach_grasp_reference),
         ('Link grasp reference to selected station', link_reference),
     ]
     station_steps = [
@@ -646,14 +646,15 @@ def calibration_menu():
         ('Select saved station', select_station),
     ]
     sheet_steps = [
-        ('Capture TL / TR / BL robot positions', lambda:run_module('robot_vision.robot.capture_workspace_robot','--ip',STATE['robot_ip'],'--zone','1','--record-only')),
+        ('Capture TL / TR / BL robot positions', lambda:run_module('robot_vision.robot.capture_workspace_robot','--ip',STATE['robot_ip'],'--zone','1')),
         ('Select captured marker record', select_markers),
     ]
     setup_submenu('CALIBRATION AND SETUP', [
         ('Select camera and robot connection', settings_menu),
         ('Calibrate camera / sheet - Zone 1', lambda:run_module('robot_vision.vision.calibrate_zone','--camera',str(STATE['camera']),'--zone','1')),
         ('Calibrate camera / sheet - Zone 2', lambda:run_module('robot_vision.vision.calibrate_zone','--camera',str(STATE['camera']),'--zone','2')),
-        ('Calibrate sheet to Robot 1', lambda:setup_submenu('SHEET TO ROBOT 1',sheet_steps)),
+        ('Calibrate Zone 1 sheet to Robot 1', lambda:setup_submenu('SHEET TO ROBOT 1',sheet_steps)),
+        ('Calibrate Zone 2 sheet to Robot 1', lambda:run_module('robot_vision.robot.capture_workspace_robot','--ip',STATE['robot_ip'],'--zone','2')),
         ('Teach grasp point and height', lambda:setup_submenu('GRASP REFERENCE',grasp_steps)),
         ('Teach placement and coupling', lambda:setup_submenu('ASSEMBLY STATION',station_steps)),
         ('Capture empty Zone 1', capture_empty),
@@ -669,6 +670,10 @@ def execute_cycle(second=False, preview=False):
     args = ['--station', STATE['station']]
     if second: args.append('--second-only')
     if not preview:
+        active_pick = read(folder / 'pick_profile.json')
+        linked_capture = active_pick.get('local_reference', {}).get('capture_directory')
+        if linked_capture and resolve(linked_capture) != resolve(STATE['capture']):
+            raise ValueError('Saved station uses a different grasp reference. Link the current grasp in Calibration and setup and validate its taught destination before running.')
         config = read('config/simulation.json')
         if config.get('mode') == 'simulation': raise ValueError('Configure the physical robot connection first')
         runner_empty_folder()
@@ -685,11 +690,13 @@ def execute_cycle(second=False, preview=False):
 
 
 def records_menu():
-    folders = sorted((PROJECT_ROOT / 'data/robot1_two_link_trials').glob('*/results.json'))[::-1][:20]
+    folders = [path for name in ('robot1_two_link_trials','chain_extension_trials','chain_destination_previews','release_retreat_trials')
+               for path in (PROJECT_ROOT / 'data' / name).glob('*/results.json')]
+    folders = sorted(folders, key=lambda path:path.stat().st_mtime, reverse=True)[:20]
     heading('RECENT PHYSICAL / PREVIEW TRIALS')
     for i, path in enumerate(folders, 1):
         record = read(path)
-        print(f"{i}. {path.parent.name} | {record.get('status','unknown')} | {record.get('mode','')}")
+        print(f"{i}. {path.parent.parent.name}/{path.parent.name} | {record.get('status','unknown')} | {record.get('mode','')}")
     answer = input('Number to inspect; 0 returns: ').strip()
     if answer == '0': return
     if not answer.isdigit() or not 1 <= int(answer) <= len(folders): raise ValueError('Invalid trial')
@@ -701,6 +708,8 @@ def records_menu():
     print('Vision captures:', len(record.get('vision',[])))
     print('Blocks:', [(b.get('name'),b.get('status')) for b in record.get('blocks',[])])
     if (folder / 'operator_validation.json').exists(): print('Operator record:', read(folder / 'operator_validation.json'))
+    for fit in sorted(folder.glob('operator_fitted_pose_*.json')):
+        print('Local operator fit:', read(fit))
     if input('Open folder? [y/N]: ').strip().lower() == 'y':
         if sys.platform == 'darwin': subprocess.run(['open',str(folder)],check=False)
         elif os.name == 'nt': os.startfile(str(folder))
@@ -708,11 +717,44 @@ def records_menu():
     pause()
 
 
+def teach_grasp_reference():
+    # Select a complete record matching the active camera snapshot, not a stale date.
+    calibration = read('data/calibration/zone1_camera.json')
+    candidates = []
+    for path in (PROJECT_ROOT / 'data/workspace_calibrations').glob('robot1_zone1_*/robot_mapping.json'):
+        record = read(path)
+        names = {item.get('marker') for item in record.get('markers', [])}
+        if record.get('camera_calibration') == calibration and names == {'TL', 'TR', 'BL'}:
+            candidates.append(path)
+    if not candidates:
+        raise ValueError('No complete Zone 1 marker record matches the active camera. Capture TL/TR/BL in Calibration and setup.')
+    markers = max(candidates, key=lambda path:read(path).get('created_at', ''))
+    STATE['markers'] = relative(markers)
+    remember()
+    print('MATCHING MARKERS:', markers)
+    run_module('robot_vision.vision.select_grasp','--capture',STATE['capture'],'--markers',STATE['markers'])
+
+
+def chain_menu():
+    heading('VISION-GUIDED CHAIN EXTENSION - EXPERIMENTAL')
+    print('Starts with a supported chain in Zone 2 and ONE loose link in Zone 1.')
+    print('A complete three-link run from an empty Zone 2 is not implemented here.')
+    print('The local -4 mm fit correction is recorded evidence, not a global calibration.')
+    setup_submenu('CHAIN EXTENSION', [
+        ('View current Zone 2 opening (camera only)', lambda:run_module('robot_vision.vision.preview_chain_destination')),
+        ('Pick and stop above entry - PHYSICAL MOVEMENT', lambda:run_module('robot_vision.robot.chain_assembly','--execute','--approach-only')),
+        ('Pick, couple, release and retreat - PHYSICAL MOVEMENT', lambda:run_module('robot_vision.robot.chain_assembly','--execute')),
+        ('Save current MANUALLY FITTED pose (read robot only)', lambda:run_module('robot_vision.robot.record_fitted_pose','--fitted')),
+        ('Release supported part and retreat - PHYSICAL MOVEMENT', lambda:run_module('robot_vision.robot.release_and_retreat','--execute')),
+        ('View chain trial records', records_menu),
+    ])
+
+
 def real_menu():
-    actions = {'1':lambda:execute_cycle(), '2':live_analysis, '3':calibration_menu}
+    actions = {'1':lambda:execute_cycle(), '2':live_analysis, '3':calibration_menu, '4':chain_menu}
     while True:
         heading('REAL ROBOT')
-        print('1. Start two-piece assembly\n2. View camera and detected part\n3. Calibration and setup\n0. Back')
+        print('1. Saved two-piece assembly station\n2. View camera and detected part\n3. Calibration and setup\n4. Vision-guided chain extension (experimental)\n0. Back')
         answer = input('Select: ').strip()
         if answer == '0': return
         try:
@@ -756,7 +798,8 @@ def show_workflow():
     print('4. Pick and place first link at the taught Zone 2 pose.')
     print('5. Capture next part, then approach and couple at taught entry/final poses.')
     print('6. Open gripper and retreat; stop before picking if Zone 1 matches the empty baseline.')
-    print('The current demo assembles TWO links. It does not locate the Zone 2 joint by vision.')
+    print('The saved-station demo uses taught targets. Chain extension estimates the free Zone 2 opening by vision.')
+    print('Three links were physically fitted with operator correction; the full three-link automatic cycle remains unvalidated.')
     print('Automatic commands do not prove grip retention or successful physical assembly.')
     print('After relocation: recalibrate camera/sheet and reteach changed station poses; do not edit source code.')
     pause()
@@ -799,3 +842,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
