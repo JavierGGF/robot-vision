@@ -1,0 +1,1055 @@
+{
+  "status": "failed",
+  "mode": "physical_execution",
+  "started_at": "2026-10-14T15:22:59.161779-05:00",
+  "requested_links": 3,
+  "completed_links": 0,
+  "blocks": [
+    {
+      "name": "startup_retreat",
+      "status": "completed",
+      "execution": [
+        {
+          "operation": "move",
+          "label": "startup_vertical_clearance",
+          "pose": [
+            -110.43335,
+            -166.363632,
+            190.0,
+            179.460867,
+            -16.343908,
+            -32.804183
+          ],
+          "speed": 20.0,
+          "mvacc": 20.0,
+          "status": "completed",
+          "started_at": "2026-10-14T15:23:10.351495-05:00",
+          "return_code": 0,
+          "actual_pose": [
+            -110.43335,
+            -166.363632,
+            189.999924,
+            179.460867,
+            -16.343908,
+            -32.804183
+          ],
+          "actual_joints": [
+            -128.313956,
+            13.048541,
+            31.23468,
+            221.72189,
+            -24.887339,
+            -314.578066
+          ],
+          "duration_seconds": 2.0189536249963567,
+          "finished_at": "2026-10-14T15:23:12.370451-05:00"
+        },
+        {
+          "operation": "move",
+          "label": "startup_travel_to_retreat",
+          "pose": [
+            -120.758293,
+            -155.405518,
+            190.0,
+            179.460867,
+            -16.343908,
+            -32.804183
+          ],
+          "speed": 20.0,
+          "mvacc": 20.0,
+          "status": "completed",
+          "started_at": "2026-10-14T15:23:12.372739-05:00",
+          "return_code": 0,
+          "actual_pose": [
+            -120.758247,
+            -155.405563,
+            190.0,
+            179.460867,
+            -16.343908,
+            -32.804183
+          ],
+          "actual_joints": [
+            -132.632969,
+            12.667925,
+            30.747436,
+            219.906015,
+            -25.678593,
+            -317.111399
+          ],
+          "duration_seconds": 3.0395749590243213,
+          "finished_at": "2026-10-14T15:23:15.412314-05:00"
+        },
+        {
+          "operation": "move",
+          "label": "startup_orient_at_retreat",
+          "pose": [
+            -120.758293,
+            -155.405518,
+            190.0,
+            -162.156109,
+            -1.636769,
+            162.777653
+          ],
+          "speed": 10.0,
+          "mvacc": 20.0,
+          "status": "completed",
+          "started_at": "2026-10-14T15:23:15.414525-05:00",
+          "return_code": 0,
+          "actual_pose": [
+            -120.758293,
+            -155.405518,
+            190.0,
+            -162.156109,
+            -1.636769,
+            162.777653
+          ],
+          "actual_joints": [
+            -129.368542,
+            8.268239,
+            25.186308,
+            274.699057,
+            -5.153412,
+            -206.369199
+          ],
+          "duration_seconds": 47.39395599998534,
+          "finished_at": "2026-10-14T15:24:02.808489-05:00"
+        },
+        {
+          "operation": "move",
+          "label": "startup_finish_retreat",
+          "pose": [
+            -120.758293,
+            -155.405518,
+            180.0,
+            -162.156109,
+            -1.636769,
+            162.777653
+          ],
+          "speed": 10.0,
+          "mvacc": 20.0,
+          "status": "completed",
+          "started_at": "2026-10-14T15:24:02.811074-05:00",
+          "return_code": 0,
+          "actual_pose": [
+            -120.758293,
+            -155.405533,
+            180.000076,
+            -162.156109,
+            -1.636769,
+            162.777653
+          ],
+          "actual_joints": [
+            -129.477117,
+            11.450218,
+            25.145571,
+            304.997409,
+            -6.32299,
+            -236.92097
+          ],
+          "duration_seconds": 2.505083583004307,
+          "finished_at": "2026-10-14T15:24:05.316159-05:00"
+        }
+      ],
+      "plan": [
+        {
+          "operation": "move",
+          "label": "startup_vertical_clearance",
+          "pose": [
+            -110.43335,
+            -166.363632,
+            190.0,
+            179.460867,
+            -16.343908,
+            -32.804183
+          ],
+          "speed": 20.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "startup_travel_to_retreat",
+          "pose": [
+            -120.758293,
+            -155.405518,
+            190.0,
+            179.460867,
+            -16.343908,
+            -32.804183
+          ],
+          "speed": 20.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "startup_orient_at_retreat",
+          "pose": [
+            -120.758293,
+            -155.405518,
+            190.0,
+            -162.156109,
+            -1.636769,
+            162.777653
+          ],
+          "speed": 10.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "startup_finish_retreat",
+          "pose": [
+            -120.758293,
+            -155.405518,
+            180.0,
+            -162.156109,
+            -1.636769,
+            162.777653
+          ],
+          "speed": 10.0,
+          "mvacc": 20.0
+        }
+      ],
+      "started_at": "2026-10-14T15:23:07.779178-05:00",
+      "route_check": {
+        "status": "passed",
+        "method": "actual_joint_seed_cartesian_chain",
+        "start_pose": [
+          -110.43335,
+          -166.363632,
+          185.660736,
+          179.460867,
+          -16.343908,
+          -32.804183
+        ],
+        "start_joints": [
+          -128.315617,
+          14.270144,
+          31.203683,
+          223.593743,
+          -23.968486,
+          -316.636989
+        ],
+        "segments": [
+          {
+            "label": "startup_vertical_clearance",
+            "pose": [
+              -110.43335,
+              -166.363632,
+              190.0,
+              179.460867,
+              -16.343908,
+              -32.804183
+            ],
+            "speed": 20.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "startup_travel_to_retreat",
+            "pose": [
+              -120.758293,
+              -155.405518,
+              190.0,
+              179.460867,
+              -16.343908,
+              -32.804183
+            ],
+            "speed": 20.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "startup_orient_at_retreat",
+            "pose": [
+              -120.758293,
+              -155.405518,
+              190.0,
+              -162.156109,
+              -1.636769,
+              162.777653
+            ],
+            "speed": 10.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "startup_finish_retreat",
+            "pose": [
+              -120.758293,
+              -155.405518,
+              180.0,
+              -162.156109,
+              -1.636769,
+              162.777653
+            ],
+            "speed": 10.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 2
+          }
+        ],
+        "external_obstacles_checked": false,
+        "seed": {
+          "return_code": 0,
+          "planner_result": 0
+        }
+      },
+      "route_check_seconds": 2.150826875003986,
+      "duration_seconds": 57.53786595800193,
+      "finished_at": "2026-10-14T15:24:05.317042-05:00",
+      "latest_path_check": {
+        "status": "passed",
+        "method": "actual_joint_seed_cartesian_chain",
+        "start_pose": [
+          -120.758293,
+          -155.405518,
+          190.0,
+          -162.156109,
+          -1.636769,
+          162.777653
+        ],
+        "start_joints": [
+          -129.368542,
+          8.268239,
+          25.186308,
+          274.699057,
+          -5.153412,
+          -206.369199
+        ],
+        "segments": [
+          {
+            "label": "linear_movement",
+            "pose": [
+              -120.758293,
+              -155.405518,
+              180.0,
+              -162.156109,
+              -1.636769,
+              162.777653
+            ],
+            "speed": 10.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 2
+          }
+        ],
+        "external_obstacles_checked": false,
+        "seed": {
+          "return_code": 0,
+          "planner_result": 0
+        }
+      }
+    },
+    {
+      "name": "first_link_cycle",
+      "status": "failed",
+      "execution": [],
+      "plan": [
+        {
+          "operation": "move",
+          "label": "raise",
+          "pose": [
+            -120.758293,
+            -155.405518,
+            190.0,
+            -162.156109,
+            -1.636769,
+            162.777653
+          ],
+          "speed": 20.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "gripper",
+          "label": "open_before_pick",
+          "opening": true,
+          "delay_s": 1.0
+        },
+        {
+          "operation": "move",
+          "label": "above_zone1_and_orient",
+          "pose": [
+            52.795636972019295,
+            -277.5012743855088,
+            190.0,
+            -179.188196,
+            -5.540101,
+            -0.5274918607934751
+          ],
+          "speed": 20.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "descend_to_pick",
+          "pose": [
+            52.795636972019295,
+            -277.5012743855088,
+            86.32589,
+            -179.188196,
+            -5.540101,
+            -0.5274918607934751
+          ],
+          "speed": 5.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "gripper",
+          "label": "close_gripper",
+          "opening": false,
+          "delay_s": 1.5
+        },
+        {
+          "operation": "move",
+          "label": "lift_after_pick",
+          "pose": [
+            52.795636972019295,
+            -277.5012743855088,
+            126.32589,
+            -179.188196,
+            -5.540101,
+            -0.5274918607934751
+          ],
+          "speed": 10.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "raise_for_transfer",
+          "pose": [
+            52.795636972019295,
+            -277.5012743855088,
+            190.0,
+            -179.188196,
+            -5.540101,
+            -0.5274918607934751
+          ],
+          "speed": 30.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "travel_to_zone2_with_pick_orientation",
+          "pose": [
+            287.443787,
+            -117.917976,
+            190.0,
+            -179.188196,
+            -5.540101,
+            -0.5274918607934751
+          ],
+          "speed": 20.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "intermediate_orientation",
+          "pose": [
+            287.443787,
+            -117.917976,
+            190.0,
+            176.662025,
+            -1.448323,
+            -88.02211593039674
+          ],
+          "speed": 15.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "set_zone2_orientation",
+          "pose": [
+            287.443787,
+            -117.917976,
+            190.0,
+            176.662025,
+            -1.448323,
+            -175.51674
+          ],
+          "speed": 15.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "descend_to_place",
+          "pose": [
+            287.443787,
+            -117.917976,
+            88.753395,
+            176.662025,
+            -1.448323,
+            -175.51674
+          ],
+          "speed": 5.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "gripper",
+          "label": "release_in_zone2",
+          "opening": true,
+          "delay_s": 1.0
+        },
+        {
+          "operation": "move",
+          "label": "clear_zone2",
+          "pose": [
+            287.443787,
+            -117.917976,
+            190.0,
+            176.662025,
+            -1.448323,
+            -175.51674
+          ],
+          "speed": 30.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "travel_to_retreat",
+          "pose": [
+            -120.758293,
+            -155.405518,
+            190.0,
+            176.662025,
+            -1.448323,
+            -175.51674
+          ],
+          "speed": 20.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "orient_at_retreat",
+          "pose": [
+            -120.758293,
+            -155.405518,
+            190.0,
+            -162.156109,
+            -1.636769,
+            162.777653
+          ],
+          "speed": 10.0,
+          "mvacc": 20.0
+        },
+        {
+          "operation": "move",
+          "label": "finish_retreat",
+          "pose": [
+            -120.758293,
+            -155.405518,
+            180.0,
+            -162.156109,
+            -1.636769,
+            162.777653
+          ],
+          "speed": 30.0,
+          "mvacc": 20.0
+        }
+      ],
+      "started_at": "2026-10-14T15:24:08.130178-05:00",
+      "error": "Route rejected at above_zone1_and_orient: 1, 23",
+      "stop_return_code": 0,
+      "duration_seconds": 1.8910020419862121,
+      "finished_at": "2026-10-14T15:24:10.021180-05:00",
+      "latest_path_check": {
+        "status": "failed",
+        "method": "actual_joint_seed_cartesian_chain",
+        "start_pose": [
+          -120.758293,
+          -155.405533,
+          180.000076,
+          -162.156109,
+          -1.636769,
+          162.777653
+        ],
+        "start_joints": [
+          -129.477117,
+          11.450218,
+          25.145571,
+          304.997409,
+          -6.32299,
+          -236.92097
+        ],
+        "segments": [
+          {
+            "label": "raise",
+            "pose": [
+              -120.758293,
+              -155.405518,
+              190.0,
+              -162.156109,
+              -1.636769,
+              162.777653
+            ],
+            "speed": 20.0,
+            "mvacc": 20.0,
+            "return_code": 0,
+            "planner_result": 0,
+            "check_type": 3
+          },
+          {
+            "label": "above_zone1_and_orient",
+            "pose": [
+              52.795636972019295,
+              -277.5012743855088,
+              190.0,
+              -179.188196,
+              -5.540101,
+              -0.5274918607934751
+            ],
+            "speed": 20.0,
+            "mvacc": 20.0,
+            "return_code": 1,
+            "planner_result": 23,
+            "check_type": 3
+          }
+        ],
+        "external_obstacles_checked": false,
+        "seed": {
+          "return_code": 0,
+          "planner_result": 0
+        },
+        "error": "Route rejected at above_zone1_and_orient: 1, 23"
+      }
+    }
+  ],
+  "vision": [
+    {
+      "link_index": 1,
+      "source": "fresh_live_capture",
+      "analysis": {
+        "mapping": "rotated_grasp_with_preserved_taught_anchor",
+        "detection": {
+          "status": "ok",
+          "message": "Object detected",
+          "reference_x_mm": 101.51087947189097,
+          "reference_y_mm": 116.46383304940375
+        },
+        "reference_detection": {
+          "status": "ok",
+          "message": "Object detected",
+          "reference_x_mm": 126.51600508501065,
+          "reference_y_mm": 125.58433177601393
+        },
+        "current_geometry": {
+          "direction_image_deg": 266.0248256402301,
+          "mouth_start_px": [
+            490.0,
+            237.0
+          ],
+          "mouth_end_px": [
+            293.0,
+            256.0
+          ],
+          "mouth_center_px": [
+            391.5,
+            246.5
+          ],
+          "bottom_px": [
+            398.958904109589,
+            353.83561643835617
+          ],
+          "deepest_contour_point_px": [
+            396.0,
+            358.0
+          ],
+          "depth_px": 111.41796875,
+          "depth_ratio": 0.2493720480251553,
+          "second_depth_px": 30.80859375,
+          "mouth_width_px": 197.91412279066898
+        },
+        "reference_geometry": {
+          "direction_image_deg": 232.37566778256172,
+          "mouth_start_px": [
+            377.0,
+            219.0
+          ],
+          "mouth_end_px": [
+            227.0,
+            324.0
+          ],
+          "mouth_center_px": [
+            302.0,
+            271.5
+          ],
+          "bottom_px": [
+            370.9848484848485,
+            361.0
+          ],
+          "deepest_contour_point_px": [
+            375.0,
+            364.0
+          ],
+          "depth_px": 117.640625,
+          "depth_ratio": 0.2461068627748932,
+          "second_depth_px": 30.171875,
+          "mouth_width_px": 183.09833423600554
+        },
+        "current_center_sheet_mm": [
+          101.51087947189097,
+          116.46383304940375
+        ],
+        "reference_center_sheet_mm": [
+          126.51600508501065,
+          125.58433177601393
+        ],
+        "reference_grasp_sheet_mm": [
+          130.4333333333333,
+          125.96133333333347
+        ],
+        "reference_grasp_offset_sheet_mm": [
+          3.9173282483226615,
+          0.3770015573195451
+        ],
+        "grasp_sheet_mm": [
+          104.56294545100992,
+          118.94828148687084
+        ],
+        "rotation_change_deg": -33.6491578576684,
+        "robot_yaw_change_deg": -34.12195586079346,
+        "target_xy_mm": [
+          52.795636972019295,
+          -277.5012743855088
+        ],
+        "target_orientation_deg": [
+          -179.188196,
+          -5.540101,
+          -0.5274918607934751
+        ],
+        "translation_distance_mm": 27.08624203637069,
+        "tool_rotation_enabled": true
+      }
+    }
+  ],
+  "physical_assembly_verified": false,
+  "external_obstacles_checked": false,
+  "pointer_offset_corrected": false,
+  "global_fit_correction_applied": false,
+  "settings": {
+    "schema_version": 1,
+    "robot_ip": "192.168.1.185",
+    "pick_reference": "data/orientation_tests/20261013_141042_884411",
+    "coupling_reference": "data/zone2_chain_tests/20261013_152227_815452",
+    "zone2_markers": "data/workspace_calibrations/robot1_zone2_20261013_151241_356980/robot_mapping.json",
+    "transfer_z_mm": 190.0,
+    "retreat_xy_mm": [
+      -120.758293,
+      -155.405518
+    ],
+    "max_insertion_rotation_deg": 10.0,
+    "max_approach_rotation_deg": 20.0,
+    "max_opening_shift_mm": 100.0,
+    "preview_match_shift_mm": 3.0,
+    "preview_match_rotation_deg": 2.0,
+    "coupling_speed_mm_s": 1.0,
+    "local_fit_record": "data/chain_extension_trials/20261013_171000_491423/operator_fitted_pose_20261013_171634_273054.json",
+    "apply_local_fit_automatically": false
+  },
+  "pick_profile": {
+    "profile_version": 1,
+    "robot_name": "Robot 1",
+    "part_name": "Part 1",
+    "motion": {
+      "tool_orientation_deg": [
+        -179.188196,
+        -5.540101,
+        33.594464
+      ],
+      "pick_z_mm": 86.32589,
+      "approach_z_mm": 200.0,
+      "lift_mm": 40.0,
+      "travel_speed_mm_s": 30.0,
+      "orientation_speed_deg_s": 15.0,
+      "descent_speed_mm_s": 5.0,
+      "lift_speed_mm_s": 10.0,
+      "travel_acceleration": 20.0,
+      "descent_acceleration": 20.0,
+      "open_delay_s": 1.0,
+      "close_delay_s": 1.5
+    },
+    "local_reference": {
+      "capture_directory": "data/orientation_tests/20261013_141042_884411",
+      "marker_record": "data/orientation_tests/20261013_141042_884411/marker_pairs.json",
+      "taught_robot_xy_mm": [
+        26.503803,
+        -270.989441
+      ],
+      "max_translation_mm": 50.0,
+      "max_rotation_change_deg": 10.0
+    },
+    "validation": {
+      "mapping": "approximate_pointer_offset_uncorrected",
+      "approach_and_cycle_observed": false,
+      "part_retention_verified": false
+    }
+  },
+  "transfer_profile": {
+    "profile_version": 1,
+    "robot_name": "Robot 1",
+    "destination": "Zone 2",
+    "transfer_strategy": "after_travel_longer_turn",
+    "placement_pose_mm_deg": [
+      287.443787,
+      -117.917976,
+      88.753395,
+      176.662025,
+      -1.448323,
+      -175.51674
+    ],
+    "retreat_pose_mm_deg": [
+      -120.758293,
+      -155.405518,
+      180.0,
+      -162.156109,
+      -1.636769,
+      162.777653
+    ],
+    "motion": {
+      "transfer_z_mm": 190.0,
+      "travel_speed_mm_s": 40.0,
+      "orientation_speed": 15.0,
+      "placement_speed_mm_s": 5.0,
+      "clearance_speed_mm_s": 30.0,
+      "travel_acceleration": 20.0,
+      "placement_acceleration": 20.0,
+      "release_delay_s": 1.0
+    },
+    "source_records": {
+      "current_station": "data/orientation_tests/20261010_094517_994548/station_20261010_100335_354623/station.json"
+    },
+    "validation": {
+      "check_required_before_each_execution": true,
+      "automatic_transfer_path_verified": false,
+      "placement_verified": false,
+      "part_retention_verified": false,
+      "saved_route_check_passed": false
+    }
+  },
+  "calibration": {
+    "calibration_version": 2,
+    "zone": 1,
+    "camera_index": 0,
+    "image_width_px": 1920,
+    "image_height_px": 1080,
+    "reference_width_mm": 215.9,
+    "reference_height_mm": 279.4,
+    "reference_type": "printed_fiducial_centers",
+    "point_order": [
+      "TL",
+      "TR",
+      "BR",
+      "BL"
+    ],
+    "image_points": [
+      [
+        798.4000244140625,
+        1025.5999755859375
+      ],
+      [
+        363.20001220703125,
+        1020.7999877929688
+      ],
+      [
+        371.20001220703125,
+        459.20001220703125
+      ],
+      [
+        768.0,
+        422.3999938964844
+      ]
+    ],
+    "reference_points_mm": [
+      [
+        21.0,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        258.3999938964844
+      ],
+      [
+        21.0,
+        258.3999938964844
+      ]
+    ],
+    "pixel_to_mm_matrix": [
+      [
+        -0.5082711614356307,
+        0.02994157495586992,
+        404.2228468604879
+      ],
+      [
+        0.010427058391018656,
+        -0.4931803843447086,
+        526.6080441745014
+      ],
+      [
+        0.00023536282295957467,
+        0.00019412703616391872,
+        1.0
+      ]
+    ],
+    "created_at": "2026-10-13T13:37:29.771916",
+    "source_image": "data/workspace_calibrations/zone1_20261013_133729_724493/camera.png"
+  },
+  "reference_calibration": {
+    "calibration_version": 2,
+    "zone": 1,
+    "camera_index": 0,
+    "image_width_px": 1920,
+    "image_height_px": 1080,
+    "reference_width_mm": 215.9,
+    "reference_height_mm": 279.4,
+    "reference_type": "printed_fiducial_centers",
+    "point_order": [
+      "TL",
+      "TR",
+      "BR",
+      "BL"
+    ],
+    "image_points": [
+      [
+        798.4000244140625,
+        1025.5999755859375
+      ],
+      [
+        363.20001220703125,
+        1020.7999877929688
+      ],
+      [
+        371.20001220703125,
+        459.20001220703125
+      ],
+      [
+        768.0,
+        422.3999938964844
+      ]
+    ],
+    "reference_points_mm": [
+      [
+        21.0,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        258.3999938964844
+      ],
+      [
+        21.0,
+        258.3999938964844
+      ]
+    ],
+    "pixel_to_mm_matrix": [
+      [
+        -0.5082711614356307,
+        0.02994157495586992,
+        404.2228468604879
+      ],
+      [
+        0.010427058391018656,
+        -0.4931803843447086,
+        526.6080441745014
+      ],
+      [
+        0.00023536282295957467,
+        0.00019412703616391872,
+        1.0
+      ]
+    ],
+    "created_at": "2026-10-13T13:37:29.771916",
+    "source_image": "data/orientation_tests/20261013_141042_884411/camera.png",
+    "reference_capture": "data/orientation_tests/20261013_141042_884411",
+    "purpose": "current_taught_pick_reference"
+  },
+  "zone2_calibration": {
+    "calibration_version": 2,
+    "zone": 2,
+    "camera_index": 0,
+    "image_width_px": 1920,
+    "image_height_px": 1080,
+    "reference_width_mm": 215.9,
+    "reference_height_mm": 279.4,
+    "reference_type": "printed_fiducial_centers",
+    "point_order": [
+      "TL",
+      "TR",
+      "BR",
+      "BL"
+    ],
+    "image_points": [
+      [
+        1337.5999755859375,
+        600.0
+      ],
+      [
+        904.0,
+        622.4000244140625
+      ],
+      [
+        872.0,
+        80.0
+      ],
+      [
+        1280.0,
+        78.4000015258789
+      ]
+    ],
+    "reference_points_mm": [
+      [
+        21.0,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        21.0
+      ],
+      [
+        194.89999389648438,
+        258.3999938964844
+      ],
+      [
+        21.0,
+        258.3999938964844
+      ]
+    ],
+    "pixel_to_mm_matrix": [
+      [
+        -0.4015418613307648,
+        0.046736875310665026,
+        529.311536282806
+      ],
+      [
+        -0.022874233424980926,
+        -0.4069167637597626,
+        294.9979098831012
+      ],
+      [
+        -8.18643993020779e-05,
+        0.0001230806154840862,
+        1.0
+      ]
+    ],
+    "created_at": "2026-10-13T13:37:58.486619",
+    "source_image": "data/workspace_calibrations/zone2_20261013_133758_444203/camera.png"
+  },
+  "error": "Route rejected at above_zone1_and_orient: 1, 23",
+  "stop_return_code": 0,
+  "gripper_shutdown": "preserved_after_failure_or_interruption",
+  "elapsed_seconds": 71.81153195799561,
+  "finished_at": "2026-10-14T15:24:10.973322-05:00"
+}

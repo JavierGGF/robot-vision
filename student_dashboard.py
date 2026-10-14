@@ -86,12 +86,16 @@ def render(folder=None, record=None):
         except (KeyError,ValueError,cv2.error):
             zone2 = None
     opening_preview = load_image(folder / "zone2/opening_preview.png") if folder and is_chain else None
+    if folder and latest.get('zone2_geometry'):
+        opening_preview = load_image(folder / f"link{index}_vision/zone2_opening.png")
     picture(canvas,opening_preview if opening_preview is not None else zone2,670,190,550,330)
     text(canvas,"Last shared-camera snapshot (not live)",670,548,.52)
-    opening_angle = record.get("destination_geometry",{}).get("direction_image_deg")
+    opening_angle = record.get("destination_geometry", latest.get("zone2_geometry", {})).get("direction_image_deg")
     text(canvas,f"Measured opening direction: {opening_angle:.1f} deg" if isinstance(opening_angle,(int,float))
          else "Zone 2 angle is taught; not measured by vision",670,574,.48)
-    text(canvas,"NEXT LINK / EXISTING CHAIN" if is_chain else (f"PART {index} / 2" if vision else "PART -- / 2"),45,548,.7)
+    count = record.get('requested_links', 2)
+    text(canvas,"NEXT LINK / EXISTING CHAIN" if is_chain else
+         (f"PART {index} / {count}" if vision else f"PART -- / {count}"),45,548,.7)
     rotation = analysis.get("rotation_change_deg")
     text(canvas,f"Rotation vs reference: {rotation:+.1f} deg" if isinstance(rotation,(int,float))
          else "Rotation: waiting for measurement",45,574,.52)
@@ -106,7 +110,7 @@ def render(folder=None, record=None):
         for step in block.get("plan",[]):
             if step.get("label") == "couple_second_link":
                 destination = step.get("pose",destination)
-    text(canvas,"VISION-ESTIMATED ASSEMBLY TARGET" if is_chain else "TAUGHT ASSEMBLY TARGET",665,622,.6,accent)
+    text(canvas,"VISION-ESTIMATED ASSEMBLY TARGET" if is_chain or latest.get("zone2_geometry") else "TAUGHT ASSEMBLY TARGET",665,622,.6,accent)
     if len(destination)==6:
         text(canvas,f"X {destination[0]:.1f}  Y {destination[1]:.1f}  Z {destination[2]:.1f} mm",665,652,.6)
         text(canvas,f"Tool yaw: {destination[5]:.1f} deg",665,682,.65)
@@ -114,6 +118,9 @@ def render(folder=None, record=None):
         text(canvas,"Waiting for station data...",665,652,.6)
     labels = ("Startup","First link","Second pick","Coupling")
     names = ("startup_retreat","first_link_cycle","second_link_approach","second_link_coupling_and_retreat")
+    if record.get('requested_links'):
+        labels = ("Startup", "First link", "Second link", "Third link")
+        names = ("startup_retreat", "first_link_cycle", "link2_cycle", "link3_cycle")
     states = []
     if is_chain:
         labels = ("Pick", "Transfer", "Coupling", "Release / retreat")

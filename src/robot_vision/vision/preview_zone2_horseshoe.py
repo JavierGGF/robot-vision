@@ -22,10 +22,48 @@ def project_path(value):
     return path if path.is_absolute() else ROOT / path
 
 
+
+def interior_parts(frame, calibration):
+    """Return complete dark contours inside the fiducials, excluding markers.
+
+    An empty result means no candidate under the current segmentation settings;
+    it does not prove that the physical sheet is empty.
+    """
+    try:
+        _, rectified, mask = process_frame(frame, calibration)
+    except ValueError as error:
+        if str(error) != "No suitable object detected.":
+            raise
+        return [], None, None
+    points = np.asarray(calibration['reference_points_mm'], dtype=float) * 4
+    # Use the calibrated marker-centre rectangle. Marker blobs cross its
+    # boundaries and are excluded; a complete part near the boundary is valid.
+    low = points.min(axis=0)
+    high = points.max(axis=0)
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    candidates = []
+    for contour in contours:
+        x, y, width, height = cv2.boundingRect(contour)
+        if (cv2.contourArea(contour) >= 160 and x > low[0] and y > low[1]
+                and x + width < high[0] and y + height < high[1]):
+            candidates.append(contour)
+    return sorted(candidates, key=cv2.contourArea, reverse=True), rectified, mask
+
+
 def analyze(frame, calibration):
     """Measure the dominant contour; reject ambiguous opening geometry."""
-    detection, rectified, mask = process_frame(frame, calibration)
-    geometry = horseshoe_direction(mask)
+    candidates, rectified, mask = interior_parts(frame, calibration)
+    if not candidates:
+        raise ValueError("No part detected inside Zone 2 fiducials.")
+    if len(candidates) != 1:
+        raise ValueError("Multiple separate objects in Zone 2; free opening is ambiguous.")
+    selected = np.zeros_like(mask)
+    cv2.drawContours(selected, candidates, -1, 255, -1)
+    geometry = horseshoe_direction(selected)
+    moments = cv2.moments(candidates[0])
+    detection = {'status': 'ok', 'message': 'Interior part detected',
+                 'reference_x_mm': float(moments['m10'] / moments['m00'] / 4),
+                 'reference_y_mm': float(moments['m01'] / moments['m00'] / 4)}
     mouth = np.asarray(geometry['mouth_center_px'])
     bottom = np.asarray(geometry['bottom_px'])
     for first, second, color in (

@@ -18,7 +18,7 @@ import numpy as np
 
 # Pixels darker than this value are considered part of the object.
 # This can be adjusted later for each station if needed.
-DARK_THRESHOLD = 90
+DARK_THRESHOLD = 110
 
 
 def load_calibration():

@@ -352,6 +352,256 @@ def move_to_start_retreat(controller, transfer, expected, record, output):
     return run_block(controller, 'startup_retreat', plan, current, record, output)
 
 
+
+def first_chain_plan(expected, analysis, runtime, transfer, settings):
+    """Keep the taught first-placement pose and the proven retreat sequence."""
+    runtime = copy.deepcopy(runtime)
+    runtime['motion']['approach_z_mm'] = settings['transfer_z_mm']
+    runtime['motion']['travel_speed_mm_s'] = 20.0
+    transfer = copy.deepcopy(transfer)
+    transfer['motion']['transfer_z_mm'] = settings['transfer_z_mm']
+    transfer['motion']['travel_speed_mm_s'] = 20.0
+    original = build_cycle_plan(expected, analysis['target_xy_mm'], runtime, transfer)
+    adjusted = []
+    for index, item in enumerate(original):
+        step = copy.deepcopy(item)
+        if step['label'] == 'intermediate_orientation':
+            previous = next(v for v in reversed(original[:index]) if v['operation'] == 'move')
+            following = next(v for v in original[index+1:] if v['operation'] == 'move')
+            turn = (following['pose'][5] - previous['pose'][5] + 180) % 360 - 180
+            step['pose'][5] = (previous['pose'][5] + turn / 2 + 180) % 360 - 180
+        if step['operation'] == 'move' and step['pose'][2] > settings['transfer_z_mm'] + .5:
+            raise ValueError('First-link plan exceeds configured clearance')
+        if step['operation'] == 'move':
+            step['pose'][2] = min(step['pose'][2], settings['transfer_z_mm'])
+        if step['label'] == 'approach_retreat_and_orient':
+            previous = next(v for v in reversed(adjusted) if v['operation'] == 'move')
+            orientation = copy.deepcopy(step)
+            orientation.update(label='orient_at_retreat', speed=10.0)
+            step.update(label='travel_to_retreat', speed=20.0)
+            step['pose'][3:] = previous['pose'][3:]
+            adjusted.extend([step, orientation])
+        else:
+            adjusted.append(step)
+    return adjusted
+
+
+def require_chain_target_range(diagnostic, settings):
+    """Reject an unvalidated insertion before issuing a pick or gripper command."""
+    angle = diagnostic['rotation_sheet_deg']
+    distance = diagnostic['opening_shift_sheet_mm']
+    if (not math.isfinite(angle) or not math.isfinite(distance)
+            or abs(angle) > settings['max_insertion_rotation_deg']
+            or distance > settings['max_opening_shift_mm']):
+        raise ValueError(
+            f'Insertion blocked before pick: opening rotation={angle:.2f} deg, '
+            f'shift={distance:.2f} mm; allowed '
+            f'{settings["max_insertion_rotation_deg"]:.1f} deg / '
+            f'{settings["max_opening_shift_mm"]:.1f} mm. '
+            'No global fitted-pose correction is applied.')
+
+
+
+def load_chain_zone2_calibration(value):
+    """Validate Zone 2 without invoking the Zone 1-only pick loader."""
+    import numpy as np
+    calibration = json.loads(project_path(value).read_text(encoding='utf-8'))
+    if calibration.get('zone') != 2:
+        raise ValueError('Chain destination requires the Zone 2 calibration')
+    if calibration.get('reference_type') != 'printed_fiducial_centers':
+        raise ValueError('A fiducial-center calibration is required')
+    if calibration.get('point_order') != ['TL', 'TR', 'BR', 'BL']:
+        raise ValueError('Invalid physical fiducial order')
+    matrix = np.asarray(calibration['pixel_to_mm_matrix'], dtype=float)
+    points = np.asarray(calibration['reference_points_mm'], dtype=float)
+    if (matrix.shape != (3, 3) or not np.isfinite(matrix).all()
+            or abs(np.linalg.det(matrix)) < 1e-12):
+        raise ValueError('Invalid Zone 2 sheet transformation')
+    if points.shape != (4, 2) or not np.isfinite(points).all():
+        raise ValueError('Invalid Zone 2 fiducial coordinates')
+    for key in ('image_width_px', 'image_height_px', 'reference_width_mm', 'reference_height_mm'):
+        value = calibration[key]
+        if isinstance(value, bool) or not math.isfinite(float(value)) or float(value) <= 0:
+            raise ValueError('Invalid Zone 2 image or sheet dimensions')
+    return calibration
+
+
+def run_vision_chain(args):
+    """Run the existing first placement, then inspect each newly exposed opening.
+
+    This is an experimental integration of existing operations. The camera does
+    not verify grip retention, physical contact, or successful assembly.
+    """
+    from robot_vision.robot.chain_settings import load_settings, resolve
+    from robot_vision.robot.chain_assembly import assembly_plan
+    from robot_vision.vision.preview_zone2_horseshoe import analyze, interior_parts
+    from robot_vision.vision.chain_targets import (
+        matching_calibration, displacement_matrix, opening_targets,
+    )
+
+    def read(path):
+        return json.loads(Path(path).read_text(encoding='utf-8'))
+
+    output = PROJECT_ROOT / 'data/robot1_two_link_trials' / datetime.now().strftime('%Y%m%d_%H%M%S_%f')
+    output.mkdir(parents=True)
+    record = {'status': 'started', 'mode': 'physical_execution' if args.execute else 'camera_preview',
+              'started_at': datetime.now().astimezone().isoformat(),
+              'requested_links': args.links, 'completed_links': 0, 'blocks': [], 'vision': [],
+              'physical_assembly_verified': False, 'external_obstacles_checked': False,
+              'pointer_offset_corrected': False, 'global_fit_correction_applied': False}
+    controller = None
+    exit_code = 0
+    released_and_parked = False
+    started = time.monotonic()
+    try:
+        settings = load_settings(args.chain_config)
+        record['settings'] = settings
+        pick_folder = resolve(settings['pick_reference'])
+        destination = resolve(settings['coupling_reference'])
+        pick = load_pick_profile(pick_folder / 'pick_profile.json')
+        reference = load_sheet_calibration(pick_folder / 'reference_camera.json')
+        transfer = load_transfer_profile(project_path(args.station) / 'transfer_profile.json')
+        transfer['motion']['transfer_z_mm'] = settings['transfer_z_mm']
+        cal1 = load_sheet_calibration('data/calibration/zone1_camera.json')
+        cal2 = load_chain_zone2_calibration('data/calibration/zone2_camera.json')
+        if any(cal1[key] != cal2[key] for key in ('camera_index', 'image_width_px', 'image_height_px')):
+            raise ValueError('Both zones must use the same camera and resolution')
+        if not matching_calibration(cal2, read(destination / 'calibration.json')):
+            raise ValueError('Zone 2 reference and current camera calibration differ')
+        markers = read(resolve(settings['zone2_markers']))
+        displacement_matrix(markers, cal2)
+        reference_frame = cv2.imread(str(destination / 'camera.png'))
+        if reference_frame is None:
+            raise FileNotFoundError(destination / 'camera.png')
+        _, _, reference_geometry = analyze(reference_frame, cal2)
+        poses = {name: read(destination / f'taught_coupling_{name}.json')['pose_mm_deg']
+                 for name in ('entry', 'final')}
+        # Validate saved poses without altering the user's station or calibration.
+        opening_targets(reference_geometry, reference_geometry, markers, cal2, poses)
+        record.update(pick_profile=pick, transfer_profile=transfer, calibration=cal1,
+                      reference_calibration=reference, zone2_calibration=cal2)
+        save_record(output, record)
+        if args.execute:
+            print('EXPERIMENTAL CHAIN RUN: taught first placement, then vision-based coupling.')
+            print('Start with EMPTY Zone 2, EMPTY gripper, and ONE loose link in Zone 1.')
+            print('No OPEN/HELD prompts. Feed each next link only while the robot is parked.')
+            print('The previous 4 mm local error is NOT corrected automatically.')
+            confirm('Verify current setup, supported chain, empty gripper and clear startup paths.', 'VERIFIED')
+        initial = capture_frame(cal1)
+        save_images(output, {'initial_camera.png': initial})
+        if interior_parts(initial, cal2)[0]:
+            raise ValueError('Start-from-first requires empty Zone 2. Existing-chain extension remains a separate menu activity.')
+        if args.execute:
+            controller = PhysicalCouplingController()
+            if controller.robot_ip != settings['robot_ip']:
+                raise ValueError('Controller IP and chain settings differ')
+            controller.connect()
+            controller.wait_stationary()
+            expected = controller.get_pose()
+            if expected[2] > settings['transfer_z_mm'] + .5:
+                raise ValueError('Current pose is above configured clearance; startup route needs inspection')
+            expected = move_to_start_retreat(controller, transfer, expected, record, output)
+            released_and_parked = True
+        else:
+            expected = list(transfer['retreat_pose_mm_deg'])
+            print('CAMERA PREVIEW ONLY: first placement plan; no robot connection.')
+        for index in range(1, args.links + 1):
+            if index > 1:
+                if not args.execute:
+                    record['status'] = 'first_plan_preview_completed_future_scene_required'
+                    print('Later targets require fresh images after physical placement; no invented chain scene.')
+                    break
+                print(f'Robot parked. Load ONE loose link for link {index}; keep the chain supported.')
+                if input('Press ENTER when clear, or Q to end this run: ').strip().lower() == 'q':
+                    record['status'] = 'stopped_by_operator_at_feed'
+                    break
+            if controller:
+                controller.wait_stationary()
+                check_pose(controller.get_pose(), expected)
+            directory = output / f'link{index}_vision'
+            directory.mkdir()
+            frame = capture_frame(cal1)
+            save_images(directory, {'camera.png': frame})
+            candidates, _, _ = interior_parts(frame, cal1)
+            if not candidates:
+                record.update(status='stopped_no_pick_candidate', stopped_before_link_index=index)
+                print('ZONE 1: no interior pick candidate. No pick issued.')
+                break
+            if len(candidates) != 1:
+                raise ValueError('Zone 1 requires ONE separated interior part; no pick issued')
+            item = {'link_index': index, 'source': 'fresh_live_capture', 'analysis': {}}
+            record['vision'].append(item)
+            if index == 1:
+                if interior_parts(frame, cal2)[0]:
+                    raise ValueError('Zone 2 changed after startup; no pick issued')
+            else:
+                preview, _, geometry = analyze(frame, cal2)
+                save_images(directory, {'zone2_opening.png': preview})
+                targets, diagnostic = opening_targets(reference_geometry, geometry, markers, cal2, poses)
+                item.update(zone2_geometry=geometry, targets=targets, destination_diagnostics=diagnostic)
+                record['targets'] = targets
+                save_record(output, record)
+                require_chain_target_range(diagnostic, settings)
+                print(f'Link {index} opening: {diagnostic["rotation_sheet_deg"]:.2f} deg; '
+                      f'shift {diagnostic["opening_shift_sheet_mm"]:.2f} mm')
+            analysis, runtime = inspect_image(frame, cal1, reference, pick, directory, 'fresh_live_capture')
+            item['analysis'] = analysis
+            if index == 1:
+                plan = first_chain_plan(expected, analysis, runtime, transfer, settings)
+                name = 'first_link_cycle'
+                record.pop('targets', None)
+            else:
+                plan = assembly_plan(expected, analysis['target_xy_mm'], runtime,
+                                     targets['entry'], targets['final'], settings)
+                name = f'link{index}_cycle'
+            save_record(output, record)
+            for step in plan:
+                print(step['label'], step.get('pose', 'gripper operation'))
+            if args.execute:
+                released_and_parked = False
+                expected = run_block(controller, name, plan, expected, record, output, contact=index > 1)
+                released_and_parked = True
+                record['completed_links'] = index  # Motion count, not physical fit verification.
+            else:
+                record['blocks'].append({'name': name, 'status': 'preview_only', 'plan': plan})
+            save_record(output, record)
+        else:
+            record['status'] = ('physical_motion_completed_assembly_not_verified' if args.execute
+                                else 'first_plan_preview_completed_future_scene_required')
+    except (Exception, KeyboardInterrupt) as error:
+        exit_code = 130 if isinstance(error, KeyboardInterrupt) else 1
+        record.update(status='failed', error=str(error) or 'Interrupted')
+        if controller is not None and controller.arm is not None:
+            try:
+                record['stop_return_code'] = controller.arm.set_state(4)
+            except Exception as stop_error:
+                record['stop_error'] = str(stop_error)
+        print('Stopped:', record['error'])
+    finally:
+        if controller is not None:
+            try:
+                if released_and_parked and record['status'] != 'failed':
+                    record['gripper_shutdown_return_code'] = controller.stop_gripper_after_completion()
+                else:
+                    record['gripper_shutdown'] = 'preserved_after_failure_or_interruption'
+            except Exception as error:
+                record['gripper_shutdown_error'] = str(error)
+                exit_code = 1
+                print('Gripper drive stop failed:', error)
+            finally:
+                try:
+                    controller.disconnect()
+                except Exception as error:
+                    record['disconnect_error'] = str(error)
+                    exit_code = 1
+                    print('Disconnect failed:', error)
+        record['elapsed_seconds'] = time.monotonic() - started
+        record['finished_at'] = datetime.now().astimezone().isoformat()
+        save_record(output, record)
+        print('Saved:', output)
+    return exit_code
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--execute', action='store_true', help='Physical Robot 1; live capture and operator pauses.')
@@ -367,7 +617,15 @@ def main(argv=None):
     parser.add_argument('--station', type=Path, help='Current station directory with taught poses and profiles.')
     parser.add_argument('--reference-calibration', default='data/calibration/zone1_reference_camera.json')
     parser.add_argument('--second-only', action='store_true')
+    parser.add_argument('--chain-config', help='Use current references for first placement and visual chain extension')
+    parser.add_argument('--links', type=int, choices=(1, 2, 3), default=2)
     args = parser.parse_args(argv)
+    if args.chain_config:
+        if not args.station or args.second_only or args.first_image or args.second_image:
+            parser.error('Chain mode requires --station and fresh camera images; no --second-only')
+        return run_vision_chain(args)
+    if args.links != 2:
+        parser.error('--links requires --chain-config')
     station = None
     if args.station:
         folder = project_path(args.station)

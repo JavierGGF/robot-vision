@@ -665,26 +665,27 @@ def calibration_menu():
 
 def execute_cycle(second=False, preview=False):
     folder = resolve(STATE['station'])
-    for name in ('station.json','pick_profile.json','transfer_profile.json','coupling.json'):
-        read(folder / name)
-    args = ['--station', STATE['station']]
-    if second: args.append('--second-only')
-    if not preview:
-        active_pick = read(folder / 'pick_profile.json')
-        linked_capture = active_pick.get('local_reference', {}).get('capture_directory')
-        if linked_capture and resolve(linked_capture) != resolve(STATE['capture']):
-            raise ValueError('Saved station uses a different grasp reference. Link the current grasp in Calibration and setup and validate its taught destination before running.')
+    if preview or second:
+        args = ['--station', STATE['station']]
+        if second: args.append('--second-only')
+        if not preview: args.append('--execute')
+    else:
+        settings = read('config/chain_assembly.json')
+        if resolve(settings['pick_reference']) != resolve(STATE['capture']):
+            raise ValueError('Menu grasp and chain configuration differ; select the same validated grasp reference first.')
         config = read('config/simulation.json')
-        if config.get('mode') == 'simulation': raise ValueError('Configure the physical robot connection first')
-        runner_empty_folder()
-        heading('PHYSICAL TWO-LINK EXECUTION')
-        print('This activity commands Robot 1 and its gripper.')
-        print('Keep the robot outside the camera view; disable manual mode; clear the movement area.')
-        print('The runner enables stopped state 4 at startup if diagnostics allow it.')
-        print('After VERIFIED: no OPEN/HELD prompts. Physical gripper state is NOT sensed.')
-        print('Load one part at a time. A vacant Zone 1 ends the run; load the second only while stopped.')
-        print('Keep first placement fixed for second-only. No automatic destination detection in Zone 2.')
-        args.append('--execute')
+        if config.get('mode') == 'simulation':
+            raise ValueError('Configure the physical robot connection first')
+        heading('START ASSEMBLY FROM EMPTY ZONE 2')
+        print('Existing first placement, then fresh opening recognition before each next pick.')
+        print('One loose part at a time. Feed prompts occur while the robot is parked.')
+        print('No OPEN/HELD prompts. Physical retention and assembly are not sensed.')
+        print('Experimental integration: local 4 mm fitted-pose correction is not applied.')
+        answer = input('Number of links [1 / 2 / 3, default 2]: ').strip() or '2'
+        if answer not in ('1', '2', '3'):
+            raise ValueError('Choose 1, 2, or 3 links')
+        args = ['--station', STATE['station'], '--chain-config', 'config/chain_assembly.json',
+                '--links', answer, '--execute']
     if not preview: launch_dashboard()
     run_module('robot_vision.robot.robot1_two_link_cycle', *args)
 
@@ -754,7 +755,7 @@ def real_menu():
     actions = {'1':lambda:execute_cycle(), '2':live_analysis, '3':calibration_menu, '4':chain_menu}
     while True:
         heading('REAL ROBOT')
-        print('1. Saved two-piece assembly station\n2. View camera and detected part\n3. Calibration and setup\n4. Vision-guided chain extension (experimental)\n0. Back')
+        print('1. Start assembly from empty Zone 2\n2. View camera and detected part\n3. Calibration and setup\n4. Vision-guided chain extension (experimental)\n0. Back')
         answer = input('Select: ').strip()
         if answer == '0': return
         try:
